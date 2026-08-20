@@ -18,7 +18,7 @@ export default function Navbar({ onSearchClick, isAdultMode, onToggleAdultMode, 
 
   const allDrawerLinks = [
     { id: 'catalog', label: lang === 'th' ? 'คอลเลกชัน 70 รุ่น ทั้งหมด' : 'All 70 Models Collection', href: '#catalog' },
-    { id: 'ready', label: lang === 'th' ? 'สินค้าพร้อมส่งทันทีในไทย (23 รายการ)' : 'Ready to Ship in Thailand (23 Items)', href: '#catalog' },
+    { id: 'ready', label: lang === 'th' ? 'สินค้าพร้อมส่งทันทีในไทย (ด่วน 1-2 วัน)' : 'Ready to Ship in Thailand (Express)', href: '#catalog' },
     { id: 'discreet', label: lang === 'th' ? 'นโยบายจัดส่งลับเฉพาะ 100% (Secret Box)' : '100% Secret & Discreet Shipping', href: '#discreet' },
     { id: 'care', label: lang === 'th' ? 'ศิลปะการดูแลรักษา (The Longevity Care)' : 'Care & Maintenance Guide', href: '#care' },
     { id: 'reviews', label: lang === 'th' ? 'รีวิวความประทับใจจากคอลเลกเตอร์' : 'Verified Collector Reviews', href: '#reviews' },

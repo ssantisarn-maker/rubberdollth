@@ -21,7 +21,6 @@ export const products = [
     "category": "ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวเอเชีย",
     "categories": [
       "all",
-      "ready",
       "asian"
     ],
     "height": "165 cm",
@@ -29,7 +28,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01M07YW3CWQNG4QC1RXTEWMG65",
@@ -53,7 +52,6 @@ export const products = [
     "category": "ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวเอเชีย",
     "categories": [
       "all",
-      "ready",
       "anime",
       "asian"
     ],
@@ -62,7 +60,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01M07YHAJ63NC1BYPPDX7WRBVN",
@@ -86,7 +84,6 @@ export const products = [
     "category": "ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวเอเชีย",
     "categories": [
       "all",
-      "ready",
       "asian"
     ],
     "height": "165 cm",
@@ -94,7 +91,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01M07Y3MWM9BVEWA8GXV7DTAR4",
@@ -118,7 +115,6 @@ export const products = [
     "category": "ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวเอเชีย",
     "categories": [
       "all",
-      "ready",
       "asian"
     ],
     "height": "165 cm",
@@ -126,7 +122,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01KYYQFNX7XYTE8NRAT5J3PT0W",
@@ -150,7 +146,6 @@ export const products = [
     "category": "ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวเอเชีย",
     "categories": [
       "all",
-      "ready",
       "asian"
     ],
     "height": "165 cm",
@@ -158,7 +153,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01M0593J49ZVDKFJ8FKME81ZD9",
@@ -182,7 +177,6 @@ export const products = [
     "category": "ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวเอเชีย",
     "categories": [
       "all",
-      "ready",
       "anime",
       "asian"
     ],
@@ -191,7 +185,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01M058ZK1NBTJMQAF8DB1ENMAT",
@@ -215,7 +209,6 @@ export const products = [
     "category": "ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวเอเชีย",
     "categories": [
       "all",
-      "ready",
       "asian"
     ],
     "height": "165 cm",
@@ -223,7 +216,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01M058MGF92P138HJYRKRKJ7FD",
@@ -342,7 +335,6 @@ export const products = [
     "category": "ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวฝรั่ง / ยุโรป",
     "categories": [
       "all",
-      "ready",
       "western"
     ],
     "height": "165 cm",
@@ -350,7 +342,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01KZXRDQ62M116E7HTQAFRT983",
@@ -531,7 +523,6 @@ export const products = [
     "category": "ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวฝรั่ง / ยุโรป",
     "categories": [
       "all",
-      "ready",
       "western"
     ],
     "height": "165 cm",
@@ -539,7 +530,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01KZXKEQKE6FM1A0JK43ZNX74S",
@@ -657,7 +648,6 @@ export const products = [
     "category": "ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวเอเชีย",
     "categories": [
       "all",
-      "ready",
       "asian"
     ],
     "height": "165 cm",
@@ -665,7 +655,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01KZXHM5R8BBKSCWC9YMPQEBJY",
@@ -721,7 +711,6 @@ export const products = [
     "category": "ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวเอเชีย",
     "categories": [
       "all",
-      "ready",
       "asian"
     ],
     "height": "165 cm",
@@ -729,7 +718,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01KZVAW6Q33PJZBAFZDMX228DE",
@@ -1054,7 +1043,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "ready",
       "toys",
       "torso"
     ],
@@ -1063,7 +1051,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01KZMHRYXR0NSM4KSR2SSYRRJB",
@@ -1222,6 +1210,7 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
+      "ready",
       "toys",
       "torso"
     ],
@@ -1230,7 +1219,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": false
+    "isReadyToShip": true
   },
   {
     "id": "prod_01KZMGJDCJCR31TNMKCZ6A6JE6",
@@ -1277,7 +1266,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "ready",
       "toys",
       "torso"
     ],
@@ -1286,7 +1274,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01KZMFEXYEE931299P5PQPD19E",
@@ -1332,6 +1320,7 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
+      "ready",
       "toys",
       "torso"
     ],
@@ -1340,7 +1329,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": false
+    "isReadyToShip": true
   },
   {
     "id": "prod_01KZM43WQ3T05Q8WF4D65TM8FD",
@@ -1390,7 +1379,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "ready",
       "toys",
       "torso"
     ],
@@ -1399,7 +1387,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01KZEDPWCFH2EFH9BEXYS90NYY",
@@ -1534,7 +1522,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "ready",
       "toys",
       "torso"
     ],
@@ -1543,7 +1530,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01KZBPCRDSVTM890MFMX7VTAPT",
@@ -1731,7 +1718,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "ready",
       "toys",
       "torso"
     ],
@@ -1740,7 +1726,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01KZ7KFY43BVE7EQFTYCASY6H8",
@@ -1761,7 +1747,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "ready",
       "toys",
       "torso"
     ],
@@ -1770,7 +1755,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01KZ7K1J6PQZGE9H10XQPRAPQ9",
@@ -1878,6 +1863,7 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
+      "ready",
       "toys",
       "torso"
     ],
@@ -1886,7 +1872,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": false
+    "isReadyToShip": true
   },
   {
     "id": "prod_01KZ1KH5RN25BDY8PNWAA54T9N",
@@ -1907,7 +1893,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "ready",
       "toys",
       "torso"
     ],
@@ -1916,7 +1901,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01KZ1K6TCWABFT1EB1B0Q9HJA3",
@@ -1936,7 +1921,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "ready",
       "toys",
       "torso"
     ],
@@ -1945,7 +1929,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01KZ1HGYRM8T13VW0M3GF47NBH",
@@ -1965,7 +1949,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "ready",
       "toys",
       "torso"
     ],
@@ -1974,7 +1957,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01KYZBY22FCZRAPMMN758DNZTR",
@@ -1994,7 +1977,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "ready",
       "toys",
       "torso"
     ],
@@ -2003,7 +1985,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01KYZ9KHHWGGBZ60TV4N59DTM4",
@@ -2023,7 +2005,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "ready",
       "torso"
     ],
     "height": "165 cm",
@@ -2031,7 +2012,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01KYZ51F4226MXCEEPNZMV53QK",
@@ -2051,7 +2032,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "ready",
       "torso"
     ],
     "height": "165 cm",
@@ -2059,7 +2039,7 @@ export const products = [
     "bust": "คัพ C-D สัมผัสนุ่มเสมือนจริง",
     "skeleton": "โครงกระดูกสแตนเลสข้อต่อ EVO ขยับจัดท่าได้ 360°",
     "material": "ซิลิโคนเกรดการแพทย์พรีเมียม + ผมปลูกและคิ้วปลูกระดับ Hi-End",
-    "isReadyToShip": true
+    "isReadyToShip": false
   },
   {
     "id": "prod_01KYYXZGS7FYPRG2VRX1GFYFMS",
