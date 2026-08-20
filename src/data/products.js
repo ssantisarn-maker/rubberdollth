@@ -1015,7 +1015,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1043,7 +1042,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1098,7 +1096,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1126,7 +1123,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1154,7 +1150,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1182,7 +1177,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1211,7 +1205,6 @@ export const products = [
     "categories": [
       "all",
       "ready",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1238,7 +1231,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1266,7 +1258,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1321,7 +1312,6 @@ export const products = [
     "categories": [
       "all",
       "ready",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1350,7 +1340,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1379,7 +1368,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1408,7 +1396,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1437,7 +1424,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1466,7 +1452,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1494,7 +1479,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1522,7 +1506,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1604,7 +1587,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1633,7 +1615,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1662,7 +1643,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1689,7 +1669,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1718,7 +1697,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1747,7 +1725,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1776,7 +1753,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1805,7 +1781,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1834,7 +1809,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1864,7 +1838,6 @@ export const products = [
     "categories": [
       "all",
       "ready",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1893,7 +1866,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1921,7 +1893,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1949,7 +1920,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",
@@ -1977,7 +1947,6 @@ export const products = [
     "category": "ตุ๊กตายางครึ่งตัว TORSO",
     "categories": [
       "all",
-      "toys",
       "torso"
     ],
     "height": "165 cm",

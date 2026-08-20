@@ -196,6 +196,41 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
               />
             ))}
           </div>
+        ) : selectedCategory === 'toys' ? (
+          <div className="text-center py-16 bg-white rounded-3xl border border-sand-200 p-8 sm:p-12 space-y-4 max-w-2xl mx-auto shadow-soft">
+            <div className="w-16 h-16 bg-sand-100 rounded-full flex items-center justify-center mx-auto text-2xl">
+              🎁
+            </div>
+            <h3 className="text-lg sm:text-xl font-serif font-bold text-ink">
+              {lang === 'th' 
+                ? 'หมวดหมู่ของเล่นสำหรับผู้ใหญ่ (เตรียมลงสินค้าใหม่เร็วๆ นี้)' 
+                : 'Adult Toys & Accessories (Coming Soon)'}
+            </h3>
+            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
+              {lang === 'th'
+                ? 'ทางร้านกำลังอยู่ระหว่างการคัดสรรอุปกรณ์และของเล่นเกรดพรีเมียมตัวใหม่ล่าสุดเพื่อนำมาเปิดตัวเร็วๆ นี้ ท่านสามารถทักสอบถามรายการสินค้าพิเศษล่วงหน้าได้ทาง LINE ครับ'
+                : 'We are currently preparing an exclusive collection of luxury accessories. Please contact our concierge via LINE for early access.'}
+            </p>
+            <div className="pt-2 flex items-center justify-center gap-3 flex-wrap">
+              <a
+                href="https://line.me/ti/p/~@rubberdoll.th"
+                target="_blank"
+                rel="noreferrer"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-full text-xs font-semibold shadow-sm transition-all"
+              >
+                {lang === 'th' ? 'สอบถามสินค้าทาง LINE' : 'Inquire via LINE'}
+              </a>
+              <button
+                onClick={() => {
+                  handleSelectCategory('all');
+                  setSearchQuery('');
+                }}
+                className="text-xs font-semibold text-ink-soft hover:text-ink px-4 py-2.5 rounded-full border border-sand-300 bg-sand-50 transition-all"
+              >
+                {t.catalog.resetBtn}
+              </button>
+            </div>
+          </div>
         ) : (
           <div className="text-center py-16 bg-white rounded-3xl border border-sand-200 p-8 space-y-3">
             <p className="text-base font-semibold text-ink">{t.catalog.noResultTitle}</p>
