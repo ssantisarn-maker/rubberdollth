@@ -1,0 +1,15 @@
+{
+  "siteMeta": {
+    "version": 201,
+    "template": "design-agent-v3",
+    "metaTitle": "RUBBER DOLL THAILAND ตุ๊กตายาง ซิลิโคน ตุ๊กตาสมจริง ตุ๊กตาเหมือนคน",
+    "aiWebsiteType": "Online store",
+    "defaultLocale": "system",
+    "ecommerceType": "zyro",
+    "ecommerceStoreId": "store_01KYYQFNVFQMCAMTY5SZA4J5H8",
+    "isPrivateModeActive": false,
+    "demoEcommerceStoreId": "demo_01G0E9P2R0CFTNBWEEFCEV8EG5",
+    "shouldAddWWWPrefixToDomain": false,
+    "migrationToLayoutModifications": {}
+  }
+}

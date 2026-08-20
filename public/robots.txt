@@ -1,0 +1,8 @@
+# robots.txt for RUBBER DOLL THAILAND
+User-agent: *
+Allow: /
+Disallow: /private/
+Disallow: /temp/
+
+# Sitemaps
+Sitemap: https://rubberdollth.com/sitemap.xml

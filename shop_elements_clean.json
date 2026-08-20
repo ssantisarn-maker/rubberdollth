@@ -1,0 +1,935 @@
+[
+  {
+    "id": "6EV3I1",
+    "type": "GridShape",
+    "text": "",
+    "href": "",
+    "el": {
+      "svg": "<svg preserveAspectRatio=\"none\" viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"currentColor\"><path d=\"M0 0H80V80H0V0Z\"></path></svg>",
+      "type": "GridShape",
+      "color": "#e88243",
+      "shape": "rectangle",
+      "mobile": {
+        "top": 32,
+        "left": 0,
+        "width": 328,
+        "height": 3
+      },
+      "desktop": {
+        "top": 48,
+        "left": 80,
+        "width": 48,
+        "height": 3
+      },
+      "settings": {
+        "styles": {}
+      },
+      "animation": {
+        "name": "fade",
+        "type": "global"
+      }
+    }
+  },
+  {
+    "id": "9Bzhcg",
+    "type": "GridTextBox",
+    "text": "© 2019 RUBBER DOLL THAILAND - การจัดส่งแบบมิดชิดสูงสุด พร้อมบริการระดับพรีเมียม",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 514,
+        "left": 0,
+        "width": 328,
+        "height": 36
+      },
+      "content": "<p dir=\"auto\" class=\"body-small\" style=\"color: rgb(244, 240, 235);\">© 2019 RUBBER DOLL THAILAND<span style=\"color: rgb(232, 130, 67);\">-</span>การจัดส่งแบบมิดชิดสูงสุด พร้อมบริการระดับพรีเมียม</p>",
+      "desktop": {
+        "top": 427,
+        "left": 80,
+        "width": 464,
+        "height": 36
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "fade",
+        "type": "global"
+      }
+    }
+  },
+  {
+    "id": "Z-qmhV",
+    "type": "GridShape",
+    "text": "",
+    "href": "",
+    "el": {
+      "svg": "<svg preserveAspectRatio=\"none\" viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"currentColor\"><path d=\"M0 0H80V80H0V0Z\"></path></svg>",
+      "type": "GridShape",
+      "color": "#f4f0eb",
+      "shape": "rectangle",
+      "mobile": {
+        "top": 498,
+        "left": 0,
+        "width": 328,
+        "height": 1
+      },
+      "desktop": {
+        "top": 411,
+        "left": 80,
+        "width": 1040,
+        "height": 1
+      },
+      "settings": {
+        "styles": {}
+      },
+      "animation": {
+        "name": "fade",
+        "type": "global"
+      }
+    }
+  },
+  {
+    "id": "jmCqJo",
+    "type": "GridTextBox",
+    "text": "RUBBER DOLL THAILAND",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 558,
+        "left": 0,
+        "width": 328,
+        "height": 18
+      },
+      "content": "<p dir=\"auto\" class=\"body-small\" style=\"color: rgb(232, 130, 67); letter-spacing: 0.16em;\">RUBBER DOLL THAILAND</p>",
+      "desktop": {
+        "top": 289,
+        "left": 560,
+        "width": 560,
+        "height": 18
+      },
+      "settings": {
+        "styles": {
+          "text": "right",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "fade",
+        "type": "global"
+      }
+    }
+  },
+  {
+    "id": "pAg3jt",
+    "type": "GridTextBox",
+    "text": "RUBBER DOLL THAILAND  ตุ๊กตายาง พรีเมี่ยม ระดับ Hi-end นำเข้าและจัดส่งถึงบ้านลูกค้าปลอดภัยหายห่วง 100 % รับประกันเงินคืนเต็มจำนวนหากไม่ได้รับสินค้า 🥇      ทางเพจให้บริการการขายตุ๊กตายางตั้งแต่ปี 2019 ในเพจเฟสบุค มีผู้ติดตามกว่า 77,000 คน แต่เนื่องจากระบบเฟสบุ๊ค ทำให้มีปัญหาในการขายตุ๊กตายาง",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 48,
+        "left": 0,
+        "width": 328,
+        "height": 316
+      },
+      "content": "<h3 dir=\"auto\" style=\"color: rgb(244, 240, 235); margin-bottom: 8px;\">RUBBER DOLL THAILAND</h3><p dir=\"auto\" class=\"body\" style=\"color: rgb(244, 240, 235);\">ตุ๊กตายาง พรีเมี่ยม ระดับ Hi-end นำเข้าและจัดส่งถึงบ้านลูกค้าปลอดภัยหายห่วง 100 % รับประกันเงินคืนเต็มจำนวนหากไม่ได้รับสินค้า 🥇<br><span style=\"color: rgb(255, 255, 255);\"><br></span><span style=\"color: rgb(255, 255, 255); font-family: inherit;\"><strong>ทางเพจให้บริการการขายตุ๊กตายางตั้งแต่ปี 2019 ในเพจเฟสบุค มีผู้ติดตามกว่า 77,000 คน แต่เนื่องจากระบบเฟสบุ๊ค ทำให้มีปัญหาในการขายตุ๊กตายาง</strong></span></p>",
+      "desktop": {
+        "top": 64,
+        "left": 79,
+        "width": 440,
+        "height": 301
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "fade",
+        "type": "global"
+      }
+    }
+  },
+  {
+    "id": "pU88R1",
+    "type": "GridTextBox",
+    "text": "ติดต่อเรา  LINE : rubberdoll.th  อีเมล: rubber.doll.re@gmail.com   จัดส่งมิดชิดเป็นความลับปลอดภัย 100%",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 363,
+        "left": 0,
+        "width": 328,
+        "height": 119
+      },
+      "content": "<p dir=\"auto\" class=\"body-small\" style=\"color: rgb(232, 130, 67); letter-spacing: 0.16em; margin-bottom: 10px;\">ติดต่อเรา</p><p dir=\"auto\" class=\"body\" style=\"color: rgb(244, 240, 235); margin-bottom: 4px;\">LINE : rubberdoll.th</p><p dir=\"auto\" class=\"body\" style=\"color: rgb(244, 240, 235); margin-bottom: 4px;\">อีเมล: rubber.doll.re@gmail.com </p><p dir=\"auto\" class=\"body\" style=\"color: rgb(244, 240, 235); margin-bottom: 4px;\">จัดส่งมิดชิดเป็นความลับปลอดภัย 100%</p>",
+      "desktop": {
+        "top": 107,
+        "left": 560,
+        "width": 560,
+        "height": 119
+      },
+      "settings": {
+        "styles": {
+          "text": "right",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "fade",
+        "type": "global"
+      }
+    }
+  },
+  {
+    "id": "z2_IIf",
+    "type": "GridCard",
+    "text": "",
+    "href": "",
+    "el": {
+      "type": "GridCard",
+      "mobile": {
+        "top": 682,
+        "left": 0,
+        "width": 328,
+        "height": 230
+      },
+      "desktop": {
+        "top": 292,
+        "left": 792,
+        "width": 344,
+        "height": 249
+      },
+      "opacity": 100,
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "borderColor": "#00000000",
+      "borderWidth": 0,
+      "borderRadius": 16,
+      "backgroundColor": "#252427",
+      "boxShadowPreset": "xl",
+      "initialElementId": "daiC22",
+      "backgroundCurrent": "color"
+    }
+  },
+  {
+    "id": "z6PRx5",
+    "type": "GridTextBox",
+    "text": "ตุ๊กตายางสินค้าและบริการระดับพรีเมี่ยม สนใจสอบถามและสั่งซื้อได้ตลอด 24 ชั่วโมงค่ะ",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 243,
+        "left": 0,
+        "width": 328,
+        "height": 53
+      },
+      "content": "<p dir=\"auto\" class=\"body\" style=\"color: rgb(165, 162, 160);\">ตุ๊กตายางสินค้าและบริการระดับพรีเมี่ยม สนใจสอบถามและสั่งซื้อได้ตลอด 24 ชั่วโมงค่ะ</p>",
+      "desktop": {
+        "top": 279,
+        "left": 80,
+        "width": 1056,
+        "height": 26
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "eaM914"
+    }
+  },
+  {
+    "id": "z6xO2b",
+    "type": "GridTextBox",
+    "text": "RUBBER DOLL THAILAND",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 80,
+        "left": 0,
+        "width": 328,
+        "height": 47
+      },
+      "content": "<span class=\"body-small\" dir=\"auto\" style=\"color: rgb(232, 130, 67);\">RUBBER DOLL THAILAND</span>",
+      "desktop": {
+        "top": 104,
+        "left": 80,
+        "width": 1056,
+        "height": 20
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "KyqySn"
+    }
+  },
+  {
+    "id": "z7Dj_n",
+    "type": "GridShape",
+    "text": "",
+    "href": "",
+    "el": {
+      "svg": "<svg viewBox=\"0 0 48 48\" preserveAspectRatio=\"xMinYMid meet\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><rect width=\"48\" height=\"48\" rx=\"12\" fill=\"#48342c\"></rect><g transform=\"translate(12 12)\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"12 2 2 7 12 12 22 7 12 2\"></polygon><polyline points=\"2 17 12 22 22 17\"></polyline><polyline points=\"2 12 12 17 22 12\"></polyline></g></svg>",
+      "type": "GridShape",
+      "color": "#f3c0a1",
+      "shape": "icon-layers",
+      "mobile": {
+        "top": 496,
+        "left": 136,
+        "width": 56,
+        "height": 56
+      },
+      "desktop": {
+        "top": 316,
+        "left": 460,
+        "width": 296,
+        "height": 56
+      },
+      "settings": {
+        "styles": {}
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "CoqMb3"
+    }
+  },
+  {
+    "id": "zAKk8K",
+    "type": "GridTextBox",
+    "text": "เนื้อยางซิลิโคน",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 564,
+        "left": 16,
+        "width": 296,
+        "height": 25
+      },
+      "content": "<h4 dir=\"auto\" style=\"color: rgb(244, 240, 235);\">เนื้อยางซิลิโคน</h4>",
+      "desktop": {
+        "top": 384,
+        "left": 460,
+        "width": 296,
+        "height": 28
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "dXN1Og"
+    }
+  },
+  {
+    "id": "zE5Q9q",
+    "type": "GridTextBox",
+    "text": "การจัดส่งมิดชิด",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 766,
+        "left": 16,
+        "width": 296,
+        "height": 45
+      },
+      "content": "<h4 dir=\"auto\" style=\"color: rgb(244, 240, 235);\">การจัดส่งมิดชิด</h4>",
+      "desktop": {
+        "top": 384,
+        "left": 816,
+        "width": 296,
+        "height": 28
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "LF3WWa"
+    }
+  },
+  {
+    "id": "zEu_dg",
+    "type": "GridTextBox",
+    "text": "วัสดุทุกชิ้นผ่านการคัดสรรมาอย่างดี คุณภาพคุ้มค่าคุ้มราคาแน่นอนจ้า",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 399,
+        "left": 16,
+        "width": 296,
+        "height": 53
+      },
+      "content": "<p dir=\"auto\" class=\"body\" style=\"color: rgb(244, 240, 235);\">วัสดุทุกชิ้นผ่านการคัดสรรมาอย่างดี คุณภาพคุ้มค่าคุ้มราคาแน่นอนจ้า</p>",
+      "desktop": {
+        "top": 444,
+        "left": 104,
+        "width": 296,
+        "height": 53
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "IcvX71"
+    }
+  },
+  {
+    "id": "zFonr7",
+    "type": "GridCard",
+    "text": "",
+    "href": "",
+    "el": {
+      "type": "GridCard",
+      "mobile": {
+        "top": 258,
+        "left": 0,
+        "width": 328,
+        "height": 230
+      },
+      "desktop": {
+        "top": 292,
+        "left": 80,
+        "width": 344,
+        "height": 249
+      },
+      "opacity": 100,
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "borderColor": "#00000000",
+      "borderWidth": 0,
+      "borderRadius": 16,
+      "backgroundColor": "#252427",
+      "boxShadowPreset": "xl",
+      "initialElementId": "AK1vGf",
+      "backgroundCurrent": "color"
+    }
+  },
+  {
+    "id": "zI0G8d",
+    "type": "GridTextBox",
+    "text": "พร้อมยกระดับสเปซส่วนตัวของคุณแล้วหรือยัง?",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 36,
+        "left": 0,
+        "width": 328,
+        "height": 45
+      },
+      "content": "<h4 dir=\"auto\" style=\"color: rgb(20, 19, 22);\">พร้อมยกระดับสเปซส่วนตัวของคุณแล้วหรือยัง?</h4>",
+      "desktop": {
+        "top": 48,
+        "left": 80,
+        "width": 700,
+        "height": 28
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "AGaH4j"
+    }
+  },
+  {
+    "id": "zJM_BJ",
+    "type": "GridButton",
+    "text": "สอบถามรายละเอียดการสั่งซื้อ",
+    "href": "https://line.me/ti/p/gSLmor2yUC",
+    "el": {
+      "rel": "nofollow",
+      "href": "https://line.me/ti/p/gSLmor2yUC",
+      "type": "GridButton",
+      "mobile": {
+        "top": 138,
+        "left": 25,
+        "width": 278,
+        "height": 48
+      },
+      "target": "_blank",
+      "content": "สอบถามรายละเอียดการสั่งซื้อ",
+      "desktop": {
+        "top": 68,
+        "left": 832,
+        "width": 304,
+        "height": 53
+      },
+      "linkType": "external",
+      "settings": {
+        "type": "primary",
+        "styles": {}
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "fontColor": "#000000",
+      "borderColor": "#f4f0eb",
+      "borderWidth": 0,
+      "borderRadius": 8,
+      "linkedPageId": "",
+      "fontColorHover": "#000000",
+      "backgroundColor": "#f4f0eb",
+      "borderColorHover": "#c3c0bc",
+      "initialElementId": "CXndkd",
+      "backgroundColorHover": "#c3c0bc"
+    }
+  },
+  {
+    "id": "zN9utH",
+    "type": "GridTextBox",
+    "text": "ความมั่นใจสูงสุด",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 52,
+        "left": 0,
+        "width": 328,
+        "height": 47
+      },
+      "content": "<span class=\"body-small\" dir=\"auto\" style=\"color: rgb(232, 130, 67);\">ความมั่นใจสูงสุด</span>",
+      "desktop": {
+        "top": 72,
+        "left": 80,
+        "width": 1056,
+        "height": 20
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "VKmoeh"
+    }
+  },
+  {
+    "id": "zNRrzd",
+    "type": "GridTextBox",
+    "text": "ความประณีตในทุกรายละเอียด",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 111,
+        "left": 0,
+        "width": 328,
+        "height": 70
+      },
+      "content": "<h3 dir=\"auto\" style=\"color: rgb(244, 240, 235);\">ความประณีตในทุกรายละเอียด</h3>",
+      "desktop": {
+        "top": 131,
+        "left": 80,
+        "width": 1056,
+        "height": 53
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "gmP22I"
+    }
+  },
+  {
+    "id": "zObajS",
+    "type": "GridCard",
+    "text": "",
+    "href": "",
+    "el": {
+      "type": "GridCard",
+      "mobile": {
+        "top": 480,
+        "left": 0,
+        "width": 328,
+        "height": 230
+      },
+      "desktop": {
+        "top": 292,
+        "left": 436,
+        "width": 344,
+        "height": 249
+      },
+      "opacity": 100,
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "borderColor": "#00000000",
+      "borderWidth": 0,
+      "borderRadius": 16,
+      "backgroundColor": "#252427",
+      "boxShadowPreset": "xl",
+      "initialElementId": "pLrPRY",
+      "backgroundCurrent": "color"
+    }
+  },
+  {
+    "id": "zUyJ7C",
+    "type": "GridShape",
+    "text": "",
+    "href": "",
+    "el": {
+      "svg": "<svg viewBox=\"0 0 48 48\" preserveAspectRatio=\"xMinYMid meet\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><rect width=\"48\" height=\"48\" rx=\"12\" fill=\"#48342c\"></rect><g transform=\"translate(12 12)\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><line x1=\"16.5\" y1=\"9.4\" x2=\"7.5\" y2=\"4.21\"></line><path d=\"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\"></path><polyline points=\"3.27 6.96 12 12.01 20.73 6.96\"></polyline><line x1=\"12\" y1=\"22.08\" x2=\"12\" y2=\"12\"></line></g></svg>",
+      "type": "GridShape",
+      "color": "#f3c0a1",
+      "shape": "icon-package",
+      "mobile": {
+        "top": 698,
+        "left": 136,
+        "width": 56,
+        "height": 56
+      },
+      "desktop": {
+        "top": 316,
+        "left": 816,
+        "width": 296,
+        "height": 56
+      },
+      "settings": {
+        "styles": {}
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "k0yN0u"
+    }
+  },
+  {
+    "id": "zVX1_v",
+    "type": "GridTextBox",
+    "text": "ปรึกษาผู้เชี่ยวชาญของเราเพื่อเลือกสรรสิ่งที่ลงตัวกับไลฟ์สไตล์ของคุณ",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 87,
+        "left": 0,
+        "width": 328,
+        "height": 39
+      },
+      "content": "<p class=\"body-small\" dir=\"auto\" style=\"color: rgb(20, 19, 22);\">ปรึกษาผู้เชี่ยวชาญของเราเพื่อเลือกสรรสิ่งที่ลงตัวกับไลฟ์สไตล์ของคุณ</p>",
+      "desktop": {
+        "top": 102,
+        "left": 80,
+        "width": 700,
+        "height": 18
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "WGJph_"
+    }
+  },
+  {
+    "id": "zeCfDf",
+    "type": "GridTextBox",
+    "text": "จัดส่งมิดชิดปลอดภัย หายห่วง 100 % มีปัญหาการจัดส่งทางร้านคืนเงินเต็มจำนวน",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 823,
+        "left": 16,
+        "width": 296,
+        "height": 53
+      },
+      "content": "<p dir=\"auto\" class=\"body\" style=\"color: rgb(244, 240, 235);\">จัดส่งมิดชิดปลอดภัย หายห่วง 100 % มีปัญหาการจัดส่งทางร้านคืนเงินเต็มจำนวน</p>",
+      "desktop": {
+        "top": 444,
+        "left": 816,
+        "width": 296,
+        "height": 53
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "c0grOD"
+    }
+  },
+  {
+    "id": "zgE2Rq",
+    "type": "GridTextBox",
+    "text": "คุณภาพระดับโลก",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 342,
+        "left": 16,
+        "width": 296,
+        "height": 45
+      },
+      "content": "<h4 dir=\"auto\" style=\"color: rgb(244, 240, 235);\">คุณภาพระดับโลก</h4>",
+      "desktop": {
+        "top": 384,
+        "left": 104,
+        "width": 296,
+        "height": 28
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "y715CH"
+    }
+  },
+  {
+    "id": "zjZXTW",
+    "type": "GridShape",
+    "text": "",
+    "href": "",
+    "el": {
+      "svg": "<svg viewBox=\"0 0 48 48\" preserveAspectRatio=\"xMinYMid meet\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><rect width=\"48\" height=\"48\" rx=\"12\" fill=\"#48342c\"></rect><g transform=\"translate(12 12)\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M22 11.08V12a10 10 0 1 1-5.93-9.14\"></path><polyline points=\"22 4 12 14.01 9 11.01\"></polyline></g></svg>",
+      "type": "GridShape",
+      "color": "#f3c0a1",
+      "shape": "icon-check-circle",
+      "mobile": {
+        "top": 274,
+        "left": 136,
+        "width": 56,
+        "height": 56
+      },
+      "desktop": {
+        "top": 316,
+        "left": 104,
+        "width": 296,
+        "height": 56
+      },
+      "settings": {
+        "styles": {}
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "xHahiO"
+    }
+  },
+  {
+    "id": "zlvAgD",
+    "type": "GridButton",
+    "text": "ดูสินค้าทั้งหมด",
+    "href": "/",
+    "el": {
+      "href": "/",
+      "type": "GridButton",
+      "mobile": {
+        "top": 308,
+        "left": 76,
+        "width": 176,
+        "height": 48
+      },
+      "target": "_self",
+      "content": "ดูสินค้าทั้งหมด",
+      "desktop": {
+        "top": 343,
+        "left": 80,
+        "width": 190,
+        "height": 53
+      },
+      "linkType": "anchored-section",
+      "settings": {
+        "type": "primary",
+        "styles": {}
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "fontColor": "#000000",
+      "borderColor": "#e88243",
+      "borderWidth": 0,
+      "borderRadius": 8,
+      "fontColorHover": "#ffffff",
+      "backgroundColor": "#e88243",
+      "borderColorHover": "#b96835",
+      "initialElementId": "AWnI9O",
+      "backgroundColorHover": "#b96835"
+    }
+  },
+  {
+    "id": "zpZX0U",
+    "type": "GridTextBox",
+    "text": "คอลเลกชันระดับ  พรีเมียม",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 139,
+        "left": 0,
+        "width": 328,
+        "height": 92
+      },
+      "content": "<h2 dir=\"auto\" style=\"color: rgb(244, 240, 235);\">คอลเลกชันระดับ<span style=\"color: rgb(216, 92, 29);\"><strong>พรีเมียม</strong></span></h2>",
+      "desktop": {
+        "top": 163,
+        "left": 80,
+        "width": 1056,
+        "height": 84
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "BOmJcl"
+    }
+  },
+  {
+    "id": "zsZkMD",
+    "type": "GridTextBox",
+    "text": "สัมผัสความสมจริงของผิวสัมผัสและรายละเอียดผิวที่สมจริงเหมือนคน",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 601,
+        "left": 16,
+        "width": 296,
+        "height": 53
+      },
+      "content": "<p dir=\"auto\" class=\"body\" style=\"color: rgb(244, 240, 235);\">สัมผัสความสมจริงของผิวสัมผัสและรายละเอียดผิวที่สมจริงเหมือนคน</p>",
+      "desktop": {
+        "top": 444,
+        "left": 460,
+        "width": 296,
+        "height": 53
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "ErmosD"
+    }
+  },
+  {
+    "id": "zwdPRU",
+    "type": "GridTextBox",
+    "text": "เราคัดสรรและนำเสนอเฉพาะสิ่งที่ดีที่สุด เพื่อประสบการณ์ที่เหนือระดับสำหรับคุณ",
+    "href": "",
+    "el": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 193,
+        "left": 0,
+        "width": 328,
+        "height": 53
+      },
+      "content": "<p dir=\"auto\" class=\"body\" style=\"color: rgb(165, 162, 160);\">เราคัดสรรและนำเสนอเฉพาะสิ่งที่ดีที่สุด เพื่อประสบการณ์ที่เหนือระดับสำหรับคุณ</p>",
+      "desktop": {
+        "top": 216,
+        "left": 80,
+        "width": 1056,
+        "height": 26
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "GoVanH"
+    }
+  }
+]

@@ -1,0 +1,1761 @@
+{
+  "home_blocks": {
+    "zpxbIO": {
+      "type": "BlockImageSlideshow",
+      "mobile": {
+        "minHeight": 508
+      },
+      "slides": [
+        {
+          "alt": "",
+          "url": "https://assets.zyrosite.com/fszQiDlMqQsK31Ld/2-J7XSkPiBSNBjVYD1.jpg",
+          "path": "2-J7XSkPiBSNBjVYD1.jpg",
+          "origin": "assets",
+          "fullResolutionWidth": 800,
+          "fullResolutionHeight": 800
+        },
+        {
+          "alt": "",
+          "url": "https://assets.zyrosite.com/fszQiDlMqQsK31Ld/_r5a1094-IQ1FWl28UnvWLfg6.jpg",
+          "path": "_r5a1094-IQ1FWl28UnvWLfg6.jpg",
+          "origin": "assets",
+          "fullResolutionWidth": 1440,
+          "fullResolutionHeight": 2160
+        },
+        {
+          "alt": "",
+          "url": "https://assets.zyrosite.com/fszQiDlMqQsK31Ld/_r9a1208-VRyN8wRBmlZWSn8C.jpg",
+          "path": "_r9a1208-VRyN8wRBmlZWSn8C.jpg",
+          "origin": "assets",
+          "fullResolutionWidth": 1440,
+          "fullResolutionHeight": 2160
+        }
+      ],
+      "desktop": {
+        "isHidden": true,
+        "minHeight": 38
+      },
+      "settings": {
+        "styles": {
+          "navigationDotsColor": "rgb(0, 0, 0)",
+          "navigationArrowsColor": "rgb(0, 0, 0)"
+        }
+      },
+      "zindexes": [],
+      "components": [],
+      "isLoopEnabled": false,
+      "initialBlockId": "zf_wmA",
+      "autoplayInterval": 3,
+      "isAutoplayEnabled": true,
+      "isNavigationDotsVisible": true,
+      "isNavigationArrowsVisible": true
+    },
+    "zVR4Os": {
+      "type": "BlockLayout",
+      "mobile": {
+        "minHeight": 2727
+      },
+      "desktop": {
+        "minHeight": 2332
+      },
+      "settings": {
+        "styles": {
+          "block-padding": "16px 0 16px 0",
+          "m-block-padding": "16px"
+        }
+      },
+      "zindexes": [
+        "z97Giy",
+        "zH6Jir",
+        "z_xgf3",
+        "zANqDr",
+        "zZPOfI",
+        "z5wtq9",
+        "zzUj49",
+        "zbP5wV",
+        "z95Sqa",
+        "zUyMGi",
+        "zG5LYH",
+        "z2lGyp",
+        "zKnwZh",
+        "zKbHeT",
+        "zgrJZk",
+        "z8venT"
+      ],
+      "attachment": "fixed",
+      "background": {
+        "color": "rgb(244, 240, 235)",
+        "current": "color",
+        "gradient": {
+          "angle": 135,
+          "colors": [
+            {
+              "value": "rgb(23, 107, 224)"
+            },
+            {
+              "value": "rgb(143, 17, 168)"
+            }
+          ],
+          "isAnimated": false
+        },
+        "overlay-opacity": "0.90"
+      },
+      "components": [
+        "z_xgf3",
+        "zANqDr",
+        "zH6Jir",
+        "z97Giy",
+        "zZPOfI",
+        "z5wtq9",
+        "zUyMGi",
+        "zzUj49",
+        "zbP5wV",
+        "z95Sqa",
+        "zG5LYH",
+        "z2lGyp",
+        "zKnwZh",
+        "zKbHeT",
+        "zgrJZk",
+        "z8venT"
+      ],
+      "initialBlockId": "zAqwcd"
+    },
+    "zncj11": {
+      "type": "BlockLayout",
+      "mobile": {
+        "minHeight": 2048
+      },
+      "desktop": {
+        "minHeight": 953
+      },
+      "settings": {
+        "styles": {
+          "block-padding": "16px 0 16px 0",
+          "m-block-padding": "16px"
+        }
+      },
+      "zindexes": [
+        "zl064y",
+        "zE1NMT",
+        "z5pXv1",
+        "zWPlLC",
+        "z3WbfP",
+        "zb55yv",
+        "z9FVRE",
+        "zR1uwS",
+        "znpib6",
+        "zlGXpU",
+        "zbyjQZ",
+        "z74MxY",
+        "zL0Vm-",
+        "z7rRfm",
+        "zR1P2A",
+        "zGfcH-",
+        "zazmDb"
+      ],
+      "attachment": "fixed",
+      "background": {
+        "color": "rgb(244, 240, 235)",
+        "current": "color",
+        "gradient": {
+          "angle": 135,
+          "colors": [
+            {
+              "value": "rgb(23, 107, 224)"
+            },
+            {
+              "value": "rgb(143, 17, 168)"
+            }
+          ],
+          "isAnimated": false
+        },
+        "overlay-opacity": "0.90"
+      },
+      "components": [
+        "z5pXv1",
+        "zE1NMT",
+        "zWPlLC",
+        "zl064y",
+        "z3WbfP",
+        "z7rRfm",
+        "zb55yv",
+        "zR1uwS",
+        "z9FVRE",
+        "znpib6",
+        "zlGXpU",
+        "zbyjQZ",
+        "z74MxY",
+        "zL0Vm-",
+        "zR1P2A",
+        "zGfcH-",
+        "zazmDb"
+      ],
+      "initialBlockId": "zVR4Os"
+    },
+    "zbGlD-": {
+      "type": "BlockEcommerceProductList",
+      "desktop": {
+        "rowGap": 40,
+        "columnGap": 23,
+        "columnCount": 3
+      },
+      "settings": {
+        "styles": {
+          "textAlign": "center",
+          "block-padding": "100px 16px",
+          "content-width": "1224px",
+          "m-block-padding": "56px 16px",
+          "imageHoverEffect": "swap_image",
+          "imageBorderRadius": "6%"
+        },
+        "imageHoverEffect": "swap_image"
+      },
+      "zindexes": [],
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "background": {
+        "color": "rgb(255, 255, 255)",
+        "current": "color"
+      },
+      "components": [],
+      "imageRatio": "cover",
+      "buttonStyle": {
+        "grid-button-primary-color": "rgb(0, 0, 0)",
+        "grid-button-secondary-color": "rgb(46, 47, 49)",
+        "grid-button-primary-color-hover": "rgb(255, 255, 255)",
+        "grid-button-primary-border-color": "rgb(0, 0, 0)",
+        "grid-button-secondary-color-hover": "rgb(29, 30, 32)",
+        "grid-button-secondary-border-color": "rgb(255, 255, 255)",
+        "grid-button-primary-background-color": "rgba(0, 0, 0, 0)",
+        "grid-button-primary-border-color-hover": "rgb(29, 30, 32)",
+        "grid-button-secondary-background-color": "rgb(255, 255, 255)",
+        "grid-button-primary-border-color-active": "rgb(0, 0, 0)",
+        "grid-button-secondary-border-color-hover": "rgb(241, 241, 241)",
+        "grid-button-secondary-border-color-active": "rgb(255, 255, 255)",
+        "grid-button-primary-background-color-hover": "rgb(29, 30, 32)",
+        "grid-button-primary-background-color-active": "rgb(0, 0, 0)",
+        "grid-button-secondary-background-color-hover": "rgb(241, 241, 241)",
+        "grid-button-secondary-background-color-active": "rgb(255, 255, 255)"
+      },
+      "isFullWidth": false,
+      "ribbonStyle": {
+        "ribbon-color": "rgb(255, 255, 255)",
+        "ribbon-background-color": "rgb(29, 30, 32)"
+      },
+      "buttonDisplay": "always",
+      "productSearch": {
+        "width": 500,
+        "fillColor": "rgb(255, 255, 255)",
+        "isEnabled": true,
+        "borderColor": "rgb(218, 220, 224)",
+        "borderRadius": 18,
+        "inputAlignment": "center",
+        "textAndIconColor": "rgb(86, 88, 94)",
+        "resultItemHoverColor": "rgba(0, 0, 0, 0.06)"
+      },
+      "textColorVars": {
+        "h1-color": "rgb(26, 26, 26)",
+        "h2-color": "rgb(26, 26, 26)",
+        "h3-color": "rgb(26, 26, 26)",
+        "h4-color": "rgb(26, 26, 26)",
+        "h5-color": "rgb(26, 26, 26)",
+        "h6-color": "rgb(26, 26, 26)",
+        "body-color": "rgb(26, 26, 26)",
+        "body-large-color": "rgb(26, 26, 26)"
+      },
+      "productSorting": {
+        "enabled": true,
+        "textColor": "#000",
+        "sortingOptions": [
+          {
+            "id": "default",
+            "label": "Default",
+            "value": "",
+            "isEnabled": true
+          },
+          {
+            "id": "priceLTH",
+            "label": "Price (low to high)",
+            "value": "order=ASC&sort_by=price",
+            "isEnabled": true
+          },
+          {
+            "id": "priceHTL",
+            "label": "Price (high to low)",
+            "value": "order=DESC&sort_by=price",
+            "isEnabled": true
+          },
+          {
+            "id": "mostRecent",
+            "label": "Most recent",
+            "value": "order=DESC&sort_by=created_at",
+            "isEnabled": true
+          }
+        ]
+      },
+      "isButtonEnabled": true,
+      "productsPerPage": 12,
+      "scrollBehaviour": "pagination",
+      "scrollToTopStyle": {
+        "backgroundColor": "rgb(252, 0, 0)",
+        "contrastBackgroundColor": "rgb(255, 255, 255)"
+      },
+      "buttonBorderWidth": 1,
+      "isButtonFullWidth": true,
+      "isScrollToTopEnabled": true,
+      "isCategoryListEnabled": true,
+      "isTotalProductCountShown": true,
+      "disabledFilterCategoryIds": []
+    },
+    "HcfvDc": {
+      "type": "BlockLayout",
+      "htmlId": "trust-strip",
+      "mobile": {
+        "minHeight": 411
+      },
+      "desktop": {
+        "minHeight": 250
+      },
+      "settings": {
+        "styles": {
+          "cols": "12",
+          "rows": 3,
+          "width": "1224px",
+          "m-rows": "1",
+          "col-gap": "24px",
+          "row-gap": "16px",
+          "row-size": "48px",
+          "block-padding": "16px 0 16px 0",
+          "m-block-padding": "16px"
+        }
+      },
+      "zindexes": [
+        "VOQSC9",
+        "kyzG7s",
+        "CaEeh8",
+        "JIN8j4",
+        "VZhueX",
+        "D4uw2i"
+      ],
+      "background": {
+        "color": "#141316",
+        "current": "color",
+        "isTransparent": false
+      },
+      "components": [
+        "VOQSC9",
+        "kyzG7s",
+        "CaEeh8",
+        "JIN8j4",
+        "VZhueX",
+        "D4uw2i"
+      ]
+    }
+  },
+  "elements": {
+    "6EV3I1": {
+      "svg": "<svg preserveAspectRatio=\"none\" viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"currentColor\"><path d=\"M0 0H80V80H0V0Z\"></path></svg>",
+      "type": "GridShape",
+      "color": "#e88243",
+      "shape": "rectangle",
+      "mobile": {
+        "top": 32,
+        "left": 0,
+        "width": 328,
+        "height": 3
+      },
+      "desktop": {
+        "top": 48,
+        "left": 80,
+        "width": 48,
+        "height": 3
+      },
+      "settings": {
+        "styles": {}
+      },
+      "animation": {
+        "name": "fade",
+        "type": "global"
+      }
+    },
+    "9Bzhcg": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 514,
+        "left": 0,
+        "width": 328,
+        "height": 36
+      },
+      "content": "<p dir=\"auto\" class=\"body-small\" style=\"color: rgb(244, 240, 235);\">© 2019 RUBBER DOLL THAILAND<span style=\"color: rgb(232, 130, 67);\">-</span>การจัดส่งแบบมิดชิดสูงสุด พร้อมบริการระดับพรีเมียม</p>",
+      "desktop": {
+        "top": 427,
+        "left": 80,
+        "width": 464,
+        "height": 36
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "fade",
+        "type": "global"
+      }
+    },
+    "CaEeh8": {
+      "svg": "<svg viewBox=\"0 0 48 48\" preserveAspectRatio=\"xMidYMid meet\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><rect width=\"48\" height=\"48\" rx=\"12\" fill=\"#372017\"></rect><g transform=\"translate(12 12)\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M22 11.08V12a10 10 0 1 1-5.93-9.14\"></path><polyline points=\"22 4 12 14.01 9 11.01\"></polyline></g></svg>",
+      "type": "GridShape",
+      "color": "#df7c4a",
+      "shape": "icon-check-circle",
+      "mobile": {
+        "top": 295,
+        "left": 136,
+        "width": 56,
+        "height": 56
+      },
+      "desktop": {
+        "top": 48,
+        "left": 792,
+        "width": 344,
+        "height": 56
+      },
+      "settings": {
+        "styles": {}
+      },
+      "animation": {
+        "name": "none",
+        "type": "global"
+      }
+    },
+    "D4uw2i": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 363,
+        "left": 0,
+        "width": 328,
+        "height": 26
+      },
+      "content": "<p dir=\"auto\" class=\"body\" style=\"color: rgb(244, 240, 235);\">สอบถามทุกรายละเอียดได้ทุกเรื่อง</p>",
+      "desktop": {
+        "top": 116,
+        "left": 792,
+        "width": 344,
+        "height": 26
+      },
+      "settings": {
+        "styles": {
+          "text": "center",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "none",
+        "type": "global"
+      }
+    },
+    "JIN8j4": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 104,
+        "left": 0,
+        "width": 328,
+        "height": 53
+      },
+      "content": "<p dir=\"auto\" class=\"body\" style=\"color: rgb(244, 240, 235);\">จัดส่งมิดชิด 100% ไม่เปิดเผยข้อมูลภายในกล่อง</p>",
+      "desktop": {
+        "top": 116,
+        "left": 80,
+        "width": 344,
+        "height": 26
+      },
+      "settings": {
+        "styles": {
+          "text": "center",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "none",
+        "type": "global"
+      }
+    },
+    "VOQSC9": {
+      "svg": "<svg viewBox=\"0 0 48 48\" preserveAspectRatio=\"xMidYMid meet\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><rect width=\"48\" height=\"48\" rx=\"12\" fill=\"#372017\"></rect><g transform=\"translate(12 12)\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z\"></path></g></svg>",
+      "type": "GridShape",
+      "color": "#df7c4a",
+      "shape": "icon-shield",
+      "mobile": {
+        "top": 36,
+        "left": 136,
+        "width": 56,
+        "height": 56
+      },
+      "desktop": {
+        "top": 48,
+        "left": 80,
+        "width": 344,
+        "height": 56
+      },
+      "settings": {
+        "styles": {}
+      },
+      "animation": {
+        "name": "none",
+        "type": "global"
+      }
+    },
+    "VZhueX": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 210,
+        "left": 0,
+        "width": 328,
+        "height": 23
+      },
+      "content": "<p dir=\"auto\" style=\"color: rgb(244, 240, 235);\">สินค้านำเข้าระดับพรีเมียม คุณภาพสูงสุด</p>",
+      "desktop": {
+        "top": 116,
+        "left": 436,
+        "width": 344,
+        "height": 21
+      },
+      "settings": {
+        "styles": {
+          "text": "center",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "none",
+        "type": "global"
+      }
+    },
+    "Z-qmhV": {
+      "svg": "<svg preserveAspectRatio=\"none\" viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"currentColor\"><path d=\"M0 0H80V80H0V0Z\"></path></svg>",
+      "type": "GridShape",
+      "color": "#f4f0eb",
+      "shape": "rectangle",
+      "mobile": {
+        "top": 498,
+        "left": 0,
+        "width": 328,
+        "height": 1
+      },
+      "desktop": {
+        "top": 411,
+        "left": 80,
+        "width": 1040,
+        "height": 1
+      },
+      "settings": {
+        "styles": {}
+      },
+      "animation": {
+        "name": "fade",
+        "type": "global"
+      }
+    },
+    "jmCqJo": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 558,
+        "left": 0,
+        "width": 328,
+        "height": 18
+      },
+      "content": "<p dir=\"auto\" class=\"body-small\" style=\"color: rgb(232, 130, 67); letter-spacing: 0.16em;\">RUBBER DOLL THAILAND</p>",
+      "desktop": {
+        "top": 289,
+        "left": 560,
+        "width": 560,
+        "height": 18
+      },
+      "settings": {
+        "styles": {
+          "text": "right",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "fade",
+        "type": "global"
+      }
+    },
+    "kyzG7s": {
+      "svg": "<svg viewBox=\"0 0 48 48\" preserveAspectRatio=\"xMidYMid meet\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><rect width=\"48\" height=\"48\" rx=\"12\" fill=\"#372017\"></rect><g transform=\"translate(12 12)\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"8\" r=\"7\"></circle><polyline points=\"8.21 13.89 7 23 12 20 17 23 15.79 13.88\"></polyline></g></svg>",
+      "type": "GridShape",
+      "color": "#df7c4a",
+      "shape": "icon-award",
+      "mobile": {
+        "top": 142,
+        "left": 136,
+        "width": 56,
+        "height": 56
+      },
+      "desktop": {
+        "top": 48,
+        "left": 436,
+        "width": 344,
+        "height": 56
+      },
+      "settings": {
+        "styles": {}
+      },
+      "animation": {
+        "name": "none",
+        "type": "global"
+      }
+    },
+    "pAg3jt": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 48,
+        "left": 0,
+        "width": 328,
+        "height": 316
+      },
+      "content": "<h3 dir=\"auto\" style=\"color: rgb(244, 240, 235); margin-bottom: 8px;\">RUBBER DOLL THAILAND</h3><p dir=\"auto\" class=\"body\" style=\"color: rgb(244, 240, 235);\">ตุ๊กตายาง พรีเมี่ยม ระดับ Hi-end นำเข้าและจัดส่งถึงบ้านลูกค้าปลอดภัยหายห่วง 100 % รับประกันเงินคืนเต็มจำนวนหากไม่ได้รับสินค้า 🥇<br><span style=\"color: rgb(255, 255, 255);\"><br></span><span style=\"color: rgb(255, 255, 255); font-family: inherit;\"><strong>ทางเพจให้บริการการขายตุ๊กตายางตั้งแต่ปี 2019 ในเพจเฟสบุค มีผู้ติดตามกว่า 77,000 คน แต่เนื่องจากระบบเฟสบุ๊ค ทำให้มีปัญหาในการขายตุ๊กตายาง</strong></span></p>",
+      "desktop": {
+        "top": 64,
+        "left": 79,
+        "width": 440,
+        "height": 301
+      },
+      "settings": {
+        "styles": {
+          "text": "left",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "fade",
+        "type": "global"
+      }
+    },
+    "pU88R1": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 363,
+        "left": 0,
+        "width": 328,
+        "height": 119
+      },
+      "content": "<p dir=\"auto\" class=\"body-small\" style=\"color: rgb(232, 130, 67); letter-spacing: 0.16em; margin-bottom: 10px;\">ติดต่อเรา</p><p dir=\"auto\" class=\"body\" style=\"color: rgb(244, 240, 235); margin-bottom: 4px;\">LINE : rubberdoll.th</p><p dir=\"auto\" class=\"body\" style=\"color: rgb(244, 240, 235); margin-bottom: 4px;\">อีเมล: rubber.doll.re@gmail.com </p><p dir=\"auto\" class=\"body\" style=\"color: rgb(244, 240, 235); margin-bottom: 4px;\">จัดส่งมิดชิดเป็นความลับปลอดภัย 100%</p>",
+      "desktop": {
+        "top": 107,
+        "left": 560,
+        "width": 560,
+        "height": 119
+      },
+      "settings": {
+        "styles": {
+          "text": "right",
+          "m-text": "center"
+        }
+      },
+      "animation": {
+        "name": "fade",
+        "type": "global"
+      }
+    },
+    "z2lGyp": {
+      "rel": "nofollow",
+      "href": "https://linktr.ee/RUBBERDOLL.TH",
+      "type": "GridButton",
+      "mobile": {
+        "top": 861,
+        "left": 79,
+        "width": 169,
+        "height": 31
+      },
+      "target": "_blank",
+      "content": "LINKTREE CATALOGS ",
+      "desktop": {
+        "top": 1389,
+        "left": 496,
+        "width": 221,
+        "height": 85
+      },
+      "linkType": "external",
+      "settings": {
+        "type": "primary",
+        "styles": {
+          "align": "center",
+          "justify": "center",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "fontColor": "rgb(255, 255, 255)",
+      "borderColor": "rgb(0, 0, 0)",
+      "linkedPageId": "",
+      "fontColorHover": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(186, 17, 17)",
+      "borderColorHover": "rgb(0, 0, 0)",
+      "backgroundColorHover": "rgb(29, 30, 32)"
+    },
+    "z3WbfP": {
+      "rel": "nofollow",
+      "href": "https://rubberdollth.com/half-06-15-",
+      "type": "GridButton",
+      "mobile": {
+        "top": 561,
+        "left": 67,
+        "width": 194,
+        "height": 56
+      },
+      "target": "_blank",
+      "content": "See more",
+      "desktop": {
+        "top": 701,
+        "left": 115,
+        "width": 170,
+        "height": 56,
+        "fontSize": 16
+      },
+      "linkType": "external",
+      "settings": {
+        "type": "primary",
+        "styles": {
+          "align": "center",
+          "justify": "center",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "fontColor": "rgb(255, 255, 255)",
+      "fontFamily": "Inter",
+      "fontWeight": 500,
+      "borderColor": "rgb(255, 255, 255)",
+      "borderWidth": 1,
+      "borderRadius": 28,
+      "linkedPageId": "",
+      "fontColorHover": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(255, 255, 255, 0)",
+      "borderColorHover": "rgb(255, 255, 255)",
+      "initialElementId": "z5wtq9",
+      "backgroundColorHover": "rgba(255, 255, 255, 0)"
+    },
+    "z5pXv1": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 43,
+        "left": 0,
+        "width": 328,
+        "height": 62
+      },
+      "content": "<p dir=\"auto\" class=\"body\" style=\"color: rgb(232, 130, 67); --lineHeightMobile: 1.3; --lineHeightDesktop: 1.3; --fontSizeMobile: 24px; --fontSizeDesktop: 48px;\"><span style=\"font-weight: 700;\"><strong>🚛รายการสินค้าพร้อมส่งอยู่ไทยนัดรับได้🚛</strong></span></p>",
+      "desktop": {
+        "top": 24,
+        "left": 0,
+        "width": 1224,
+        "height": 64
+      },
+      "settings": {
+        "styles": {
+          "text": "center",
+          "align": "flex-start",
+          "justify": "flex-start",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zANqDr"
+    },
+    "z5wtq9": {
+      "rel": "nofollow",
+      "href": "https://rubberdollth.com/shop?category=pcol_01KYZ3FXKNB157GYTMMNJ311FF",
+      "type": "GridButton",
+      "mobile": {
+        "top": 1399,
+        "left": 67,
+        "width": 194,
+        "height": 56
+      },
+      "target": "_blank",
+      "content": "See more",
+      "desktop": {
+        "top": 2138,
+        "left": 115,
+        "width": 170,
+        "height": 56,
+        "fontSize": 16
+      },
+      "linkType": "external",
+      "settings": {
+        "type": "primary",
+        "styles": {
+          "align": "center",
+          "justify": "center",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "fontColor": "rgb(255, 255, 255)",
+      "fontFamily": "Inter",
+      "fontWeight": 500,
+      "borderColor": "rgb(255, 255, 255)",
+      "borderWidth": 1,
+      "borderRadius": 28,
+      "linkedPageId": "",
+      "fontColorHover": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(255, 255, 255, 0)",
+      "borderColorHover": "rgb(255, 255, 255)",
+      "initialElementId": "zYYKrH",
+      "backgroundColorHover": "rgba(255, 255, 255, 0)"
+    },
+    "z74MxY": {
+      "rel": "nofollow",
+      "href": "https://rubberdollth.com/half-07-9-",
+      "type": "GridButton",
+      "mobile": {
+        "top": 1156,
+        "left": 67,
+        "width": 194,
+        "height": 56
+      },
+      "target": "_blank",
+      "content": "See more",
+      "desktop": {
+        "top": 701,
+        "left": 527,
+        "width": 170,
+        "height": 56,
+        "fontSize": 16
+      },
+      "linkType": "external",
+      "settings": {
+        "type": "primary",
+        "styles": {
+          "align": "center",
+          "justify": "center",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "fontColor": "rgb(255, 255, 255)",
+      "fontFamily": "Inter",
+      "fontWeight": 500,
+      "borderColor": "rgb(255, 255, 255)",
+      "borderWidth": 1,
+      "borderRadius": 28,
+      "linkedPageId": "",
+      "fontColorHover": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(255, 255, 255, 0)",
+      "borderColorHover": "rgb(255, 255, 255)",
+      "initialElementId": "z95Sqa",
+      "backgroundColorHover": "rgba(255, 255, 255, 0)"
+    },
+    "z7rRfm": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 521,
+        "left": 20,
+        "width": 288,
+        "height": 26
+      },
+      "content": "<p dir=\"auto\" class=\"body\" style=\"color: rgb(255, 255, 255); --lineHeightDesktop: 1.3; --fontSizeDesktop: 18px;\">จิมิ+หน้าอก เนื้อซิลิโคนขนาด  4 กิโลกรัม</p>",
+      "desktop": {
+        "top": 648,
+        "left": 51,
+        "width": 297,
+        "height": 47
+      },
+      "settings": {
+        "styles": {
+          "text": "center",
+          "align": "flex-start",
+          "justify": "flex-start",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zUyMGi"
+    },
+    "z8venT": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 2540,
+        "left": 23,
+        "width": 282,
+        "height": 25
+      },
+      "content": "<h5 dir=\"auto\" style=\"color: rgb(255, 255, 255); --lineHeightDesktop: 1.3; --fontSizeDesktop: 24px;\"><strong>ของเล่นสำหรับผู้ใหญ่</strong></h5>",
+      "desktop": {
+        "top": 2071,
+        "left": 885,
+        "width": 297,
+        "height": 31
+      },
+      "settings": {
+        "styles": {
+          "text": "center",
+          "align": "flex-start",
+          "justify": "flex-start",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zrbiGM"
+    },
+    "z95Sqa": {
+      "rel": "nofollow",
+      "href": "https://rubberdollth.com/shop?category=pcol_01KYYT7KK4G1HC8ZHJ2D03D5ZD",
+      "type": "GridButton",
+      "mobile": {
+        "top": 1975,
+        "left": 67,
+        "width": 194,
+        "height": 56
+      },
+      "target": "_blank",
+      "content": "See more",
+      "desktop": {
+        "top": 2138,
+        "left": 515,
+        "width": 170,
+        "height": 56,
+        "fontSize": 16
+      },
+      "linkType": "external",
+      "settings": {
+        "type": "primary",
+        "styles": {
+          "align": "center",
+          "justify": "center",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "fontColor": "rgb(255, 255, 255)",
+      "fontFamily": "Inter",
+      "fontWeight": 500,
+      "borderColor": "rgb(255, 255, 255)",
+      "borderWidth": 1,
+      "borderRadius": 28,
+      "linkedPageId": "",
+      "fontColorHover": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(255, 255, 255, 0)",
+      "borderColorHover": "rgb(255, 255, 255)",
+      "initialElementId": "zc8-hP",
+      "backgroundColorHover": "rgba(255, 255, 255, 0)"
+    },
+    "z97Giy": {
+      "rel": "nofollow",
+      "type": "GridImage",
+      "mobile": {
+        "top": 975,
+        "left": 0,
+        "width": 328,
+        "height": 320
+      },
+      "desktop": {
+        "top": 1594,
+        "left": 0,
+        "width": 399,
+        "height": 424,
+        "borderRadius": "20px"
+      },
+      "settings": {
+        "alt": "",
+        "path": "wechat-image_20221027125915-QlvKtmsuIDInyOto.jpg",
+        "origin": "assets",
+        "styles": {
+          "align": "center",
+          "justify": "center",
+          "m-element-margin": "0 0 16px 0"
+        },
+        "clickAction": "none"
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zNTNNJ",
+      "fullResolutionWidth": 786,
+      "fullResolutionHeight": 787
+    },
+    "z9FVRE": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 1076,
+        "left": 17,
+        "width": 294,
+        "height": 25
+      },
+      "content": "<h5 dir=\"auto\" style=\"color: rgb(255, 255, 255); --lineHeightDesktop: 1.3; --fontSizeDesktop: 24px;\"><strong>HALF 07</strong></h5>",
+      "desktop": {
+        "top": 600,
+        "left": 451,
+        "width": 297,
+        "height": 31
+      },
+      "settings": {
+        "styles": {
+          "text": "center",
+          "align": "flex-start",
+          "justify": "flex-start",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zbP5wV"
+    },
+    "zANqDr": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 901,
+        "left": 0,
+        "width": 328,
+        "height": 42
+      },
+      "content": "<p dir=\"auto\" class=\"body\" style=\"color: rgb(232, 130, 67); --lineHeightMobile: 1.3; --lineHeightDesktop: 1.3; --fontSizeMobile: 32px; --fontSizeDesktop: 48px;\"><span style=\"font-weight: 700;\"><strong> 🩷</strong></span><span style=\"font-weight: 700;\"><strong>รายการสินค้า</strong></span><span style=\"font-weight: 700;\"><strong>🩷 </strong></span></p>",
+      "desktop": {
+        "top": 1498,
+        "left": 0,
+        "width": 1224,
+        "height": 64
+      },
+      "settings": {
+        "styles": {
+          "text": "center",
+          "align": "flex-start",
+          "justify": "flex-start",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "znQcNJ"
+    },
+    "zE1NMT": {
+      "svg": "<svg preserveAspectRatio=\"none\" viewBox=\"0 0 80 80\" fill=\"none\" stroke=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 0H80V80H0V0Z\"></path></svg>",
+      "type": "GridShape",
+      "color": "rgb(13, 27, 43)",
+      "shape": "rectangle",
+      "mobile": {
+        "top": 457,
+        "left": 0,
+        "width": 328,
+        "height": 240
+      },
+      "desktop": {
+        "top": 544,
+        "left": 0,
+        "width": 413,
+        "height": 280
+      },
+      "settings": {
+        "styles": {}
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zH6Jir"
+    },
+    "zG5LYH": {
+      "rel": "nofollow",
+      "href": "https://line.me/ti/p/gSLmor2yUC",
+      "type": "GridButton",
+      "mobile": {
+        "top": 821,
+        "left": 99,
+        "width": 130,
+        "height": 24
+      },
+      "target": "_blank",
+      "content": "ADD LINE",
+      "desktop": {
+        "top": 1298,
+        "left": 496,
+        "width": 222,
+        "height": 85
+      },
+      "linkType": "external",
+      "settings": {
+        "type": "primary",
+        "styles": {
+          "align": "center",
+          "justify": "center",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "fontColor": "rgb(255, 255, 255)",
+      "borderColor": "rgb(0, 0, 0)",
+      "linkedPageId": "",
+      "fontColorHover": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(48, 186, 17)",
+      "borderColorHover": "rgb(0, 0, 0)",
+      "backgroundColorHover": "rgb(29, 30, 32)"
+    },
+    "zGfcH-": {
+      "rel": "nofollow",
+      "type": "GridImage",
+      "mobile": {
+        "top": 1251,
+        "left": 0,
+        "width": 328,
+        "height": 424
+      },
+      "desktop": {
+        "top": 115,
+        "left": 817,
+        "width": 407,
+        "height": 429,
+        "borderRadius": "20px"
+      },
+      "settings": {
+        "alt": "",
+        "path": "wechat-image_20221027125915-QlvKtmsuIDInyOto.jpg",
+        "origin": "assets",
+        "styles": {
+          "align": "center",
+          "justify": "center",
+          "m-element-margin": "0 0 16px 0"
+        },
+        "clickAction": "none"
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zNTNNJ",
+      "fullResolutionWidth": 786,
+      "fullResolutionHeight": 787
+    },
+    "zH6Jir": {
+      "svg": "<svg preserveAspectRatio=\"none\" viewBox=\"0 0 80 80\" fill=\"none\" stroke=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 0H80V80H0V0Z\"></path></svg>",
+      "type": "GridShape",
+      "color": "rgb(13, 27, 43)",
+      "shape": "rectangle",
+      "mobile": {
+        "top": 1295,
+        "left": 0,
+        "width": 328,
+        "height": 240
+      },
+      "desktop": {
+        "top": 2016,
+        "left": 0,
+        "width": 413,
+        "height": 280
+      },
+      "settings": {
+        "styles": {}
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zlnrSQ"
+    },
+    "zKbHeT": {
+      "svg": "<svg preserveAspectRatio=\"none\" viewBox=\"0 0 80 80\" fill=\"none\" stroke=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 0H80V80H0V0Z\"></path></svg>",
+      "type": "GridShape",
+      "color": "rgb(13, 27, 43)",
+      "shape": "rectangle",
+      "mobile": {
+        "top": 2500,
+        "left": 0,
+        "width": 328,
+        "height": 240
+      },
+      "desktop": {
+        "top": 2018,
+        "left": 824,
+        "width": 400,
+        "height": 280
+      },
+      "settings": {
+        "styles": {}
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zcYGxn"
+    },
+    "zKnwZh": {
+      "rel": "nofollow",
+      "type": "GridImage",
+      "mobile": {
+        "top": 2071,
+        "left": 0,
+        "width": 328,
+        "height": 424
+      },
+      "desktop": {
+        "top": 1594,
+        "left": 814,
+        "width": 410,
+        "height": 424,
+        "borderRadius": "20px"
+      },
+      "settings": {
+        "alt": "",
+        "path": "109434-Dyn6g9hoTOClKHuc.jpg",
+        "origin": "assets",
+        "styles": {
+          "align": "center",
+          "justify": "center",
+          "m-element-margin": "0 0 16px 0"
+        },
+        "clickAction": "none"
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zWdmRQ",
+      "fullResolutionWidth": 1000,
+      "fullResolutionHeight": 1000
+    },
+    "zL0Vm-": {
+      "rel": "nofollow",
+      "href": "https://rubberdollth.com/half-01-24-",
+      "type": "GridButton",
+      "mobile": {
+        "top": 1795,
+        "left": 67,
+        "width": 194,
+        "height": 56
+      },
+      "target": "_blank",
+      "content": "See more",
+      "desktop": {
+        "top": 704,
+        "left": 942,
+        "width": 170,
+        "height": 56,
+        "fontSize": 16
+      },
+      "linkType": "external",
+      "settings": {
+        "type": "primary",
+        "styles": {
+          "align": "center",
+          "justify": "center",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "fontColor": "rgb(255, 255, 255)",
+      "fontFamily": "Inter",
+      "fontWeight": 500,
+      "borderColor": "rgb(255, 255, 255)",
+      "borderWidth": 1,
+      "borderRadius": 28,
+      "fontColorHover": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(255, 255, 255, 0)",
+      "borderColorHover": "rgb(255, 255, 255)",
+      "initialElementId": "zgrJZk",
+      "backgroundColorHover": "rgba(255, 255, 255, 0)"
+    },
+    "zR1P2A": {
+      "rel": "nofollow",
+      "type": "GridImage",
+      "mobile": {
+        "top": 649,
+        "left": 0,
+        "width": 328,
+        "height": 424
+      },
+      "desktop": {
+        "top": 115,
+        "left": 397,
+        "width": 415,
+        "height": 425,
+        "borderRadius": "20px"
+      },
+      "settings": {
+        "alt": "",
+        "path": "img_1950-9UiAkxTe7WvImZ4Q.JPG",
+        "origin": "assets",
+        "styles": {
+          "align": "center",
+          "justify": "center",
+          "m-element-margin": "0 0 16px 0"
+        },
+        "clickAction": "none"
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "z97Giy",
+      "fullResolutionWidth": 3240,
+      "fullResolutionHeight": 2160
+    },
+    "zR1uwS": {
+      "svg": "<svg preserveAspectRatio=\"none\" viewBox=\"0 0 80 80\" fill=\"none\" stroke=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 0H80V80H0V0Z\"></path></svg>",
+      "type": "GridShape",
+      "color": "rgb(13, 27, 43)",
+      "shape": "rectangle",
+      "mobile": {
+        "top": 1675,
+        "left": 0,
+        "width": 328,
+        "height": 240
+      },
+      "desktop": {
+        "top": 544,
+        "left": 809,
+        "width": 415,
+        "height": 280
+      },
+      "settings": {
+        "styles": {}
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zKbHeT"
+    },
+    "zUyMGi": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 1338,
+        "left": 20,
+        "width": 288,
+        "height": 26
+      },
+      "content": "<p dir=\"auto\" class=\"body\" style=\"color: rgb(255, 255, 255); --lineHeightDesktop: 1.3; --fontSizeDesktop: 26px;\"><span style=\"font-weight: 700;\"><strong>ตุ๊กตายาง Torso ครึ่งตัว</strong></span></p>",
+      "desktop": {
+        "top": 2070,
+        "left": 51,
+        "width": 297,
+        "height": 35
+      },
+      "settings": {
+        "styles": {
+          "text": "center",
+          "align": "flex-start",
+          "justify": "flex-start",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zTHAQO"
+    },
+    "zWPlLC": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 472,
+        "left": 14,
+        "width": 300,
+        "height": 25
+      },
+      "content": "<h5 dir=\"auto\" style=\"color: rgb(255, 255, 255); --lineHeightDesktop: 1.3; --fontSizeDesktop: 24px;\"><strong>HALF 28</strong></h5>",
+      "desktop": {
+        "top": 600,
+        "left": 51,
+        "width": 297,
+        "height": 31
+      },
+      "settings": {
+        "styles": {
+          "text": "center",
+          "align": "flex-start",
+          "justify": "flex-start",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zZ5Mmr"
+    },
+    "zZPOfI": {
+      "rel": "nofollow",
+      "type": "GridImage",
+      "mobile": {
+        "top": 1533,
+        "left": 0,
+        "width": 328,
+        "height": 360
+      },
+      "desktop": {
+        "top": 1594,
+        "left": 402,
+        "width": 410,
+        "height": 424,
+        "borderRadius": "20px"
+      },
+      "settings": {
+        "alt": "",
+        "path": "3-lLrv7LiyDvKKIIKv.jpg",
+        "origin": "assets",
+        "styles": {
+          "align": "center",
+          "justify": "center",
+          "m-element-margin": "0 0 16px 0"
+        },
+        "clickAction": "none"
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zWdmRQ",
+      "fullResolutionWidth": 800,
+      "fullResolutionHeight": 800
+    },
+    "z_xgf3": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 0,
+        "left": 0,
+        "width": 328,
+        "height": 790
+      },
+      "content": "<p dir=\"auto\" class=\"body\"></p><h3 dir=\"auto\" style=\"color: rgb(245, 16, 54); --lineHeightMobile: 1.3; --lineHeightDesktop: 1.3; --fontSizeMobile: 14px; --fontSizeDesktop: 32px; margin-bottom: 8px;\"><span style=\"color: rgb(105, 67, 232); font-family: &quot;Bodoni Moda&quot;; font-weight: 400;\"><strong>ร้านค้าอัพเดทล่าสุด 16 สิงหาคม 2569</strong></span></h3><h3 dir=\"auto\" style=\"color: rgb(232, 130, 67); --lineHeightMobile: 1.3; --lineHeightDesktop: 1.3; --fontSizeMobile: 14px; --fontSizeDesktop: 32px;\"><span style=\"color: inherit; font-family: inherit;\"><strong>💟</strong></span><span style=\"color: rgb(26, 26, 26); text-transform: none; letter-spacing: normal; font-family: Tahoma, Arial, &quot;MS Sans Serif&quot;, sans-serif; font-weight: 400;\"><strong>ยินดีต้อนรับสู่</strong></span><span style=\"text-transform: none; letter-spacing: normal; font-family: Tahoma, Arial, &quot;MS Sans Serif&quot;, sans-serif; font-weight: 400;\"><strong> RUBBER DOLL THAILAND SINCE 2019</strong></span><br><span style=\"color: rgb(26, 26, 26); text-transform: none; letter-spacing: normal; font-family: Tahoma, Arial, &quot;MS Sans Serif&quot;, sans-serif; font-weight: 400;\"><strong>ตุ๊กตายางและสินค้านำเข้าจากต่างประเทศ</strong></span><br><span style=\"font-family: inherit;\"><strong>📩</strong></span><span style=\"color: rgb(26, 26, 26); text-transform: none; letter-spacing: normal; font-family: Tahoma, Arial, &quot;MS Sans Serif&quot;, sans-serif; font-weight: 400;\"><strong>ทักสอบถามได้ตลอด 24 ชั่วโมงจ้า</strong></span><br><br><span style=\"color: rgb(214, 9, 43);\">🛒 </span><span style=\"color: rgb(214, 9, 43); text-transform: none; letter-spacing: normal; font-family: Tahoma, Arial, &quot;MS Sans Serif&quot;, sans-serif; font-weight: 400;\"><strong>โปรโมชั่นลูกค้าใหม่ ส่วนลด 5% ทุกยอดสั่งซื้อ หมดเขต 1 กันยายน 2569🛒</strong></span><br><span style=\"color: rgb(16, 10, 255); font-family: Manrope; font-weight: 400;\">ใส่โค้ด NEWRBDTH</span></h3><h3 dir=\"auto\" style=\"color: rgb(232, 130, 67); --lineHeightMobile: 1.3; --lineHeightDesktop: 1.3; --fontSizeMobile: 14px; --fontSizeDesktop: 32px;\"><span style=\"color: rgb(242, 15, 15); font-weight: 700;\"><strong><u>แนะนำตัว</u></strong></span><span style=\"color: rgb(26, 26, 26);\"><br></span><br><span style=\"color: rgb(26, 26, 26); font-weight: 700;\"><strong>ทางเพจมีการดีลตุ๊กตากับทางโรงงานโดยตรง ชื่อแบรนด์ว่า RBD เป็นแบรนด์ที่ทางเพจสั่งผลิตเองทั้งหมด ทางลูกค้ามั่นใจได้เลยว่า ได้ตุ๊กตาเกรดคุณภาพ SSS แน่นอนทุกตัวส่งถึงมือปลอดภัยแน่นอนจ้า รับประกันคืนเงิน 100 % หากไม่ได้รับสินค้าถึงมือ</strong></span><br><br><span style=\"color: rgb(26, 26, 26); font-weight: 700;\"><strong>ประสบการณ์การขายตุ๊กตายางมากกว่า 7 ปี ยอดขายมากกว่า 800 ชิ้นลูกค้ามั่นใจได้ว่าของที่สั่งทุกชิ้นถึงมือแน่นอน หายห่วงจ้า รับประกันด้วยทีมงานหลังบ้านทุกคน</strong></span><br><span style=\"color: rgb(26, 26, 26); font-weight: 700;\"><strong>ทางเพจดูแลตั้งแต่ออกจากโรงงาน ถึงบ้านลูกค้าทุกท่านแน่นอน</strong></span><br><br><span style=\"color: rgb(26, 26, 26); font-weight: 700;\"><strong>ตุ๊กตายางของทางเพจมีทั้งแบบเต็มตัว ครึ่งตัว หรือทั้งแบบของเล่น</strong></span><br><span style=\"color: rgb(26, 26, 26); font-weight: 700;\"><strong>เชิญรับชมและเลือกซื้อสินค้าได้เลยจ้า</strong></span><br><br><span style=\"color: rgb(26, 26, 26); font-weight: 700;\"><strong>ปล. ทางเพจยังมีสินค้าอีกเยอะมากๆ กำลังอัพเดทอยู่ ท่านใด อยากได้สินค้า ตุ๊กตายางแนวไหนสามารถทักเข้าสอบถามทางไลน์ก่อนได้จ้า แอดมินแนะนำทุกข้อสงสัย</strong></span><br><br><span style=\"color: rgb(26, 26, 26); font-weight: 700;\"><strong>ช่องทางการติดต่อ </strong></span><br><span style=\"color: rgb(0, 148, 7);\"><br></span><span style=\"color: rgb(0, 148, 7); font-weight: 700;\"><strong>LINE : RUBBERDOLL.TH</strong></span><br><br><span style=\"color: rgb(232, 67, 67);\"><a href=\"https://linktr.ee/RUBBERDOLL.TH\">https://linktr.ee/RUBBERDOLL.TH</a></span></h3>",
+      "desktop": {
+        "top": 5,
+        "left": 0,
+        "width": 1224,
+        "height": 1268
+      },
+      "settings": {
+        "styles": {
+          "text": "center",
+          "align": "flex-start",
+          "justify": "flex-start",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zMCFL_"
+    },
+    "zazmDb": {
+      "rel": "nofollow",
+      "href": "https://line.me/ti/p/gSLmor2yUC",
+      "type": "GridButton",
+      "mobile": {
+        "top": 1935,
+        "left": 53,
+        "width": 222,
+        "height": 85
+      },
+      "target": "_blank",
+      "content": "ADD LINE",
+      "desktop": {
+        "top": 835,
+        "left": 501,
+        "width": 222,
+        "height": 85
+      },
+      "linkType": "external",
+      "settings": {
+        "type": "primary",
+        "styles": {
+          "align": "center",
+          "justify": "center",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "fontColor": "rgb(255, 255, 255)",
+      "borderColor": "rgb(0, 0, 0)",
+      "linkedPageId": "",
+      "fontColorHover": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(48, 186, 17)",
+      "borderColorHover": "rgb(0, 0, 0)",
+      "backgroundColorHover": "rgb(29, 30, 32)"
+    },
+    "zb55yv": {
+      "svg": "<svg preserveAspectRatio=\"none\" viewBox=\"0 0 80 80\" fill=\"none\" stroke=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 0H80V80H0V0Z\"></path></svg>",
+      "type": "GridShape",
+      "color": "rgb(13, 27, 43)",
+      "shape": "rectangle",
+      "mobile": {
+        "top": 1073,
+        "left": 0,
+        "width": 328,
+        "height": 178
+      },
+      "desktop": {
+        "top": 544,
+        "left": 388,
+        "width": 424,
+        "height": 280
+      },
+      "settings": {
+        "styles": {}
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zzUj49"
+    },
+    "zbP5wV": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 1915,
+        "left": 17,
+        "width": 294,
+        "height": 25
+      },
+      "content": "<h5 dir=\"auto\" style=\"color: rgb(255, 255, 255); --lineHeightDesktop: 1.3; --fontSizeDesktop: 26px;\"><span style=\"font-weight: 700;\"><strong>ตุ๊กตายางซิลิโคน</strong></span></h5>",
+      "desktop": {
+        "top": 2070,
+        "left": 448,
+        "width": 297,
+        "height": 34
+      },
+      "settings": {
+        "styles": {
+          "text": "center",
+          "align": "flex-start",
+          "justify": "flex-start",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zUq3Zq"
+    },
+    "zbyjQZ": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 1727,
+        "left": 19,
+        "width": 290,
+        "height": 53
+      },
+      "content": "<p dir=\"auto\" class=\"body\" style=\"color: rgb(255, 255, 255); --lineHeightDesktop: 1.3; --fontSizeDesktop: 18px;\">ตุ๊กตายางครึ่งตัวใหญ่ขนาดเท่าคนจริง 24 กิโลกรัม</p>",
+      "desktop": {
+        "top": 648,
+        "left": 878,
+        "width": 297,
+        "height": 47
+      },
+      "settings": {
+        "styles": {
+          "text": "center",
+          "align": "flex-start",
+          "justify": "flex-start",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zpZkPI"
+    },
+    "zgrJZk": {
+      "rel": "nofollow",
+      "href": "https://rubberdollth.com/shop?category=pcol_01KYZ4S8NYG8K6GYC19MVNFYK9",
+      "type": "GridButton",
+      "mobile": {
+        "top": 2604,
+        "left": 67,
+        "width": 194,
+        "height": 56
+      },
+      "target": "_blank",
+      "content": "See more",
+      "desktop": {
+        "top": 2138,
+        "left": 949,
+        "width": 170,
+        "height": 56,
+        "fontSize": 16
+      },
+      "linkType": "external",
+      "settings": {
+        "type": "primary",
+        "styles": {
+          "align": "center",
+          "justify": "center",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "fontColor": "rgb(255, 255, 255)",
+      "fontFamily": "Inter",
+      "fontWeight": 500,
+      "borderColor": "rgb(255, 255, 255)",
+      "borderWidth": 1,
+      "borderRadius": 28,
+      "fontColorHover": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(255, 255, 255, 0)",
+      "borderColorHover": "rgb(255, 255, 255)",
+      "initialElementId": "zHIWcx",
+      "backgroundColorHover": "rgba(255, 255, 255, 0)"
+    },
+    "zl064y": {
+      "rel": "nofollow",
+      "type": "GridImage",
+      "mobile": {
+        "top": 137,
+        "left": 0,
+        "width": 328,
+        "height": 320
+      },
+      "desktop": {
+        "top": 115,
+        "left": 0,
+        "width": 400,
+        "height": 429,
+        "borderRadius": "20px"
+      },
+      "settings": {
+        "alt": "",
+        "path": "dsc01505-1InczPhsNTBVkmAX.jpg",
+        "origin": "assets",
+        "styles": {
+          "align": "center",
+          "justify": "center",
+          "m-element-margin": "0 0 16px 0"
+        },
+        "clickAction": "none"
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "z97Giy",
+      "fullResolutionWidth": 3240,
+      "fullResolutionHeight": 2160
+    },
+    "zlGXpU": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 1691,
+        "left": 23,
+        "width": 282,
+        "height": 25
+      },
+      "content": "<h5 dir=\"auto\" style=\"color: rgb(255, 255, 255); --lineHeightDesktop: 1.3; --fontSizeDesktop: 24px;\"><strong>HALF 01</strong></h5>",
+      "desktop": {
+        "top": 600,
+        "left": 868,
+        "width": 297,
+        "height": 31
+      },
+      "settings": {
+        "styles": {
+          "text": "center",
+          "align": "flex-start",
+          "justify": "flex-start",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "z8venT"
+    },
+    "znpib6": {
+      "type": "GridTextBox",
+      "mobile": {
+        "top": 1114,
+        "left": 18,
+        "width": 291,
+        "height": 26
+      },
+      "content": "<p dir=\"auto\" class=\"body\" style=\"color: rgb(255, 255, 255); --lineHeightDesktop: 1.3; --fontSizeDesktop: 18px;\">ตุ๊กตายางช่วงก้นขนาดกลาง 9 กิโลกรัม</p>",
+      "desktop": {
+        "top": 648,
+        "left": 451,
+        "width": 297,
+        "height": 23
+      },
+      "settings": {
+        "styles": {
+          "text": "center",
+          "align": "flex-start",
+          "justify": "flex-start",
+          "m-element-margin": "0 0 16px 0"
+        }
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "z6gjrM"
+    },
+    "zzUj49": {
+      "svg": "<svg preserveAspectRatio=\"none\" viewBox=\"0 0 80 80\" fill=\"none\" stroke=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 0H80V80H0V0Z\"></path></svg>",
+      "type": "GridShape",
+      "color": "rgb(13, 27, 43)",
+      "shape": "rectangle",
+      "mobile": {
+        "top": 1893,
+        "left": 0,
+        "width": 328,
+        "height": 178
+      },
+      "desktop": {
+        "top": 2018,
+        "left": 400,
+        "width": 424,
+        "height": 280
+      },
+      "settings": {
+        "styles": {}
+      },
+      "animation": {
+        "name": "slide",
+        "type": "global"
+      },
+      "initialElementId": "zwg2ZE"
+    }
+  }
+}
