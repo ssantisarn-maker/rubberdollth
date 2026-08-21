@@ -9,23 +9,7 @@ header('Content-Type: text/html; charset=utf-8');
 $pdo = getDbConnection();
 
 if (!$pdo) {
-    ?>
-    <!DOCTYPE html>
-    <html lang="th">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Database Setup - RUBBER DOLL THAILAND</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-    </head>
-    <body class="bg-gray-950 text-white min-h-screen flex items-center justify-center p-4">
-        <div class="max-w-md w-full bg-gray-900 rounded-3xl p-8 border border-amber-500/30 shadow-2xl text-center space-y-4">
-            <h1 class="text-xl font-bold text-amber-400">⚠️ ยังไม่ได้เชื่อมต่อฐานข้อมูล MySQL</h1>
-            <p class="text-xs text-gray-300">กรุณาตรวจสอบ DB_NAME, DB_USER, DB_PASS ใน config.php</p>
-        </div>
-    </body>
-    </html>
-    <?php
+    echo "<h1>Database connection error</h1>";
     exit();
 }
 
@@ -71,16 +55,7 @@ CREATE TABLE IF NOT EXISTS products (
 
 $pdo->exec($sqlTables);
 
-// 2. Admin User
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM admin_users");
-$stmt->execute();
-if ($stmt->fetchColumn() == 0) {
-    $defaultHash = password_hash('rbd2026master', PASSWORD_DEFAULT);
-    $stmt = $pdo->prepare("INSERT INTO admin_users (username, password_hash) VALUES ('admin', :hash)");
-    $stmt->execute(['hash' => $defaultHash]);
-}
-
-// 3. Categories
+// 2. Categories
 $defaultCategories = [
     ['all', 'สินค้าทั้งหมด', 'All Masterpieces', 1],
     ['ready', 'สินค้าพร้อมส่ง (ไทย)', 'Ready to Ship (TH)', 2],
@@ -97,28 +72,16 @@ foreach ($defaultCategories as $c) {
     $stmtCat->execute($c);
 }
 
-// 4. Force Import/Update all 70 Products from products_cache.json
+// 3. Import all 70 Products
 $imported = 0;
 if (file_exists(__DIR__ . '/products_cache.json')) {
     $jsonProducts = json_decode(file_get_contents(__DIR__ . '/products_cache.json'), true);
+    
+    // Clear and re-populate to guarantee all 70 clean items
+    $pdo->exec("DELETE FROM products");
+
     $stmtIns = $pdo->prepare("INSERT INTO products (id, code, name, series, description, image, secondary_image, gallery_json, total_angles, category, categories_json, height, weight, bust, price, is_ready_to_ship, is_active) 
-                              VALUES (:id, :code, :name, :series, :description, :image, :secondary_image, :gallery_json, :total_angles, :category, :categories_json, :height, :weight, :bust, :price, :is_ready_to_ship, 1)
-                              ON DUPLICATE KEY UPDATE 
-                                name = VALUES(name),
-                                series = VALUES(series),
-                                description = VALUES(description),
-                                image = VALUES(image),
-                                secondary_image = VALUES(secondary_image),
-                                gallery_json = VALUES(gallery_json),
-                                total_angles = VALUES(total_angles),
-                                category = VALUES(category),
-                                categories_json = VALUES(categories_json),
-                                height = VALUES(height),
-                                weight = VALUES(weight),
-                                bust = VALUES(bust),
-                                price = VALUES(price),
-                                is_ready_to_ship = VALUES(is_ready_to_ship),
-                                is_active = 1");
+                              VALUES (:id, :code, :name, :series, :description, :image, :secondary_image, :gallery_json, :total_angles, :category, :categories_json, :height, :weight, :bust, :price, :is_ready_to_ship, 1)");
     
     foreach ($jsonProducts as $p) {
         $stmtIns->execute([
