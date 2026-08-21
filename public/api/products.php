@@ -1,6 +1,6 @@
 <?php
 /**
- * RUBBER DOLL THAILAND - Products API (CRUD + Live Fetch)
+ * RUBBER DOLL THAILAND - Products API (Dual Persistence: MySQL + JSON Cache)
  */
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
@@ -11,7 +11,28 @@ $method = $_SERVER['REQUEST_METHOD'];
 $pdo = getDbConnection();
 $jsonCacheFile = __DIR__ . '/products_cache.json';
 
-// GET: Fetch all or single product
+// Helper to sync cache
+function syncCacheFromDb($pdo, $jsonCacheFile) {
+    try {
+        $stmt = $pdo->query("SELECT * FROM products WHERE is_active = 1 ORDER BY id ASC");
+        $rows = $stmt->fetchAll();
+        if (!empty($rows)) {
+            $products = [];
+            foreach ($rows as $r) {
+                $r['gallery'] = json_decode($r['gallery_json'] ?? '[]', true);
+                $r['categories'] = json_decode($r['categories_json'] ?? '[]', true);
+                $r['isReadyToShip'] = (bool)$r['is_ready_to_ship'];
+                $r['totalAngles'] = (int)($r['total_angles'] ?? count($r['gallery']));
+                $products[] = $r;
+            }
+            file_put_contents($jsonCacheFile, json_encode($products, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+            return $products;
+        }
+    } catch (Exception $e) {}
+    return null;
+}
+
+// GET: Fetch products
 if ($method === 'GET') {
     $code = $_GET['code'] ?? null;
 
@@ -21,13 +42,12 @@ if ($method === 'GET') {
                 $stmt = $pdo->prepare("SELECT * FROM products WHERE code = :code OR id = :id LIMIT 1");
                 $stmt->execute(['code' => $code, 'id' => $code]);
                 $product = $stmt->fetch();
-                if (!$product) {
-                    sendError('Product not found', 404);
+                if ($product) {
+                    $product['gallery'] = json_decode($product['gallery_json'] ?? '[]', true);
+                    $product['categories'] = json_decode($product['categories_json'] ?? '[]', true);
+                    $product['isReadyToShip'] = (bool)$product['is_ready_to_ship'];
+                    sendResponse(['success' => true, 'product' => $product]);
                 }
-                $product['gallery'] = json_decode($product['gallery_json'] ?? '[]', true);
-                $product['categories'] = json_decode($product['categories_json'] ?? '[]', true);
-                $product['isReadyToShip'] = (bool)$product['is_ready_to_ship'];
-                sendResponse(['success' => true, 'product' => $product]);
             } else {
                 $stmt = $pdo->query("SELECT * FROM products WHERE is_active = 1 ORDER BY id ASC");
                 $rows = $stmt->fetchAll();
@@ -40,12 +60,10 @@ if ($method === 'GET') {
                         $r['totalAngles'] = (int)($r['total_angles'] ?? count($r['gallery']));
                         $products[] = $r;
                     }
-                    sendResponse(['success' => true, 'products' => $products, 'total' => count($products)]);
+                    sendResponse(['success' => true, 'products' => $products, 'total' => count($products), 'source' => 'mysql']);
                 }
             }
-        } catch (Exception $e) {
-            // fallback to cache
-        }
+        } catch (Exception $e) {}
     }
 
     if (file_exists($jsonCacheFile)) {
@@ -56,10 +74,13 @@ if ($method === 'GET') {
     }
 }
 
-// POST or PUT: Update or Create product
+// POST / PUT: Save product (Insert or Update)
 if ($method === 'POST' || $method === 'PUT') {
     $rawInput = file_get_contents('php://input');
-    $data = json_decode($rawInput, true) ?: $_POST;
+    $data = json_decode($rawInput, true);
+    if (!$data) {
+        $data = $_POST;
+    }
 
     if (empty($data['code']) && empty($data['id'])) {
         sendError('Missing product code or id');
@@ -80,6 +101,10 @@ if ($method === 'POST' || $method === 'PUT') {
     $price = $data['price'] ?? 'ติดต่อสอบถามทาง LINE';
     $isReadyToShip = !empty($data['isReadyToShip']) ? 1 : 0;
 
+    if ($isReadyToShip && !in_array('ready', $categories)) {
+        $categories[] = 'ready';
+    }
+
     if ($pdo) {
         try {
             $sql = "INSERT INTO products (id, code, name, series, description, image, secondary_image, gallery_json, total_angles, category, categories_json, height, weight, bust, price, is_ready_to_ship, is_active) 
@@ -99,8 +124,7 @@ if ($method === 'POST' || $method === 'PUT') {
                         bust = VALUES(bust),
                         price = VALUES(price),
                         is_ready_to_ship = VALUES(is_ready_to_ship),
-                        is_active = 1,
-                        updated_at = NOW()";
+                        is_active = 1";
             
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
@@ -122,6 +146,9 @@ if ($method === 'POST' || $method === 'PUT') {
                 'is_ready_to_ship' => $isReadyToShip
             ]);
 
+            // Sync cache
+            syncCacheFromDb($pdo, $jsonCacheFile);
+
             sendResponse(['success' => true, 'message' => 'บันทึกข้อมูลสินค้าสำเร็จ', 'code' => $code]);
         } catch (PDOException $e) {
             sendError('Database error: ' . $e->getMessage(), 500);
@@ -142,6 +169,7 @@ if ($method === 'DELETE') {
         try {
             $stmt = $pdo->prepare("DELETE FROM products WHERE code = :code OR id = :code");
             $stmt->execute(['code' => $code]);
+            syncCacheFromDb($pdo, $jsonCacheFile);
             sendResponse(['success' => true, 'message' => 'ลบสินค้าสำเร็จ']);
         } catch (PDOException $e) {
             sendError('Database error: ' . $e->getMessage(), 500);
