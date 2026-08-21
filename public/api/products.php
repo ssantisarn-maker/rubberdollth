@@ -1,6 +1,6 @@
 <?php
 /**
- * RUBBER DOLL THAILAND - Products API (Dual Persistence: MySQL + JSON Cache)
+ * RUBBER DOLL THAILAND - Products API (Full Specs + Dual Persistence)
  */
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
@@ -11,20 +11,26 @@ $method = $_SERVER['REQUEST_METHOD'];
 $pdo = getDbConnection();
 $jsonCacheFile = __DIR__ . '/products_cache.json';
 
-// Helper to sync cache
+function formatProductRow($r) {
+    $r['gallery'] = json_decode($r['gallery_json'] ?? '[]', true) ?: [$r['image']];
+    $r['categories'] = json_decode($r['categories_json'] ?? '[]', true) ?: ['all'];
+    $r['isReadyToShip'] = (bool)($r['is_ready_to_ship'] ?? 0);
+    $r['totalAngles'] = (int)($r['total_angles'] ?? count($r['gallery']));
+    $r['skinTone'] = $r['skin_tone'] ?? '';
+    $r['material'] = $r['material'] ?? '';
+    $r['skeleton'] = $r['skeleton'] ?? '';
+    $r['originalPrice'] = $r['original_price'] ?? '';
+    $r['specialOption'] = $r['special_option'] ?? '';
+    $r['gifts'] = $r['gifts'] ?? '';
+    return $r;
+}
+
 function syncCacheFromDb($pdo, $jsonCacheFile) {
     try {
         $stmt = $pdo->query("SELECT * FROM products WHERE is_active = 1 ORDER BY id ASC");
         $rows = $stmt->fetchAll();
         if (!empty($rows)) {
-            $products = [];
-            foreach ($rows as $r) {
-                $r['gallery'] = json_decode($r['gallery_json'] ?? '[]', true);
-                $r['categories'] = json_decode($r['categories_json'] ?? '[]', true);
-                $r['isReadyToShip'] = (bool)$r['is_ready_to_ship'];
-                $r['totalAngles'] = (int)($r['total_angles'] ?? count($r['gallery']));
-                $products[] = $r;
-            }
+            $products = array_map('formatProductRow', $rows);
             file_put_contents($jsonCacheFile, json_encode($products, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
             return $products;
         }
@@ -43,23 +49,13 @@ if ($method === 'GET') {
                 $stmt->execute(['code' => $code, 'id' => $code]);
                 $product = $stmt->fetch();
                 if ($product) {
-                    $product['gallery'] = json_decode($product['gallery_json'] ?? '[]', true);
-                    $product['categories'] = json_decode($product['categories_json'] ?? '[]', true);
-                    $product['isReadyToShip'] = (bool)$product['is_ready_to_ship'];
-                    sendResponse(['success' => true, 'product' => $product]);
+                    sendResponse(['success' => true, 'product' => formatProductRow($product)]);
                 }
             } else {
                 $stmt = $pdo->query("SELECT * FROM products WHERE is_active = 1 ORDER BY id ASC");
                 $rows = $stmt->fetchAll();
                 if (!empty($rows)) {
-                    $products = [];
-                    foreach ($rows as $r) {
-                        $r['gallery'] = json_decode($r['gallery_json'] ?? '[]', true);
-                        $r['categories'] = json_decode($r['categories_json'] ?? '[]', true);
-                        $r['isReadyToShip'] = (bool)$r['is_ready_to_ship'];
-                        $r['totalAngles'] = (int)($r['total_angles'] ?? count($r['gallery']));
-                        $products[] = $r;
-                    }
+                    $products = array_map('formatProductRow', $rows);
                     sendResponse(['success' => true, 'products' => $products, 'total' => count($products), 'source' => 'mysql']);
                 }
             }
@@ -74,13 +70,11 @@ if ($method === 'GET') {
     }
 }
 
-// POST / PUT: Save product (Insert or Update)
+// POST or PUT: Save product
 if ($method === 'POST' || $method === 'PUT') {
+    checkAdminAuth();
     $rawInput = file_get_contents('php://input');
-    $data = json_decode($rawInput, true);
-    if (!$data) {
-        $data = $_POST;
-    }
+    $data = json_decode($rawInput, true) ?: $_POST;
 
     if (empty($data['code']) && empty($data['id'])) {
         sendError('Missing product code or id');
@@ -98,7 +92,13 @@ if ($method === 'POST' || $method === 'PUT') {
     $height = $data['height'] ?? '';
     $weight = $data['weight'] ?? '';
     $bust = $data['bust'] ?? '';
+    $skinTone = $data['skinTone'] ?? ($data['skin_tone'] ?? 'ผิวขาว/สีขาวเหลือง');
+    $material = $data['material'] ?? 'Pure Silicone + ปลูกผมและคิ้วเสมือนจริง';
+    $skeleton = $data['skeleton'] ?? 'EVO Stainless-Steel 360° Articulated Frame';
     $price = $data['price'] ?? 'ติดต่อสอบถามทาง LINE';
+    $originalPrice = $data['originalPrice'] ?? ($data['original_price'] ?? '');
+    $specialOption = $data['specialOption'] ?? ($data['special_option'] ?? '');
+    $gifts = $data['gifts'] ?? 'ชุดแฟชั่นสั่งตัด, วิกผมพรีเมียม, แป้งฝุ่นบำรุงผิว Silky Smooth, เซ็ตอุปกรณ์ทำความสะอาด';
     $isReadyToShip = !empty($data['isReadyToShip']) ? 1 : 0;
 
     if ($isReadyToShip && !in_array('ready', $categories)) {
@@ -107,8 +107,24 @@ if ($method === 'POST' || $method === 'PUT') {
 
     if ($pdo) {
         try {
-            $sql = "INSERT INTO products (id, code, name, series, description, image, secondary_image, gallery_json, total_angles, category, categories_json, height, weight, bust, price, is_ready_to_ship, is_active) 
-                    VALUES (:id, :code, :name, :series, :description, :image, :secondary_image, :gallery_json, :total_angles, :category, :categories_json, :height, :weight, :bust, :price, :is_ready_to_ship, 1)
+            // Auto add new columns if not exists
+            $columnsToAdd = [
+                "skin_tone VARCHAR(100) DEFAULT 'ผิวขาว/สีขาวเหลือง'",
+                "material VARCHAR(255) DEFAULT ''",
+                "skeleton VARCHAR(255) DEFAULT ''",
+                "original_price VARCHAR(100) DEFAULT ''",
+                "special_option VARCHAR(255) DEFAULT ''",
+                "gifts TEXT DEFAULT NULL"
+            ];
+            foreach ($columnsToAdd as $colDef) {
+                $colName = explode(' ', $colDef)[0];
+                try {
+                    $pdo->exec("ALTER TABLE products ADD COLUMN $colDef");
+                } catch (Exception $e) {}
+            }
+
+            $sql = "INSERT INTO products (id, code, name, series, description, image, secondary_image, gallery_json, total_angles, category, categories_json, height, weight, bust, skin_tone, material, skeleton, price, original_price, special_option, gifts, is_ready_to_ship, is_active) 
+                    VALUES (:id, :code, :name, :series, :description, :image, :secondary_image, :gallery_json, :total_angles, :category, :categories_json, :height, :weight, :bust, :skin_tone, :material, :skeleton, :price, :original_price, :special_option, :gifts, :is_ready_to_ship, 1)
                     ON DUPLICATE KEY UPDATE 
                         name = VALUES(name),
                         series = VALUES(series),
@@ -122,9 +138,16 @@ if ($method === 'POST' || $method === 'PUT') {
                         height = VALUES(height),
                         weight = VALUES(weight),
                         bust = VALUES(bust),
+                        skin_tone = VALUES(skin_tone),
+                        material = VALUES(material),
+                        skeleton = VALUES(skeleton),
                         price = VALUES(price),
+                        original_price = VALUES(original_price),
+                        special_option = VALUES(special_option),
+                        gifts = VALUES(gifts),
                         is_ready_to_ship = VALUES(is_ready_to_ship),
-                        is_active = 1";
+                        is_active = 1,
+                        updated_at = NOW()";
             
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
@@ -142,11 +165,16 @@ if ($method === 'POST' || $method === 'PUT') {
                 'height' => $height,
                 'weight' => $weight,
                 'bust' => $bust,
+                'skin_tone' => $skinTone,
+                'material' => $material,
+                'skeleton' => $skeleton,
                 'price' => $price,
+                'original_price' => $originalPrice,
+                'special_option' => $specialOption,
+                'gifts' => $gifts,
                 'is_ready_to_ship' => $isReadyToShip
             ]);
 
-            // Sync cache
             syncCacheFromDb($pdo, $jsonCacheFile);
 
             sendResponse(['success' => true, 'message' => 'บันทึกข้อมูลสินค้าสำเร็จ', 'code' => $code]);
@@ -160,6 +188,7 @@ if ($method === 'POST' || $method === 'PUT') {
 
 // DELETE: Delete product
 if ($method === 'DELETE') {
+    checkAdminAuth();
     $code = $_GET['code'] ?? $_GET['id'] ?? null;
     if (!$code) {
         sendError('Missing product code');

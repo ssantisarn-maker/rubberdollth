@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Upload, Plus, Trash2, CheckCircle2, Image as ImageIcon, Star, Sparkles } from 'lucide-react';
+import { X, Upload, Plus, Trash2, CheckCircle2, Image as ImageIcon, Star, Sparkles, Tag, DollarSign, Layers, Gift } from 'lucide-react';
 
 export default function ProductModalForm({ product, categories, onClose, onSave }) {
   const isEdit = !!product;
@@ -14,7 +14,13 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
     height: '160 cm',
     weight: '35 kg',
     bust: 'คัพ C สรีระสมจริง',
+    skinTone: 'ผิวขาว/สีขาวเหลือง',
+    material: 'Pure Silicone + ปลูกผมและคิ้วเสมือนจริงเส้นต่อเส้น',
+    skeleton: 'EVO Stainless-Steel 360° Articulated Frame',
     price: 'ติดต่อสอบถามทาง LINE',
+    originalPrice: '',
+    specialOption: '',
+    gifts: 'ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล, วิกผมเกรดพรีเมียม สัมผัสนุ่มลื่น, แป้งฝุ่นบำรุงผิว Silky Smooth Powder, เซ็ตอุปกรณ์ทำความสะอาดและดูแลรักษาครบวงจร',
     isReadyToShip: false,
     image: '',
     secondaryImage: '',
@@ -27,7 +33,6 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
 
   useEffect(() => {
     if (product) {
-      // Collect all images into gallery array
       let initialGallery = [];
       if (Array.isArray(product.gallery) && product.gallery.length > 0) {
         initialGallery = [...product.gallery];
@@ -42,7 +47,13 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
         ...product,
         categories: product.categories || ['all'],
         gallery: initialGallery,
-        image: product.image || initialGallery[0] || ''
+        image: product.image || initialGallery[0] || '',
+        skinTone: product.skinTone || product.skin_tone || 'ผิวขาว/สีขาวเหลือง',
+        material: product.material || 'Pure Silicone + ปลูกผมและคิ้วเสมือนจริงเส้นต่อเส้น',
+        skeleton: product.skeleton || 'EVO Stainless-Steel 360° Articulated Frame',
+        originalPrice: product.originalPrice || product.original_price || '',
+        specialOption: product.specialOption || product.special_option || '',
+        gifts: product.gifts || 'ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล, วิกผมเกรดพรีเมียม สัมผัสนุ่มลื่น, แป้งฝุ่นบำรุงผิว Silky Smooth Powder, เซ็ตอุปกรณ์ทำความสะอาดและดูแลรักษาครบวงจร'
       });
     }
   }, [product]);
@@ -58,7 +69,7 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
     });
   };
 
-  // Upload new image and add to gallery
+  // Upload image to gallery
   const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
@@ -68,8 +79,8 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
     for (const file of files) {
       const form = new FormData();
       form.append('image', file);
-      form.append('code', formData.code || 'PRODUCT');
-      form.append('type', 'gallery');
+      form.append('code', formData.code || 'PROD');
+      form.append('type', 'product');
 
       try {
         const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
@@ -90,7 +101,6 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
           });
         }
       } catch (err) {
-        // Offline / preview fallback
         const localUrl = URL.createObjectURL(file);
         setFormData(prev => {
           const updatedGallery = [...(prev.gallery || []), localUrl];
@@ -121,7 +131,7 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
     setNewImageUrl('');
   };
 
-  // Delete image from gallery
+  // Delete image
   const handleDeleteImage = (indexToDelete) => {
     setFormData(prev => {
       const updatedGallery = prev.gallery.filter((_, idx) => idx !== indexToDelete);
@@ -134,7 +144,7 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
     });
   };
 
-  // Set as Main Image
+  // Set as main cover image
   const handleSetMainImage = (url) => {
     setFormData(prev => ({
       ...prev,
@@ -176,9 +186,9 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
         <div className="px-6 py-4 border-b border-sand-200 flex items-center justify-between bg-sand-50/80">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-ink flex items-center gap-2">
-              <span>{isEdit ? `✏️ แก้ไขข้อมูลและรูปภาพสินค้า: ${formData.code}` : '✨ เพิ่มสินค้าใหม่'}</span>
+              <span>{isEdit ? `✏️ แก้ไขข้อมูลและสเปกสินค้า: ${formData.code}` : '✨ เพิ่มสินค้าใหม่'}</span>
             </h2>
-            <p className="text-xs text-ink-muted">จัดการสเปก ติ๊กเลือกหมวดหมู่ และเลือกลบหรือเพิ่มรูปภาพสินค้าได้ตามต้องการ</p>
+            <p className="text-xs text-ink-muted">กรอกข้อมูลสเปก ราคา โปรโมชั่น ออฟชั่นเสริม และจัดการรูปภาพสินค้าได้ตามต้องการ</p>
           </div>
           <button
             onClick={onClose}
@@ -189,71 +199,67 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-6 flex-1 text-xs sm:text-sm">
+        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-6 text-xs sm:text-sm">
           
-          {/* Section 1: Product Images Gallery (High Priority) */}
-          <div className="bg-sand-50 p-4 sm:p-5 rounded-3xl border border-sand-200 space-y-4">
-            <div className="flex items-center justify-between flex-wrap gap-2">
+          {/* Section 1: Gallery Management */}
+          <div className="space-y-3 p-4 bg-sand-50/70 border border-sand-200 rounded-3xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h3 className="font-bold text-ink text-sm flex items-center gap-2">
+                <label className="font-bold text-ink text-xs sm:text-sm flex items-center gap-1.5">
                   <ImageIcon className="w-4 h-4 text-bronze" />
                   <span>รูปภาพสินค้าทั้งหมด ({formData.gallery?.length || 0} รูป)</span>
-                </h3>
+                </label>
                 <p className="text-[11px] text-ink-muted">
-                  คลิกที่ดาว ⭐ เพื่อตั้งเป็นรูปภาพหลัก | กดไอคอน 🗑️ เพื่อลบรูปที่ไม่ต้องการออก
+                  คลิกที่ดาว ⭐ เพื่อตั้งเป็นรูปภาพหน้าปก | กดไอคอน 🗑️ เพื่อลบรูปที่ไม่ต้องการออก
                 </p>
               </div>
 
               {/* Upload Button */}
-              <label className="inline-flex items-center gap-2 px-4 py-2 bg-ink hover:bg-ink-soft text-white rounded-xl text-xs font-semibold cursor-pointer shadow-sm transition-all active:scale-98">
-                <Upload className="w-3.5 h-3.5 text-bronze" />
+              <label className="px-4 py-2 bg-ink text-white rounded-2xl text-xs font-semibold cursor-pointer hover:bg-ink-soft transition-colors flex items-center justify-center gap-2 shadow-sm shrink-0">
+                <Upload className="w-3.5 h-3.5" />
                 <span>{uploading ? 'กำลังอัปโหลด...' : '+ อัปโหลดรูปเพิ่ม'}</span>
                 <input
                   type="file"
                   multiple
                   accept="image/*"
-                  className="hidden"
                   onChange={handleImageUpload}
+                  disabled={uploading}
+                  className="hidden"
                 />
               </label>
             </div>
 
-            {/* Images Grid */}
+            {/* Gallery Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3 pt-2">
               {formData.gallery?.map((imgUrl, index) => {
                 const isMain = imgUrl === formData.image;
                 return (
                   <div
                     key={index}
-                    className={`relative group rounded-2xl overflow-hidden border-2 bg-white shadow-2xs transition-all ${
-                      isMain ? 'border-bronze ring-2 ring-bronze/20' : 'border-sand-300 hover:border-sand-400'
+                    className={`group relative rounded-2xl overflow-hidden border-2 bg-white shadow-2xs transition-all ${
+                      isMain ? 'border-amber-500 ring-2 ring-amber-400/30' : 'border-sand-300'
                     }`}
                   >
-                    {/* Thumbnail */}
-                    <div className="aspect-square bg-sand-100 relative">
+                    <div className="aspect-square relative">
                       <img
                         src={imgUrl}
-                        alt={`Preview ${index}`}
-                        className="w-full h-full object-cover"
-                        onError={(e) => { e.target.src = '/favicon.png'; }}
+                        alt={`Photo ${index + 1}`}
+                        className="w-full h-full object-cover object-top"
+                        onError={e => { e.target.src = '/favicon.png'; }}
                       />
-
-                      {/* Main Badge */}
                       {isMain && (
-                        <div className="absolute top-1.5 left-1.5 bg-ink/90 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1 shadow-sm backdrop-blur-xs">
-                          <Star className="w-3 h-3 fill-amber-400" />
-                          <span>รูปหลัก</span>
+                        <div className="absolute top-1.5 left-1.5 bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md flex items-center gap-1">
+                          <Star className="w-2.5 h-2.5 fill-white" /> ปกหลัก
                         </div>
                       )}
-
-                      {/* Action Overlay */}
-                      <div className="absolute inset-0 bg-ink/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-2">
+                      
+                      <div className="absolute inset-0 bg-ink/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                         {!isMain && (
                           <button
                             type="button"
                             onClick={() => handleSetMainImage(imgUrl)}
-                            className="p-2 rounded-xl bg-white text-ink hover:bg-amber-100 hover:text-amber-700 shadow-md transition-colors"
-                            title="ตั้งเป็นรูปภาพหลัก"
+                            className="p-2 rounded-xl bg-amber-500 text-white hover:bg-amber-600 shadow-md transition-colors"
+                            title="ตั้งเป็นรูปปกหลัก"
                           >
                             <Star className="w-4 h-4" />
                           </button>
@@ -268,8 +274,6 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
                         </button>
                       </div>
                     </div>
-
-                    {/* Footer bar */}
                     <div className="p-1.5 text-center text-[10px] text-ink-muted truncate px-2 bg-sand-50/50">
                       รูปที่ {index + 1} {isMain ? '⭐' : ''}
                     </div>
@@ -277,7 +281,7 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
                 );
               })}
 
-              {/* Add by URL box */}
+              {/* Add by URL */}
               <div className="aspect-square rounded-2xl border-2 border-dashed border-sand-300 bg-white/60 p-2.5 flex flex-col justify-center items-center text-center gap-1.5 hover:border-bronze hover:bg-amber-50/30 transition-all">
                 <input
                   type="text"
@@ -298,91 +302,199 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
             </div>
           </div>
 
-          {/* Section 2: Basic Info (Code & Name) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="font-semibold text-ink">รหัสรุ่นสินค้า (Code) *</label>
-              <input
-                type="text"
-                required
-                value={formData.code}
-                onChange={e => setFormData({ ...formData, code: e.target.value })}
-                placeholder="เช่น HALF-27 หรือ SLC-131"
-                className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="font-semibold text-ink">ชื่อสินค้า / ชื่อโมเดล *</label>
-              <input
-                type="text"
-                required
-                value={formData.name}
-                onChange={e => setFormData({ ...formData, name: e.target.value })}
-                placeholder="เช่น น้องยูกิ (Yuki)"
-                className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
-              />
-            </div>
-          </div>
+          {/* Section 2: Basic Info (Code, Name, Series) */}
+          <div className="space-y-4">
+            <h3 className="font-bold text-ink text-sm flex items-center gap-2 border-b border-sand-200 pb-2">
+              <span>📖 ข้อมูลหลักของสินค้า (Basic Information)</span>
+            </h3>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">รหัสสินค้า (Code) *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.code}
+                  onChange={e => setFormData({ ...formData, code: e.target.value })}
+                  placeholder="เช่น HALF - 01 หรือ SLC-134"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
 
-          {/* Section 3: Series & Price */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5 sm:col-span-2">
+                <label className="font-semibold text-ink">ชื่อสินค้า / ชื่อโมเดล *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="เช่น Half Doll แบบครึ่งตัว 24 กิโลกรัม หรือ น้องฟางหมิง"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
+            </div>
+
             <div className="space-y-1.5">
-              <label className="font-semibold text-ink">ซีรีส์สินค้า (Series)</label>
+              <label className="font-semibold text-ink">ซีรีส์สินค้า (Series / Subtitle)</label>
               <input
                 type="text"
                 value={formData.series}
                 onChange={e => setFormData({ ...formData, series: e.target.value })}
-                placeholder="เช่น ตุ๊กตายาง RBD Luxury"
-                className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="font-semibold text-ink">ราคา (Price)</label>
-              <input
-                type="text"
-                value={formData.price}
-                onChange={e => setFormData({ ...formData, price: e.target.value })}
-                placeholder="เช่น ติดต่อสอบถามทาง LINE หรือ ฿29,900"
+                placeholder="เช่น รุ่นครึ่งตัว 24 กิโลกรัม หรือ ตุ๊กตายางพรีเมียม รุ่น Amber Luxury"
                 className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
               />
             </div>
           </div>
 
-          {/* Section 4: Physical Specs */}
-          <div className="grid grid-cols-3 gap-3 bg-sand-50 p-4 rounded-2xl border border-sand-200">
-            <div className="space-y-1">
-              <label className="font-semibold text-ink text-[11px]">ส่วนสูง (Height)</label>
-              <input
-                type="text"
-                value={formData.height}
-                onChange={e => setFormData({ ...formData, height: e.target.value })}
-                placeholder="160 cm"
-                className="w-full px-2.5 py-1.5 bg-white border border-sand-300 rounded-lg text-xs"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="font-semibold text-ink text-[11px]">น้ำหนัก (Weight)</label>
-              <input
-                type="text"
-                value={formData.weight}
-                onChange={e => setFormData({ ...formData, weight: e.target.value })}
-                placeholder="35 kg"
-                className="w-full px-2.5 py-1.5 bg-white border border-sand-300 rounded-lg text-xs"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="font-semibold text-ink text-[11px]">ขนาดหน้าอก (Bust)</label>
-              <input
-                type="text"
-                value={formData.bust}
-                onChange={e => setFormData({ ...formData, bust: e.target.value })}
-                placeholder="คัพ C"
-                className="w-full px-2.5 py-1.5 bg-white border border-sand-300 rounded-lg text-xs"
-              />
+          {/* Section 3: Pricing, Promotions & Special Options */}
+          <div className="space-y-4 p-4 bg-amber-50/40 border border-amber-200/60 rounded-3xl">
+            <h3 className="font-bold text-amber-900 text-sm flex items-center gap-2 border-b border-amber-200 pb-2">
+              <DollarSign className="w-4 h-4 text-amber-600" />
+              <span>💰 ราคา โปรโมชั่น และออฟชั่นเสริม (Pricing & Options)</span>
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">⭐ ราคาพิเศษ / ราคาโปรโมชั่น</label>
+                <input
+                  type="text"
+                  value={formData.price}
+                  onChange={e => setFormData({ ...formData, price: e.target.value })}
+                  placeholder="เช่น 12,900.- หรือ ติดต่อสอบถามทาง LINE"
+                  className="w-full px-3.5 py-2.5 bg-white border border-sand-300 rounded-xl font-bold text-emerald-800 focus:outline-none focus:border-bronze"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">ราคาเต็มปกติ (ก่อนลด)</label>
+                <input
+                  type="text"
+                  value={formData.originalPrice}
+                  onChange={e => setFormData({ ...formData, originalPrice: e.target.value })}
+                  placeholder="เช่น 15,900.-"
+                  className="w-full px-3.5 py-2.5 bg-white border border-sand-300 rounded-xl text-ink-muted focus:outline-none focus:border-bronze"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">📋 ออฟชั่นเสริมพิเศษ</label>
+                <input
+                  type="text"
+                  value={formData.specialOption}
+                  onChange={e => setFormData({ ...formData, specialOption: e.target.value })}
+                  placeholder="เช่น เพิ่มออฟชั่นอกนุ่มพิเศษ +1,000.-"
+                  className="w-full px-3.5 py-2.5 bg-white border border-sand-300 rounded-xl text-ink-soft focus:outline-none focus:border-bronze"
+                />
+              </div>
             </div>
           </div>
 
-          {/* Section 5: Ready To Ship Switch */}
+          {/* Section 4: Physical Specs (Height, Weight, Bust, Skin Tone, Material, Skeleton) */}
+          <div className="space-y-4">
+            <h3 className="font-bold text-ink text-sm flex items-center gap-2 border-b border-sand-200 pb-2">
+              <Layers className="w-4 h-4 text-bronze" />
+              <span>📐 ข้อมูลสเปกความพรีเมียม (Specifications)</span>
+            </h3>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">🧍‍♀️ ส่วนสูง (Height)</label>
+                <input
+                  type="text"
+                  value={formData.height}
+                  onChange={e => setFormData({ ...formData, height: e.target.value })}
+                  placeholder="เช่น 85 เซนติเมตร หรือ 165 cm"
+                  className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">⚖️ น้ำหนักสุทธิ (Weight)</label>
+                <input
+                  type="text"
+                  value={formData.weight}
+                  onChange={e => setFormData({ ...formData, weight: e.target.value })}
+                  placeholder="เช่น 24 กิโลกรัม หรือ 35 kg"
+                  className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">👙 ขนาดหน้าอก (Bust)</label>
+                <input
+                  type="text"
+                  value={formData.bust}
+                  onChange={e => setFormData({ ...formData, bust: e.target.value })}
+                  placeholder="เช่น คัพ D สรีระสมจริง หรือ อกนุ่มพิเศษ"
+                  className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">👩 สีผิว (Skin Tone)</label>
+                <input
+                  type="text"
+                  value={formData.skinTone}
+                  onChange={e => setFormData({ ...formData, skinTone: e.target.value })}
+                  placeholder="เช่น ผิวขาว/สีขาวเหลือง หรือ ผิวขาวอมชมพู"
+                  className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">🧴 วัสดุและผิวกาย (Material & Skin)</label>
+                <input
+                  type="text"
+                  value={formData.material}
+                  onChange={e => setFormData({ ...formData, material: e.target.value })}
+                  placeholder="เช่น Pure Silicone + ปลูกผมและคิ้วเสมือนจริงเส้นต่อเส้น"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">🦴 โครงสร้างข้อต่อ (Skeleton & Articulation)</label>
+                <input
+                  type="text"
+                  value={formData.skeleton}
+                  onChange={e => setFormData({ ...formData, skeleton: e.target.value })}
+                  placeholder="เช่น EVO Stainless-Steel 360° Articulated Frame"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Section 5: Gifts & Collector Box */}
+          <div className="space-y-1.5">
+            <label className="font-bold text-ink text-xs sm:text-sm flex items-center gap-1.5">
+              <Gift className="w-4 h-4 text-bronze" />
+              <span>🎁 เซ็ตของขวัญ / ของแถมระดับพรีเมียม (Free Gifts)</span>
+            </label>
+            <textarea
+              rows={2}
+              value={formData.gifts}
+              onChange={e => setFormData({ ...formData, gifts: e.target.value })}
+              placeholder="เช่น ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล, วิกผมเกรดพรีเมียม, แป้งฝุ่นบำรุงผิว Silky Smooth, เซ็ตอุปกรณ์ทำความสะอาดครบวงจร"
+              className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs focus:outline-none focus:border-bronze focus:bg-white leading-relaxed"
+            />
+          </div>
+
+          {/* Section 6: Description */}
+          <div className="space-y-1.5">
+            <label className="font-bold text-ink text-xs sm:text-sm">📝 รายละเอียดสินค้าเพิ่มเติม (Description)</label>
+            <textarea
+              rows={3}
+              value={formData.description}
+              onChange={e => setFormData({ ...formData, description: e.target.value })}
+              placeholder="พิมพ์จุดเด่น ฟีเจอร์พิเศษ หรือคำแนะนำเพิ่มเติมสำหรับสินค้ารุ่นนี้..."
+              className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs focus:outline-none focus:border-bronze focus:bg-white leading-relaxed"
+            />
+          </div>
+
+          {/* Section 7: Ready To Ship Switch */}
           <div className="flex items-center justify-between p-4 bg-emerald-50/80 border border-emerald-200 rounded-2xl">
             <div>
               <p className="font-bold text-emerald-900 text-xs sm:text-sm">📦 สถานะสินค้าพร้อมส่งในไทย (Ready to Ship)</p>
@@ -397,9 +509,9 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
             </button>
           </div>
 
-          {/* Section 6: Category Checkboxes */}
+          {/* Section 8: Category Checkboxes */}
           <div className="space-y-2">
-            <label className="font-semibold text-ink">เลือกหมวดหมู่ที่ต้องการให้สินค้าชิ้นนี้ไปแสดงผล:</label>
+            <label className="font-semibold text-ink">📂 เลือกหมวดหมู่ที่ต้องการให้สินค้าชิ้นนี้ไปแสดงผล:</label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {categories.filter(c => c.id !== 'reviews').map(c => {
                 const isSelected = formData.categories?.includes(c.id);
@@ -420,37 +532,25 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
             </div>
           </div>
 
-          {/* Section 7: Description */}
-          <div className="space-y-1.5">
-            <label className="font-semibold text-ink">รายละเอียดสินค้า (Description)</label>
-            <textarea
-              rows={3}
-              value={formData.description}
-              onChange={e => setFormData({ ...formData, description: e.target.value })}
-              placeholder="รายละเอียดสรีระ, โครงสร้าง, วัสดุซิลิโคน..."
-              className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
-            />
+          {/* Sticky Bottom Actions */}
+          <div className="pt-3 border-t border-sand-200 flex items-center justify-end gap-3 sticky bottom-0 bg-white/95 backdrop-blur-sm py-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-5 py-2.5 rounded-2xl bg-sand-100 hover:bg-sand-200 text-ink font-semibold text-xs sm:text-sm transition-colors border border-sand-300"
+            >
+              ยกเลิก
+            </button>
+            <button
+              type="submit"
+              disabled={saveLoading}
+              className="px-6 py-2.5 rounded-2xl bg-ink hover:bg-ink-soft text-white font-semibold text-xs sm:text-sm transition-all shadow-md active:scale-98 flex items-center gap-2"
+            >
+              <span>{saveLoading ? 'กำลังบันทึก...' : '💾 บันทึกข้อมูลและรูปภาพสินค้า'}</span>
+            </button>
           </div>
 
         </form>
-
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-sand-200 bg-sand-50/80 flex items-center justify-end gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 rounded-xl border border-sand-300 text-ink hover:bg-sand-200 text-xs font-semibold transition-colors"
-          >
-            ยกเลิก
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={saveLoading}
-            className="px-6 py-2.5 rounded-xl bg-ink hover:bg-ink-soft text-white text-xs font-semibold shadow-md transition-all disabled:opacity-50 flex items-center gap-1.5"
-          >
-            {saveLoading ? 'กำลังบันทึก...' : '💾 บันทึกข้อมูลและรูปภาพ'}
-          </button>
-        </div>
 
       </div>
     </div>

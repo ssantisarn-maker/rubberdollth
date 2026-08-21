@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, MessageCircle, ShieldCheck, Sparkles, Box, Check, Star, Lock, HeartHandshake, ChevronLeft, ChevronRight, Flame } from 'lucide-react';
+import { X, MessageCircle, ShieldCheck, Sparkles, Box, Check, Star, Lock, HeartHandshake, ChevronLeft, ChevronRight, Flame, Layers, DollarSign, Gift, CheckCircle2 } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
 
@@ -28,9 +28,18 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
 
   const currentImage = galleryImages[activeImageIdx] || product.image;
 
-  const lineMessage = `สวัสดีครับ สนใจสอบถามและสั่งซื้อสินค้า [${product.code}] ${product.name} สเปก ${product.height} ครับ`;
+  const lineMessage = `สวัสดีครับ สนใจสอบถามและสั่งซื้อสินค้า [${product.code}] ${product.name} (ราคา: ${product.price || 'โปรโมชั่น'}, สเปก: ${product.height || '-'}, สีผิว: ${product.skinTone || product.skin_tone || 'ผิวขาวเหลือง'}) ครับ`;
   const lineProductUrl = `https://line.me/R/oaMessage/@RUBBERDOLL.TH/?${encodeURIComponent(lineMessage)}`;
   const seoImageAlt = `ตุ๊กตายาง ซิลิโคนแท้ระดับ Hi-End รุ่น ${product.code} ${product.name} ${product.series} สเปก ${product.height} RUBBER DOLL THAILAND`;
+
+  const skinTone = product.skinTone || product.skin_tone || 'ผิวขาว/สีขาวเหลือง';
+  const material = product.material || 'Pure Silicone + ปลูกผมและคิ้วเสมือนจริงเส้นต่อเส้น';
+  const skeleton = product.skeleton || 'EVO Stainless-Steel 360° Articulated Frame';
+  const specialOption = product.specialOption || product.special_option || '';
+  const originalPrice = product.originalPrice || product.original_price || '';
+  const gifts = product.gifts || 'ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล, วิกผมเกรดพรีเมียม สัมผัสนุ่มลื่น, แป้งฝุ่นบำรุงผิว Silky Smooth Powder, เซ็ตอุปกรณ์ทำความสะอาดและดูแลรักษาครบวงจร';
+
+  const giftsList = gifts.split(',').map(g => g.trim()).filter(Boolean);
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto flex items-end sm:items-center justify-center p-0 sm:p-4 lg:p-6 bg-ink/70 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
@@ -82,7 +91,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 </div>
               )}
 
-              {/* Angle Switcher arrows if multiple images */}
+              {/* Angle Switcher arrows */}
               {galleryImages.length > 1 && (
                 <div className="absolute inset-y-0 inset-x-2 flex items-center justify-between pointer-events-none">
                   <button
@@ -109,7 +118,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
               )}
 
               <div className="absolute bottom-3 left-3 right-3 bg-ink/80 backdrop-blur-md text-white text-[10px] sm:text-[11px] p-1.5 sm:p-2 rounded-xl text-center">
-                {t.modal.factoryPhotos} {activeImageIdx + 1} / {galleryImages.length} • {t.modal.medicalGrade}
+                ภาพถ่ายสเปกจริงจากโรงงาน {activeImageIdx + 1} / {galleryImages.length} • Hyper-Realistic Pure Silicone SSS
               </div>
             </div>
 
@@ -145,81 +154,130 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
           {/* Right: Technical Specs & Details */}
           <div className="md:col-span-6 flex flex-col justify-between space-y-4 sm:space-y-6">
             
-            <div className="space-y-3 sm:space-y-4">
+            <div className="space-y-4">
               
-              {/* Header */}
+              {/* Header: Series & Category */}
               <div>
                 <div className="flex items-center gap-2 text-[10px] sm:text-xs font-semibold text-bronze uppercase tracking-wider">
-                  <span>{product.series}</span>
+                  <span>{product.series || 'ตุ๊กตายางพรีเมียม'}</span>
                   <span>•</span>
-                  <span>{product.category}</span>
+                  <span>{product.category || 'ตุ๊กตาซิลิโคนแท้'}</span>
                 </div>
                 <h2 className="font-sans text-xl sm:text-2xl lg:text-3xl font-bold text-ink mt-0.5">
                   {product.code} {product.name}
                 </h2>
               </div>
 
-              {/* Description */}
-              <div className="p-3 sm:p-4 rounded-xl bg-sand-50 border border-sand-200/80 text-xs text-ink-soft leading-relaxed font-light">
-                {product.description}
+              {/* Price & Special Option Banner */}
+              <div className="p-3.5 bg-sand-50 rounded-2xl border border-sand-200 space-y-1.5">
+                <div className="flex items-baseline justify-between gap-2 flex-wrap">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-xs text-ink-muted">ราคาพิเศษ:</span>
+                    <span className="text-xl sm:text-2xl font-bold text-emerald-800 font-sans">
+                      {product.price || 'ติดต่อสอบถามทาง LINE'}
+                    </span>
+                  </div>
+                  {originalPrice && (
+                    <span className="text-xs text-ink-muted line-through font-sans">
+                      {originalPrice}
+                    </span>
+                  )}
+                </div>
+
+                {specialOption && (
+                  <div className="pt-1 text-xs text-amber-900 bg-amber-100/70 px-2.5 py-1 rounded-lg font-medium flex items-center gap-1.5 border border-amber-300/60">
+                    <span>📋</span>
+                    <span>{specialOption}</span>
+                  </div>
+                )}
               </div>
 
-              {/* Specs Table */}
-              <div className="space-y-1.5 sm:space-y-2">
-                <h4 className="text-[11px] sm:text-xs font-bold text-ink uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-bronze" /> {t.modal.specsTitle}
-                </h4>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="p-2 sm:p-2.5 rounded-lg bg-sand-100/70 border border-sand-200">
-                    <span className="text-ink-muted block text-[10px]">{t.modal.height}</span>
-                    <span className="font-sans font-bold text-ink">{product.height}</span>
+              {/* Description */}
+              {product.description && (
+                <p className="text-xs sm:text-sm text-ink-soft leading-relaxed font-light">
+                  {product.description}
+                </p>
+              )}
+
+              {/* Technical Specifications (6 Grid Boxes) */}
+              <div className="space-y-2">
+                <h3 className="text-xs font-bold text-ink flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-bronze" />
+                  <span>ข้อมูลสเปกความพรีเมียม (SPECIFICATIONS)</span>
+                </h3>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200">
+                    <span className="text-[10px] text-ink-muted block">ส่วนสูงโมเดล (Height)</span>
+                    <span className="font-bold font-sans text-xs sm:text-sm text-ink">{product.height || '85-165 cm'}</span>
                   </div>
-                  <div className="p-2 sm:p-2.5 rounded-lg bg-sand-100/70 border border-sand-200">
-                    <span className="text-ink-muted block text-[10px]">{t.modal.weight}</span>
-                    <span className="font-sans font-bold text-ink">{product.weight}</span>
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200">
+                    <span className="text-[10px] text-ink-muted block">น้ำหนักโดยประมาณ (Weight)</span>
+                    <span className="font-bold font-sans text-xs sm:text-sm text-ink">{product.weight || '24-42 kg'}</span>
                   </div>
-                  <div className="p-2 sm:p-2.5 rounded-lg bg-sand-100/70 border border-sand-200 col-span-2">
-                    <span className="text-ink-muted block text-[10px]">{t.modal.material}</span>
-                    <span className="font-sans font-bold text-ink text-[11px] sm:text-xs">{t.modal.materialValue}</span>
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200">
+                    <span className="text-[10px] text-ink-muted block">ขนาดหน้าอก (Bust)</span>
+                    <span className="font-bold text-xs sm:text-sm text-ink">{product.bust || 'คัพ D สรีระสมจริง'}</span>
                   </div>
-                  <div className="p-2 sm:p-2.5 rounded-lg bg-sand-100/70 border border-sand-200 col-span-2">
-                    <span className="text-ink-muted block text-[10px]">{t.modal.skeleton}</span>
-                    <span className="font-sans font-bold text-ink text-[11px] sm:text-xs">{t.modal.skeletonValue}</span>
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200">
+                    <span className="text-[10px] text-ink-muted block">สีผิว (Skin Tone)</span>
+                    <span className="font-bold text-xs sm:text-sm text-ink">{skinTone}</span>
                   </div>
+                </div>
+
+                <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200 space-y-0.5">
+                  <span className="text-[10px] text-ink-muted block">วัสดุศีรษะ & ผิวกาย (Material)</span>
+                  <span className="font-bold text-xs text-ink">{material}</span>
+                </div>
+
+                <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200 space-y-0.5">
+                  <span className="text-[10px] text-ink-muted block">โครงสร้างข้อต่อ (Articulation)</span>
+                  <span className="font-bold text-xs text-ink">{skeleton}</span>
                 </div>
               </div>
 
-              {/* In The Box */}
-              <div className="space-y-1.5">
-                <h4 className="text-[11px] sm:text-xs font-bold text-ink uppercase tracking-wider flex items-center gap-1.5">
-                  <Box className="w-3.5 h-3.5 text-bronze" /> {t.modal.boxTitle}
-                </h4>
-                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-ink-soft">
-                  <li className="flex items-center gap-1.5"><Check className="w-3 h-3 text-emerald-700" /> {t.modal.box1}</li>
-                  <li className="flex items-center gap-1.5"><Check className="w-3 h-3 text-emerald-700" /> {t.modal.box2}</li>
-                  <li className="flex items-center gap-1.5"><Check className="w-3 h-3 text-emerald-700" /> {t.modal.box3}</li>
-                  <li className="flex items-center gap-1.5"><Check className="w-3 h-3 text-emerald-700" /> {t.modal.box4}</li>
-                </ul>
-              </div>
+              {/* Free Gifts & Collector Box */}
+              {giftsList.length > 0 && (
+                <div className="p-3.5 rounded-2xl bg-sand-50 border border-sand-200 space-y-2">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-ink">
+                    <Gift className="w-4 h-4 text-bronze" />
+                    <span>THE LUXURY COLLECTOR BOX (เซ็ตของขวัญระดับพรีเมียม)</span>
+                  </div>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] text-ink-soft">
+                    {giftsList.map((gift, i) => (
+                      <li key={i} className="flex items-start gap-1.5">
+                        <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                        <span>{gift}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
             </div>
 
-            {/* CTAs */}
-            <div className="space-y-2.5 pt-3 sm:pt-4 border-t border-sand-200">
+            {/* Sticky Action Button */}
+            <div className="space-y-2 pt-3 border-t border-sand-200">
               <a
                 href={lineProductUrl}
                 target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3 sm:py-3.5 px-6 rounded-xl sm:rounded-2xl bg-[#06C755] hover:bg-[#05b34c] text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all duration-200 active:scale-98"
+                rel="noreferrer"
+                className="w-full py-3 sm:py-3.5 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition-all active:scale-98"
               >
-                <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 fill-white" />
-                <span>{t.modal.orderBtn}</span>
+                <MessageCircle className="w-4 h-4 fill-white" />
+                <span>สั่งซื้อ / สอบถามรุ่นนี้แบบ Private LINE</span>
               </a>
 
-              <div className="flex items-center justify-center gap-3 sm:gap-4 text-[10px] sm:text-[11px] text-ink-muted">
-                <span className="flex items-center gap-1"><Lock className="w-3 h-3 text-emerald-700" /> {t.modal.discreet}</span>
-                <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-bronze" /> {t.modal.warranty}</span>
-                <span className="flex items-center gap-1"><HeartHandshake className="w-3 h-3 text-ink-soft" /> {t.modal.support}</span>
+              <div className="flex items-center justify-center gap-4 text-[10px] text-ink-muted">
+                <span className="flex items-center gap-1">
+                  <Lock className="w-3 h-3 text-emerald-600" /> ส่งลับเฉพาะ 100%
+                </span>
+                <span className="flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3 text-emerald-600" /> ประกันคืนเงิน 100%
+                </span>
+                <span className="flex items-center gap-1">
+                  <HeartHandshake className="w-3 h-3 text-emerald-600" /> ดูแลส่วนตัว 24 ชม.
+                </span>
               </div>
             </div>
 
@@ -228,6 +286,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
         </div>
 
       </div>
+
     </div>
   );
 }
