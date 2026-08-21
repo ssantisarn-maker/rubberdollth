@@ -2,11 +2,12 @@ import React, { useState, useMemo, useRef } from 'react';
 import ProductCard from './ProductCard';
 import ProductFilter from './ProductFilter';
 import ProductModal from './ProductModal';
-import { products } from '../../data/products';
+import { useLiveProducts } from '../../hooks/useLiveProducts';
 import { Sparkles, PackageCheck, Flame, CheckCircle2, ArrowDown } from 'lucide-react';
 import { translations } from '../../data/translations';
 
 export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, onToggleAdultMode, lang = 'th' }) {
+  const { products } = useLiveProducts();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);

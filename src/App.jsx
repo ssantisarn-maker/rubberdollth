@@ -11,10 +11,15 @@ import FaqSection from './components/faq/FaqSection';
 import ContactSection from './components/contact/ContactSection';
 import Footer from './components/layout/Footer';
 import StickyMobileBar from './components/layout/StickyMobileBar';
+import AdminDashboard from './components/admin/AdminDashboard';
 import { Flame, Check, ArrowUp } from 'lucide-react';
 import { translations } from './data/translations';
 
 export default function App() {
+  const [route, setRoute] = useState(() => {
+    return window.location.pathname.startsWith('/admin') || window.location.hash === '#admin' ? 'admin' : 'shop';
+  });
+
   const [activeTab, setActiveTab] = useState('catalog');
   const [isAdultMode, setIsAdultMode] = useState(false);
   const [showAgeModal, setShowAgeModal] = useState(false);
@@ -24,7 +29,21 @@ export default function App() {
   const t = translations[lang] || translations.th;
 
   useEffect(() => {
-    document.documentElement.lang = lang;
+    const handlePopState = () => {
+      if (window.location.pathname.startsWith('/admin') || window.location.hash === '#admin') {
+        setRoute('admin');
+      } else {
+        setRoute('shop');
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  useEffect(() => {
+    if (route === 'shop') {
+      document.documentElement.lang = lang;
+    }
     const handleScroll = () => {
       if (window.scrollY > 400) {
         setShowBackToTop(true);
@@ -61,6 +80,17 @@ export default function App() {
   const handleSetLang = (newLang) => {
     setLang(newLang);
   };
+
+  if (route === 'admin') {
+    return (
+      <AdminDashboard
+        onBackToShop={() => {
+          window.history.pushState({}, '', '/');
+          setRoute('shop');
+        }}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-sand-50 text-ink overflow-x-hidden w-full">
