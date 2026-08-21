@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Tag, Settings, Globe, LogOut, ShieldCheck, Database, RefreshCw } from 'lucide-react';
+import { Package, Tag, Settings, Globe, LogOut, ShieldCheck, Database, RefreshCw, Star } from 'lucide-react';
 import ProductManager from './ProductManager';
 import CategoryManager from './CategoryManager';
+import ReviewManager from './ReviewManager';
 import AdminLogin from './AdminLogin';
 import { useLiveProducts } from '../../hooks/useLiveProducts';
+import { useLiveReviews } from '../../hooks/useLiveReviews';
 
 export default function AdminDashboard({ onBackToShop }) {
   const [authenticated, setAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState('products'); // 'products' | 'categories' | 'database'
-  const { products, setProducts, reload, loading } = useLiveProducts();
+  const [activeTab, setActiveTab] = useState('products'); // 'products' | 'categories' | 'reviews' | 'database'
+  const { products, setProducts, reload: reloadProducts, loading: prodLoading } = useLiveProducts();
+  const { reviews, setReviews, reload: reloadReviews, loading: revLoading } = useLiveReviews();
 
   const [categories, setCategories] = useState([
     { id: 'all', label_th: 'สินค้าทั้งหมด', label_en: 'All Masterpieces' },
@@ -46,9 +49,16 @@ export default function AdminDashboard({ onBackToShop }) {
     setAuthenticated(false);
   };
 
+  const handleRefreshAll = () => {
+    reloadProducts();
+    reloadReviews();
+  };
+
   if (!authenticated) {
     return <AdminLogin onLoginSuccess={() => setAuthenticated(true)} onBackToShop={onBackToShop} />;
   }
+
+  const isLoading = prodLoading || revLoading;
 
   return (
     <div className="min-h-screen bg-sand-100 flex flex-col selection:bg-bronze selection:text-white">
@@ -71,12 +81,12 @@ export default function AdminDashboard({ onBackToShop }) {
           {/* Controls */}
           <div className="flex items-center gap-2 sm:gap-3">
             <button
-              onClick={reload}
-              disabled={loading}
+              onClick={handleRefreshAll}
+              disabled={isLoading}
               className="p-2 rounded-xl text-ink-muted hover:text-ink hover:bg-sand-100 transition-colors"
               title="รีเฟรชข้อมูล"
             >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
             </button>
 
             <button
@@ -112,7 +122,19 @@ export default function AdminDashboard({ onBackToShop }) {
             }`}
           >
             <Package className="w-4 h-4 text-bronze" />
-            <span>จัดการสินค้าทั้งหมด ({products.length})</span>
+            <span>จัดการสินค้า ({products.length})</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('reviews')}
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${
+              activeTab === 'reviews'
+                ? 'bg-ink text-white shadow-sm'
+                : 'text-ink-soft hover:bg-sand-100 hover:text-ink'
+            }`}
+          >
+            <Star className="w-4 h-4 text-amber-500 fill-amber-400" />
+            <span>จัดการรีวิวลูกค้า ({reviews.length})</span>
           </button>
 
           <button
@@ -147,6 +169,13 @@ export default function AdminDashboard({ onBackToShop }) {
             products={products}
             categories={categories}
             onUpdateProducts={setProducts}
+          />
+        )}
+
+        {activeTab === 'reviews' && (
+          <ReviewManager
+            reviews={reviews}
+            onUpdateReviews={setReviews}
           />
         )}
 

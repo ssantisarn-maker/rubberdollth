@@ -67,6 +67,10 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 width="600"
                 height="800"
                 className="w-full h-full object-cover object-top transition-all duration-300"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = product.image || '/favicon.png';
+                }}
               />
               <div className="absolute top-3 left-3 bg-white/95 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-sans font-extrabold text-ink shadow-2xs border border-sand-200">
                 {product.code}
@@ -122,7 +126,15 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                         : 'border-sand-200 opacity-60 hover:opacity-100'
                     }`}
                   >
-                    <img src={img} alt={`Angle ${idx + 1}`} className="w-full h-full object-cover object-top" />
+                    <img
+                      src={img}
+                      alt={`Angle ${idx + 1}`}
+                      className="w-full h-full object-cover object-top"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = product.image || '/favicon.png';
+                      }}
+                    />
                   </button>
                 ))}
               </div>

@@ -1,6 +1,6 @@
 <?php
 /**
- * RUBBER DOLL THAILAND - 1-Click Database Installer & Seeder (ALL 70 PRODUCTS)
+ * RUBBER DOLL THAILAND - 1-Click Database Installer & Seeder (70 Products + Reviews)
  */
 require_once __DIR__ . '/config.php';
 
@@ -9,7 +9,23 @@ header('Content-Type: text/html; charset=utf-8');
 $pdo = getDbConnection();
 
 if (!$pdo) {
-    echo "<h1>Database connection error</h1>";
+    ?>
+    <!DOCTYPE html>
+    <html lang="th">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Database Setup - RUBBER DOLL THAILAND</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gray-950 text-white min-h-screen flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-gray-900 rounded-3xl p-8 border border-amber-500/30 shadow-2xl text-center space-y-4">
+            <h1 class="text-xl font-bold text-amber-400">⚠️ ยังไม่ได้เชื่อมต่อฐานข้อมูล MySQL</h1>
+            <p class="text-xs text-gray-300">กรุณาตรวจสอบ DB_NAME, DB_USER, DB_PASS ใน config.php</p>
+        </div>
+    </body>
+    </html>
+    <?php
     exit();
 }
 
@@ -51,11 +67,35 @@ CREATE TABLE IF NOT EXISTS products (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS customer_reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    model VARCHAR(255) DEFAULT '',
+    rating INT DEFAULT 5,
+    date VARCHAR(100) DEFAULT '',
+    comment TEXT NOT NULL,
+    image VARCHAR(500) DEFAULT '',
+    images_json TEXT,
+    verified TINYINT(1) DEFAULT 1,
+    order_index INT DEFAULT 0,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ";
 
 $pdo->exec($sqlTables);
 
-// 2. Categories
+// 2. Admin User
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM admin_users");
+$stmt->execute();
+if ($stmt->fetchColumn() == 0) {
+    $defaultHash = password_hash('rbd2026master', PASSWORD_DEFAULT);
+    $stmt = $pdo->prepare("INSERT INTO admin_users (username, password_hash) VALUES ('admin', :hash)");
+    $stmt->execute(['hash' => $defaultHash]);
+}
+
+// 3. Categories
 $defaultCategories = [
     ['all', 'สินค้าทั้งหมด', 'All Masterpieces', 1],
     ['ready', 'สินค้าพร้อมส่ง (ไทย)', 'Ready to Ship (TH)', 2],
@@ -72,12 +112,10 @@ foreach ($defaultCategories as $c) {
     $stmtCat->execute($c);
 }
 
-// 3. Import all 70 Products
+// 4. Products Seeding
 $imported = 0;
 if (file_exists(__DIR__ . '/products_cache.json')) {
     $jsonProducts = json_decode(file_get_contents(__DIR__ . '/products_cache.json'), true);
-    
-    // Clear and re-populate to guarantee all 70 clean items
     $pdo->exec("DELETE FROM products");
 
     $stmtIns = $pdo->prepare("INSERT INTO products (id, code, name, series, description, image, secondary_image, gallery_json, total_angles, category, categories_json, height, weight, bust, price, is_ready_to_ship, is_active) 
@@ -105,6 +143,28 @@ if (file_exists(__DIR__ . '/products_cache.json')) {
         $imported++;
     }
 }
+
+// 5. Customer Reviews Seeding
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM customer_reviews");
+$stmt->execute();
+if ($stmt->fetchColumn() == 0 && file_exists(__DIR__ . '/reviews_cache.json')) {
+    $jsonReviews = json_decode(file_get_contents(__DIR__ . '/reviews_cache.json'), true);
+    $stmtRev = $pdo->prepare("INSERT INTO customer_reviews (id, name, model, rating, date, comment, image, images_json, verified, order_index, is_active) VALUES (:id, :name, :model, :rating, :date, :comment, :image, :images_json, :verified, :order_index, 1)");
+    foreach ($jsonReviews as $i => $rev) {
+        $stmtRev->execute([
+            'id' => $rev['id'] ?? ($i + 1),
+            'name' => $rev['name'],
+            'model' => $rev['model'] ?? '',
+            'rating' => $rev['rating'] ?? 5,
+            'date' => $rev['date'] ?? '',
+            'comment' => $rev['comment'] ?? '',
+            'image' => $rev['image'] ?? '',
+            'images_json' => json_encode($rev['images'] ?? [], JSON_UNESCAPED_UNICODE),
+            'verified' => !empty($rev['verified']) ? 1 : 0,
+            'order_index' => $i + 1
+        ]);
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -117,8 +177,8 @@ if (file_exists(__DIR__ . '/products_cache.json')) {
 <body class="bg-gray-950 text-white min-h-screen flex items-center justify-center p-4 font-sans selection:bg-amber-500 selection:text-gray-950">
     <div class="max-w-md w-full bg-gray-900 rounded-3xl p-8 border border-emerald-500/30 shadow-2xl space-y-5 text-center">
         <div class="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-2xl flex items-center justify-center mx-auto text-3xl">✓</div>
-        <h1 class="text-2xl font-bold text-white">นำเข้าสินค้าครบ 100%!</h1>
-        <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">ระบบได้สร้างตาราง MySQL และนำเข้าสินค้าทั้งหมดครบถ้วน <strong class="text-amber-400 font-bold"><?= $imported ?> รายการ</strong> เรียบร้อยแล้วครับ</p>
+        <h1 class="text-2xl font-bold text-white">ติดตั้งระบบและฐานข้อมูลสำเร็จ 100%!</h1>
+        <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">ระบบได้สร้างตาราง MySQL สินค้า <strong class="text-amber-400 font-bold"><?= $imported ?> รายการ</strong> และระบบจัดการรีวิวลูกค้าเรียบร้อยแล้วครับ</p>
         
         <div class="bg-gray-950 p-4 rounded-2xl text-left text-xs space-y-2 border border-gray-800">
             <p class="font-bold text-amber-400">🔑 ข้อมูลล็อกอินหลังบ้าน:</p>
