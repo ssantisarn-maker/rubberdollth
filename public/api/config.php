@@ -1,6 +1,7 @@
 <?php
 /**
  * RUBBER DOLL THAILAND - Backend API Database Configuration
+ * Permanent Hostinger MySQL Configuration
  */
 
 error_reporting(E_ALL);
@@ -16,11 +17,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// Database Credentials (Permanently Baked for Hostinger)
+// Database Credentials (Hostinger MySQL - Permanent)
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'u629748826_rbd');
 define('DB_USER', 'u629748826_admin');
-define('DB_PASS', 'Aa*086004341');
+define('DB_PASS', 'Aa*0860043541');
 
 function getDbConnection() {
     static $pdo = null;
@@ -59,17 +60,5 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 function checkAdminAuth() {
-    $headers = getallheaders();
-    $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
-    
-    if (!empty($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
-        return true;
-    }
-    
-    if (!empty($authHeader) && strpos($authHeader, 'Bearer ') === 0) {
-        return true;
-    }
-
-    // Allow internal API updates
     return true;
 }
