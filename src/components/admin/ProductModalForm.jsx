@@ -150,8 +150,16 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
     }
 
     setSaveLoading(true);
+    let finalCategories = Array.isArray(formData.categories) ? [...formData.categories] : ['all'];
+    if (formData.isReadyToShip && !finalCategories.includes('ready')) {
+      finalCategories.push('ready');
+    } else if (!formData.isReadyToShip) {
+      finalCategories = finalCategories.filter(c => c !== 'ready');
+    }
+
     const finalData = {
       ...formData,
+      categories: finalCategories,
       image: formData.image || formData.gallery[0] || '',
       secondaryImage: formData.gallery[1] || formData.image || '',
       totalAngles: formData.gallery.length

@@ -25,7 +25,7 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
     {
       id: 'ready',
       label: t.catalog.categories.ready,
-      count: products.filter(p => p.categories && p.categories.includes('ready')).length
+      count: products.filter(p => p.isReadyToShip || p.is_ready_to_ship || (p.categories && p.categories.includes('ready'))).length
     },
     {
       id: 'toys',
@@ -57,14 +57,18 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
       label: t.catalog.categories.reviews,
       count: 24
     }
-  ], [lang, t]);
+  ], [lang, t, products]);
 
   // Filter Logic
   const filteredProducts = useMemo(() => {
     return products.filter((item) => {
       // Category filter
       if (selectedCategory !== 'all') {
-        if (!item.categories || !item.categories.includes(selectedCategory)) {
+        if (selectedCategory === 'ready') {
+          if (!item.isReadyToShip && !item.is_ready_to_ship && (!item.categories || !item.categories.includes('ready'))) {
+            return false;
+          }
+        } else if (!item.categories || !item.categories.includes(selectedCategory)) {
           return false;
         }
       }
@@ -80,7 +84,7 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
 
       return true;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [selectedCategory, searchQuery, products]);
 
   const displayedProducts = filteredProducts.slice(0, visibleCount);
 
