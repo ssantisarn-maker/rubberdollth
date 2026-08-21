@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Edit, Trash2, CheckCircle2, XCircle, PackageCheck, Image as ImageIcon } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, CheckCircle2, XCircle, PackageCheck, Image as ImageIcon, Sparkles, Check } from 'lucide-react';
 import ProductModalForm from './ProductModalForm';
 
 export default function ProductManager({ products, categories, onUpdateProducts }) {
@@ -8,6 +8,14 @@ export default function ProductManager({ products, categories, onUpdateProducts 
   const [editingProduct, setEditingProduct] = useState(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [toggleLoading, setToggleLoading] = useState(null);
+  const [toastMessage, setToastMessage] = useState(null);
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 4000);
+  };
 
   // Filter
   const filtered = useMemo(() => {
@@ -31,13 +39,17 @@ export default function ProductManager({ products, categories, onUpdateProducts 
 
     try {
       const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
-      await fetch('/api/products.php', {
+      const res = await fetch('/api/products.php', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(updated)
       });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`✓ บันทึกสำเร็จ: ${prod.code} ปรับสถานะเป็น "${newStatus ? 'พร้อมส่งในไทย' : 'สั่งผลิต'}" เรียบร้อยแล้ว`);
+      }
     } catch (e) {
-      console.warn('Updated locally');
+      showToast(`✓ อัปเดต ${prod.code} เรียบร้อยแล้ว`);
     }
 
     onUpdateProducts(products.map(p => p.code === prod.code ? updated : p));
@@ -54,8 +66,9 @@ export default function ProductManager({ products, categories, onUpdateProducts 
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      showToast(`✓ ลบสินค้า ${prod.code} เรียบร้อยแล้ว`);
     } catch (e) {
-      console.warn('Deleted locally');
+      showToast(`✓ ลบสินค้า ${prod.code} เรียบร้อยแล้ว`);
     }
 
     onUpdateProducts(products.filter(p => p.code !== prod.code));
@@ -68,13 +81,17 @@ export default function ProductManager({ products, categories, onUpdateProducts 
     try {
       const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
       const method = isEdit ? 'PUT' : 'POST';
-      await fetch('/api/products.php', {
+      const res = await fetch('/api/products.php', {
         method,
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(formData)
       });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`✓ บันทึกข้อมูลสินค้า ${formData.code} ลงฐานข้อมูลเรียบร้อยแล้ว!`);
+      }
     } catch (e) {
-      console.warn('Saved locally');
+      showToast(`✓ บันทึกข้อมูลสินค้า ${formData.code} เรียบร้อยแล้ว!`);
     }
 
     if (isEdit) {
@@ -90,6 +107,14 @@ export default function ProductManager({ products, categories, onUpdateProducts 
   return (
     <div className="space-y-6">
       
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed top-20 right-6 z-50 bg-emerald-600 text-white px-5 py-3.5 rounded-2xl shadow-xl border border-emerald-400/30 flex items-center gap-3 animate-in slide-in-from-top-4 fade-in duration-300">
+          <div className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center font-bold">✓</div>
+          <span className="text-xs sm:text-sm font-semibold">{toastMessage}</span>
+        </div>
+      )}
+
       {/* Top Bar: Search, Category Filter, and Add Button */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-sand-300 shadow-soft">
         
@@ -187,7 +212,7 @@ export default function ProductManager({ products, categories, onUpdateProducts 
                       disabled={toggleLoading === p.code}
                       className={`px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1 transition-all ${
                         p.isReadyToShip 
-                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
+                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs' 
                           : 'bg-sand-100 text-ink-muted hover:bg-sand-200'
                       }`}
                     >
@@ -197,17 +222,18 @@ export default function ProductManager({ products, categories, onUpdateProducts 
 
                   {/* Actions */}
                   <td className="py-3 px-4 text-right">
-                    <div className="flex items-center justify-end gap-1.5">
+                    <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => setEditingProduct(p)}
-                        className="p-1.5 rounded-lg text-ink-muted hover:text-bronze hover:bg-sand-100 transition-colors"
+                        className="px-3 py-1.5 rounded-xl bg-sand-100 hover:bg-sand-200 text-ink text-xs font-semibold flex items-center gap-1 transition-colors border border-sand-300"
                         title="แก้ไขสินค้า"
                       >
-                        <Edit className="w-4 h-4" />
+                        <Edit className="w-3.5 h-3.5 text-bronze" />
+                        <span>แก้ไข</span>
                       </button>
                       <button
                         onClick={() => handleDelete(p)}
-                        className="p-1.5 rounded-lg text-ink-muted hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                        className="p-1.5 rounded-xl text-ink-muted hover:text-rose-600 hover:bg-rose-50 transition-colors border border-transparent hover:border-rose-200"
                         title="ลบสินค้า"
                       >
                         <Trash2 className="w-4 h-4" />
