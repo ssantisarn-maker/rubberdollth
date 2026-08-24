@@ -22,6 +22,8 @@ function formatProductRow($r) {
     $r['originalPrice'] = $r['original_price'] ?? '';
     $r['specialOption'] = $r['special_option'] ?? '';
     $r['gifts'] = $r['gifts'] ?? '';
+    $r['video_url'] = $r['video_url'] ?? '';
+    $r['videoUrl'] = $r['video_url'] ?? '';
     $r['order_index'] = (int)($r['order_index'] ?? 999);
     $r['orderIndex'] = (int)($r['order_index'] ?? 999);
     return $r;
@@ -101,6 +103,7 @@ if ($method === 'POST' || $method === 'PUT') {
     $originalPrice = $data['originalPrice'] ?? ($data['original_price'] ?? '');
     $specialOption = $data['specialOption'] ?? ($data['special_option'] ?? '');
     $orderIndex = (int)($data['orderIndex'] ?? ($data['order_index'] ?? 999));
+    $videoUrl = trim($data['videoUrl'] ?? ($data['video_url'] ?? ''));
     $gifts = $data['gifts'] ?? 'ชุดแฟชั่นสั่งตัด, วิกผมพรีเมียม, แป้งฝุ่นบำรุงผิว Silky Smooth, เซ็ตอุปกรณ์ทำความสะอาด';
     $isReadyToShip = !empty($data['isReadyToShip']) ? 1 : 0;
 
@@ -118,7 +121,8 @@ if ($method === 'POST' || $method === 'PUT') {
                 "original_price VARCHAR(100) DEFAULT ''",
                 "special_option VARCHAR(255) DEFAULT ''",
                 "gifts TEXT DEFAULT NULL",
-                "order_index INT DEFAULT 999"
+                "order_index INT DEFAULT 999",
+                "video_url VARCHAR(500) DEFAULT ''"
             ];
             foreach ($columnsToAdd as $colDef) {
                 $colName = explode(' ', $colDef)[0];
@@ -127,8 +131,8 @@ if ($method === 'POST' || $method === 'PUT') {
                 } catch (Exception $e) {}
             }
 
-            $sql = "INSERT INTO products (id, code, name, series, description, image, secondary_image, gallery_json, total_angles, category, categories_json, height, weight, bust, skin_tone, material, skeleton, price, original_price, special_option, gifts, order_index, is_ready_to_ship, is_active) 
-                    VALUES (:id, :code, :name, :series, :description, :image, :secondary_image, :gallery_json, :total_angles, :category, :categories_json, :height, :weight, :bust, :skin_tone, :material, :skeleton, :price, :original_price, :special_option, :gifts, :order_index, :is_ready_to_ship, 1)
+            $sql = "INSERT INTO products (id, code, name, series, description, image, secondary_image, gallery_json, total_angles, category, categories_json, height, weight, bust, skin_tone, material, skeleton, price, original_price, special_option, gifts, order_index, video_url, is_ready_to_ship, is_active) 
+                    VALUES (:id, :code, :name, :series, :description, :image, :secondary_image, :gallery_json, :total_angles, :category, :categories_json, :height, :weight, :bust, :skin_tone, :material, :skeleton, :price, :original_price, :special_option, :gifts, :order_index, :video_url, :is_ready_to_ship, 1)
                     ON DUPLICATE KEY UPDATE 
                         name = VALUES(name),
                         series = VALUES(series),
@@ -149,6 +153,7 @@ if ($method === 'POST' || $method === 'PUT') {
                         original_price = VALUES(original_price),
                         special_option = VALUES(special_option),
                         order_index = VALUES(order_index),
+                        video_url = VALUES(video_url),
                         gifts = VALUES(gifts),
                         is_ready_to_ship = VALUES(is_ready_to_ship),
                         is_active = 1,
@@ -177,6 +182,7 @@ if ($method === 'POST' || $method === 'PUT') {
                 'original_price' => $originalPrice,
                 'special_option' => $specialOption,
                 'order_index' => $orderIndex,
+                'video_url' => $videoUrl,
                 'gifts' => $gifts,
                 'is_ready_to_ship' => $isReadyToShip
             ]);

@@ -117,7 +117,8 @@ $columnsToAdd = [
     "original_price VARCHAR(100) DEFAULT ''",
     "special_option VARCHAR(255) DEFAULT ''",
     "gifts TEXT DEFAULT NULL",
-    "order_index INT DEFAULT 999"
+    "order_index INT DEFAULT 999",
+    "video_url VARCHAR(500) DEFAULT ''"
 ];
 foreach ($columnsToAdd as $colDef) {
     try {

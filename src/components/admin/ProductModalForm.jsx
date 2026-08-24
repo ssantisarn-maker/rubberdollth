@@ -23,6 +23,7 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
     gifts: 'ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล, วิกผมเกรดพรีเมียม สัมผัสนุ่มลื่น, แป้งฝุ่นบำรุงผิว Silky Smooth Powder, เซ็ตอุปกรณ์ทำความสะอาดและดูแลรักษาครบวงจร',
     isReadyToShip: false,
     orderIndex: 999,
+    videoUrl: '',
     image: '',
     secondaryImage: '',
     gallery: []
@@ -31,6 +32,36 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
   const [uploading, setUploading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [newImageUrl, setNewImageUrl] = useState('');
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+
+  const handleVideoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingVideo(true);
+    const form = new FormData();
+    form.append('video', file);
+    form.append('code', formData.code || 'PROD');
+
+    try {
+      const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
+      const res = await fetch('/api/upload.php', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: form
+      });
+      const data = await res.json();
+      if (data.success && data.url) {
+        setFormData(prev => ({ ...prev, videoUrl: data.url }));
+        alert('อัปโหลดวิดีโอตัวอย่างสินค้าสำเร็จ!');
+      }
+    } catch (err) {
+      alert('เกิดข้อผิดพลาดในการอัปโหลดวิดีโอ');
+    } finally {
+      setUploadingVideo(false);
+    }
+  };
+
 
   useEffect(() => {
     if (product) {
@@ -55,6 +86,7 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
         originalPrice: product.originalPrice || product.original_price || '',
         specialOption: product.specialOption || product.special_option || '',
         orderIndex: product.orderIndex ?? product.order_index ?? 999,
+        videoUrl: product.videoUrl || product.video_url || '',
         gifts: product.gifts || 'ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล, วิกผมเกรดพรีเมียม สัมผัสนุ่มลื่น, แป้งฝุ่นบำรุงผิว Silky Smooth Powder, เซ็ตอุปกรณ์ทำความสะอาดและดูแลรักษาครบวงจร'
       });
     }
@@ -302,6 +334,56 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
                 </button>
               </div>
             </div>
+          </div>
+
+                    {/* Section: Product Video (วิดีโอคลิปตัวอย่างสินค้า) */}
+          <div className="p-4 bg-purple-50/60 border border-purple-200/70 rounded-3xl space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <label className="font-bold text-purple-950 text-xs sm:text-sm flex items-center gap-1.5">
+                  <span>🎬 วิดีโอตัวอย่างสินค้าจริง (Product Video Clip / YouTube)</span>
+                </label>
+                <p className="text-[11px] text-purple-800">
+                  อัปโหลดไฟล์วิดีโอ (MP4/WebM) หรือวางลิงก์ YouTube เพื่อให้ลูกค้ากดดูวิดีโอเคลื่อนไหว 360° บนหน้าเว็บ
+                </p>
+              </div>
+
+              <label className="px-4 py-2 bg-purple-800 text-white rounded-2xl text-xs font-semibold cursor-pointer hover:bg-purple-900 transition-colors flex items-center justify-center gap-2 shadow-sm shrink-0">
+                <Upload className="w-3.5 h-3.5" />
+                <span>{uploadingVideo ? 'กำลังอัปโหลดวิดีโอ...' : '+ อัปโหลดไฟล์วิดีโอ (MP4)'}</span>
+                <input
+                  type="file"
+                  accept="video/mp4,video/webm,video/quicktime"
+                  onChange={handleVideoUpload}
+                  disabled={uploadingVideo}
+                  className="hidden"
+                />
+              </label>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-semibold text-ink-muted">หรือวางลิงก์ URL วิดีโอ (MP4, YouTube, หรือ ลิงก์ตรง):</label>
+              <input
+                type="text"
+                value={formData.videoUrl}
+                onChange={e => setFormData({ ...formData, videoUrl: e.target.value })}
+                placeholder="เช่น https://www.youtube.com/watch?v=... หรือ /images/videos/demo.mp4"
+                className="w-full px-3.5 py-2 bg-white border border-purple-300 rounded-xl text-xs focus:outline-none focus:border-purple-600 font-mono"
+              />
+            </div>
+
+            {formData.videoUrl && (
+              <div className="p-2 bg-white rounded-xl border border-purple-200 flex items-center justify-between text-xs">
+                <span className="text-purple-900 font-semibold truncate max-w-md">▶ มีวิดีโอ: {formData.videoUrl}</span>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, videoUrl: '' })}
+                  className="text-rose-600 hover:text-rose-800 font-semibold px-2 py-0.5"
+                >
+                  ลบวิดีโอออก
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Section 2: Basic Info (Code, Name, Series) */}

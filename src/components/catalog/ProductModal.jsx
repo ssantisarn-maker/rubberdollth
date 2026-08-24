@@ -5,6 +5,7 @@ import { translations } from '../../data/translations';
 
 export default function ProductModal({ product, onClose, isAdultMode, lang = 'th' }) {
   const [activeImageIdx, setActiveImageIdx] = useState(0);
+  const [showVideo, setShowVideo] = useState(false);
   const t = translations[lang] || translations.th;
 
   useEffect(() => {
@@ -67,20 +68,42 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
           {/* Left: Product Image & Gallery Thumbnails */}
           <div className="md:col-span-6 space-y-3">
             
-            {/* Main Featured Image */}
+            {/* Main Featured Image or Video Player */}
             <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-sand-100 border border-sand-200 shadow-sm">
-              <img
-                src={currentImage}
-                alt={seoImageAlt}
-                title={seoImageAlt}
-                width="600"
-                height="800"
-                className="w-full h-full object-cover object-top transition-all duration-300"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = product.image || '/favicon.png';
-                }}
-              />
+              {showVideo && (product.videoUrl || product.video_url) ? (
+                <div className="w-full h-full bg-black flex items-center justify-center relative">
+                  {(product.videoUrl || product.video_url).includes('youtube.com') || (product.videoUrl || product.video_url).includes('youtu.be') ? (
+                    <iframe
+                      src={(product.videoUrl || product.video_url).replace('watch?v=', 'embed/')}
+                      title="วิดีโอตัวอย่างสินค้า"
+                      className="w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <video
+                      src={product.videoUrl || product.video_url}
+                      controls
+                      autoPlay
+                      playsInline
+                      className="w-full h-full object-contain"
+                    />
+                  )}
+                </div>
+              ) : (
+                <img
+                  src={currentImage}
+                  alt={seoImageAlt}
+                  title={seoImageAlt}
+                  width="600"
+                  height="800"
+                  className="w-full h-full object-cover object-top transition-all duration-300"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = product.image || '/favicon.png';
+                  }}
+                />
+              )}
               <div className="absolute top-3 left-3 bg-white/95 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-sans font-extrabold text-ink shadow-2xs border border-sand-200">
                 {product.code}
               </div>
@@ -122,8 +145,32 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
               </div>
             </div>
 
+            {/* Photo / Video Mode Switcher */}
+            {(product.videoUrl || product.video_url) && (
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setShowVideo(false)}
+                  className={`flex-1 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                    !showVideo ? 'bg-ink text-white shadow-xs' : 'bg-sand-100 text-ink hover:bg-sand-200'
+                  }`}
+                >
+                  <span>📸 ดูรูปภาพ ({galleryImages.length})</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowVideo(true)}
+                  className={`flex-1 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                    showVideo ? 'bg-purple-800 text-white shadow-xs' : 'bg-purple-100 text-purple-900 hover:bg-purple-200'
+                  }`}
+                >
+                  <span>🎬 ดูวิดีโอตัวจริง HD</span>
+                </button>
+              </div>
+            )}
+
             {/* Gallery Thumbnails */}
-            {galleryImages.length > 1 && (
+            {!showVideo && galleryImages.length > 1 && (
               <div className="flex items-center gap-2 pt-1 overflow-x-auto pb-1 scrollbar-none">
                 {galleryImages.map((img, idx) => (
                   <button

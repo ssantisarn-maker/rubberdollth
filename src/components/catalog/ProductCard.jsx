@@ -93,8 +93,13 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
           )}
         </div>
 
-        {/* Top Right: 18+ Mode or Height */}
+        {/* Top Right: Video Badge, 18+ Mode or Height */}
         <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex items-center gap-1 pointer-events-none z-10">
+          {(product.videoUrl || product.video_url) && (
+            <span className="bg-purple-700 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full shadow-2xs flex items-center gap-1 animate-pulse">
+              ▶ วิดีโอ
+            </span>
+          )}
           {isAdultMode ? (
             <span className="bg-rose-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full shadow-2xs flex items-center gap-0.5">
               <Flame className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-white" /> 18+
