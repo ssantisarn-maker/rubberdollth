@@ -409,7 +409,7 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-semibold text-ink">⚖️ น้ำหนักสุทธิ (Weight)</label>
+                <label className="font-semibold text-ink">⚖️ น้ำหนัก (Weight)</label>
                 <input
                   type="text"
                   value={formData.weight}
