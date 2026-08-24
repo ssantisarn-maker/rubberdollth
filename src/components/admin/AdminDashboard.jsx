@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Tag, Settings, Globe, LogOut, ShieldCheck, Database, RefreshCw, Star } from 'lucide-react';
+import { Package, Tag, Settings, Globe, LogOut, ShieldCheck, Database, RefreshCw, Star, HelpCircle, Sliders } from 'lucide-react';
 import ProductManager from './ProductManager';
 import CategoryManager from './CategoryManager';
 import ReviewManager from './ReviewManager';
+import SiteSettingsManager from './SiteSettingsManager';
+import FaqManager from './FaqManager';
 import AdminLogin from './AdminLogin';
 import { useLiveProducts } from '../../hooks/useLiveProducts';
 import { useLiveReviews } from '../../hooks/useLiveReviews';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
+import { useSiteFaqs } from '../../hooks/useSiteFaqs';
 
 export default function AdminDashboard({ onBackToShop }) {
   const [authenticated, setAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState('products'); // 'products' | 'categories' | 'reviews' | 'database'
+  const [activeTab, setActiveTab] = useState('products'); // 'products' | 'reviews' | 'settings' | 'faqs' | 'categories'
+  
   const { products, setProducts, reload: reloadProducts, loading: prodLoading } = useLiveProducts();
   const { reviews, setReviews, reload: reloadReviews, loading: revLoading } = useLiveReviews();
+  const { settings, setSettings, reload: reloadSettings, loading: setLoading } = useSiteSettings();
+  const { faqs, setFaqs, reload: reloadFaqs, loading: faqLoading } = useSiteFaqs();
 
   const [categories, setCategories] = useState([
     { id: 'all', label_th: 'สินค้าทั้งหมด', label_en: 'All Masterpieces' },
@@ -25,13 +32,11 @@ export default function AdminDashboard({ onBackToShop }) {
   ]);
 
   useEffect(() => {
-    // Check session
     const token = localStorage.getItem('rbd_admin_token');
     if (token) {
       setAuthenticated(true);
     }
 
-    // Fetch live categories
     fetch('/api/categories.php')
       .then(res => res.json())
       .then(data => {
@@ -52,13 +57,15 @@ export default function AdminDashboard({ onBackToShop }) {
   const handleRefreshAll = () => {
     reloadProducts();
     reloadReviews();
+    reloadSettings();
+    reloadFaqs();
   };
 
   if (!authenticated) {
     return <AdminLogin onLoginSuccess={() => setAuthenticated(true)} onBackToShop={onBackToShop} />;
   }
 
-  const isLoading = prodLoading || revLoading;
+  const isLoading = prodLoading || revLoading || setLoading || faqLoading;
 
   return (
     <div className="min-h-screen bg-sand-100 flex flex-col selection:bg-bronze selection:text-white">
@@ -74,7 +81,7 @@ export default function AdminDashboard({ onBackToShop }) {
             </div>
             <div>
               <h1 className="text-sm font-bold text-ink leading-tight">RUBBER DOLL THAILAND</h1>
-              <span className="text-[10px] text-bronze font-semibold">ระบบจัดการหลังบ้าน (Admin CMS)</span>
+              <span className="text-[10px] text-bronze font-semibold">ระบบจัดการหลังบ้าน (Full-Site Admin CMS)</span>
             </div>
           </div>
 
@@ -113,6 +120,7 @@ export default function AdminDashboard({ onBackToShop }) {
       <div className="bg-white border-b border-sand-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex gap-2 sm:gap-4 overflow-x-auto scrollbar-none py-2">
           
+          {/* Tab 1: Products */}
           <button
             onClick={() => setActiveTab('products')}
             className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${
@@ -125,6 +133,7 @@ export default function AdminDashboard({ onBackToShop }) {
             <span>จัดการสินค้า ({products.length})</span>
           </button>
 
+          {/* Tab 2: Reviews */}
           <button
             onClick={() => setActiveTab('reviews')}
             className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${
@@ -137,6 +146,33 @@ export default function AdminDashboard({ onBackToShop }) {
             <span>จัดการรีวิวลูกค้า ({reviews.length})</span>
           </button>
 
+          {/* Tab 3: Site Settings */}
+          <button
+            onClick={() => setActiveTab('settings')}
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${
+              activeTab === 'settings'
+                ? 'bg-ink text-white shadow-sm'
+                : 'text-ink-soft hover:bg-sand-100 hover:text-ink'
+            }`}
+          >
+            <Sliders className="w-4 h-4 text-bronze" />
+            <span>ตั้งค่าเว็บไซต์ & ข้อมูลติดต่อ</span>
+          </button>
+
+          {/* Tab 4: FAQs */}
+          <button
+            onClick={() => setActiveTab('faqs')}
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${
+              activeTab === 'faqs'
+                ? 'bg-ink text-white shadow-sm'
+                : 'text-ink-soft hover:bg-sand-100 hover:text-ink'
+            }`}
+          >
+            <HelpCircle className="w-4 h-4 text-amber-600" />
+            <span>คำถามที่พบบ่อย ({faqs.length})</span>
+          </button>
+
+          {/* Tab 5: Categories */}
           <button
             onClick={() => setActiveTab('categories')}
             className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${
@@ -149,6 +185,7 @@ export default function AdminDashboard({ onBackToShop }) {
             <span>จัดการหมวดหมู่ ({categories.length})</span>
           </button>
 
+          {/* Database installer link */}
           <a
             href="/api/init_db.php"
             target="_blank"
@@ -176,6 +213,20 @@ export default function AdminDashboard({ onBackToShop }) {
           <ReviewManager
             reviews={reviews}
             onUpdateReviews={setReviews}
+          />
+        )}
+
+        {activeTab === 'settings' && (
+          <SiteSettingsManager
+            settings={settings}
+            onUpdateSettings={setSettings}
+          />
+        )}
+
+        {activeTab === 'faqs' && (
+          <FaqManager
+            faqs={faqs}
+            onUpdateFaqs={setFaqs}
           />
         )}
 

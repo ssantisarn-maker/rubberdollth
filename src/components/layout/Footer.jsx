@@ -1,10 +1,15 @@
 import React from 'react';
-import { Sparkles, MessageCircle, Mail, Globe } from 'lucide-react';
+import { Sparkles, MessageCircle, Mail, Globe, Phone } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
 
 export default function Footer({ lang = 'th', onSetLang }) {
+  const { settings } = useSiteSettings();
   const t = translations[lang] || translations.th;
+
+  const lineUrl = settings.line_url || siteConfig.lineUrl;
+  const lineId = settings.line_id || siteConfig.lineId;
 
   return (
     <footer className="bg-sand-900 text-sand-200 pt-16 pb-12 border-t border-sand-800">
@@ -27,10 +32,10 @@ export default function Footer({ lang = 'th', onSetLang }) {
               </span>
             </div>
             <p className="text-xs text-sand-400 leading-relaxed font-light max-w-sm">
-              {t.footer.desc}
+              {settings.site_subtitle || t.footer.desc}
             </p>
             
-            {/* Language Switcher in Footer */}
+            {/* Language Switcher */}
             <div className="pt-2 flex items-center gap-2">
               <span className="text-xs text-sand-400">Language:</span>
               <div className="inline-flex items-center bg-sand-800 p-0.5 rounded-full border border-sand-700">
@@ -71,12 +76,15 @@ export default function Footer({ lang = 'th', onSetLang }) {
           <div className="md:col-span-4 space-y-3">
             <h4 className="font-sans text-sm font-bold text-white uppercase tracking-wider">{t.nav.contact}</h4>
             <p className="text-xs text-sand-400 font-light">
-              LINE Official: <strong className="text-white font-mono">@{siteConfig.lineId}</strong><br />
-              Email: <strong className="text-white font-mono">{siteConfig.contactEmail}</strong>
+              LINE Official: <strong className="text-white font-mono">{lineId}</strong><br />
+              {settings.phone && (
+                <>โทรศัพท์: <strong className="text-white font-mono">{settings.phone}</strong><br /></>
+              )}
+              เวลาทำการ: <span className="text-sand-300">{settings.business_hours || 'ทุกวัน 24 ชม.'}</span>
             </p>
             <div className="pt-2">
               <a
-                href={siteConfig.lineUrl}
+                href={lineUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-[#06C755] text-white px-4 py-2 rounded-xl text-xs font-bold shadow hover:bg-[#05b34c] transition-colors"

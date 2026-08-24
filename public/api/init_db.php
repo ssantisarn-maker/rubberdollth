@@ -68,6 +68,22 @@ CREATE TABLE IF NOT EXISTS products (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS site_settings (
+    setting_key VARCHAR(100) PRIMARY KEY,
+    setting_value LONGTEXT NOT NULL,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS site_faqs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    question TEXT NOT NULL,
+    answer LONGTEXT NOT NULL,
+    category VARCHAR(50) DEFAULT 'general',
+    order_index INT DEFAULT 0,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS customer_reviews (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -165,6 +181,35 @@ if ($stmt->fetchColumn() == 0 && file_exists(__DIR__ . '/reviews_cache.json')) {
         ]);
     }
 }
+
+// 6. Site Settings Seeding
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM site_settings");
+$stmt->execute();
+if ($stmt->fetchColumn() == 0 && file_exists(__DIR__ . '/settings_cache.json')) {
+    $jsonSettings = json_decode(file_get_contents(__DIR__ . '/settings_cache.json'), true);
+    $stmtSet = $pdo->prepare("INSERT INTO site_settings (setting_key, setting_value) VALUES (:k, :v) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)");
+    foreach ($jsonSettings as $k => $v) {
+        $stmtSet->execute(['k' => $k, 'v' => is_string($v) ? $v : json_encode($v, JSON_UNESCAPED_UNICODE)]);
+    }
+}
+
+// 7. FAQs Seeding
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM site_faqs");
+$stmt->execute();
+if ($stmt->fetchColumn() == 0 && file_exists(__DIR__ . '/faqs_cache.json')) {
+    $jsonFaqs = json_decode(file_get_contents(__DIR__ . '/faqs_cache.json'), true);
+    $stmtFaq = $pdo->prepare("INSERT INTO site_faqs (id, question, answer, category, order_index, is_active) VALUES (:id, :q, :a, :cat, :ord, 1)");
+    foreach ($jsonFaqs as $f) {
+        $stmtFaq->execute([
+            'id' => $f['id'],
+            'q' => $f['question'],
+            'a' => $f['answer'],
+            'cat' => $f['category'] ?? 'general',
+            'ord' => $f['order_index'] ?? 0
+        ]);
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="th">

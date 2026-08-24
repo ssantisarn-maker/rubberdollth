@@ -2,9 +2,18 @@ import React from 'react';
 import { Shield, Sparkles, MessageCircle, ArrowRight, CheckCircle2, Star } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
 
 export default function HeroSection({ onExploreClick, lang = 'th' }) {
+  const { settings } = useSiteSettings();
   const t = translations[lang] || translations.th;
+
+  const heroTag = settings.hero_tag || t.hero.badge;
+  const heroTitle = settings.hero_title || t.hero.title2;
+  const heroSubtitle = settings.hero_subtitle || t.hero.subtitle;
+  const lineUrl = settings.line_url || siteConfig.lineUrl;
+  const btnPrimary = settings.hero_btn_primary_text || t.hero.btnCatalog;
+  const btnSecondary = settings.hero_btn_secondary_text || t.hero.btnConsult;
 
   return (
     <section className="relative overflow-hidden bg-sand-100/50 pt-12 pb-16 sm:pt-20 sm:pb-28 border-b border-sand-200">
@@ -21,7 +30,7 @@ export default function HeroSection({ onExploreClick, lang = 'th' }) {
             {/* Top Pill Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-sand-300/80 shadow-2xs text-xs font-medium text-ink-soft">
               <Sparkles className="w-3.5 h-3.5 text-bronze" />
-              <span>{t.hero.badge}</span>
+              <span>{heroTag}</span>
             </div>
 
             {/* Main Headline */}
@@ -30,13 +39,13 @@ export default function HeroSection({ onExploreClick, lang = 'th' }) {
                 {t.hero.title1}
               </p>
               <h1 className="font-sans text-3xl sm:text-5xl lg:text-6xl font-bold text-ink leading-[1.15] tracking-tight">
-                {t.hero.title2}
+                {heroTitle}
               </h1>
             </div>
 
             {/* Subtitle */}
-            <p className="text-sm sm:text-base text-ink-muted max-w-2xl mx-auto lg:mx-0 leading-relaxed font-light">
-              {t.hero.subtitle}
+            <p className="text-sm sm:text-base text-ink-muted max-w-2xl mx-auto lg:mx-0 leading-relaxed font-light whitespace-pre-line">
+              {heroSubtitle}
             </p>
 
             {/* CTA Action Buttons */}
@@ -45,18 +54,18 @@ export default function HeroSection({ onExploreClick, lang = 'th' }) {
                 onClick={onExploreClick}
                 className="w-full sm:w-auto px-8 py-4 rounded-full bg-ink hover:bg-sand-900 text-white text-xs sm:text-sm font-semibold tracking-wide shadow-soft hover:shadow-soft-hover transition-all duration-200 flex items-center justify-center gap-2 group active:scale-98"
               >
-                <span>{t.hero.btnCatalog}</span>
+                <span>{btnPrimary}</span>
                 <ArrowRight className="w-4 h-4 text-bronze group-hover:translate-x-1 transition-transform" />
               </button>
 
               <a
-                href={siteConfig.lineUrl}
+                href={lineUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto px-7 py-4 rounded-full bg-white hover:bg-sand-100 text-ink border border-sand-300 text-xs sm:text-sm font-semibold tracking-wide shadow-2xs transition-all duration-200 flex items-center justify-center gap-2"
               >
                 <MessageCircle className="w-4 h-4 text-[#06C755]" />
-                <span>{t.hero.btnConsult}</span>
+                <span>{btnSecondary}</span>
               </a>
             </div>
 
@@ -82,13 +91,11 @@ export default function HeroSection({ onExploreClick, lang = 'th' }) {
           <div className="lg:col-span-5 relative">
             
             <div className="relative mx-auto max-w-md lg:max-w-none">
-              {/* Glow Behind */}
               <div className="absolute -inset-2 bg-gradient-to-tr from-bronze/20 to-sand-300/40 rounded-3xl blur-xl" />
 
-              {/* Main Visual Image */}
               <div className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-modal border border-sand-300 bg-sand-200">
                 <img
-                  src="https://cdn.zyrosite.com/cdn-ecommerce/store_01KYYQFNVFQMCAMTY5SZA4J5H8/assets/7ee33a0f-4684-42bb-b140-e282b3df64a3.jpg"
+                  src={settings.hero_bg_image || "https://cdn.zyrosite.com/cdn-ecommerce/store_01KYYQFNVFQMCAMTY5SZA4J5H8/assets/7ee33a0f-4684-42bb-b140-e282b3df64a3.jpg"}
                   alt="RUBBER DOLL THAILAND ตุ๊กตายางพรีเมียม ซิลิโคนแท้"
                   title="RUBBER DOLL THAILAND ตุ๊กตายางพรีเมียม ซิลิโคนแท้"
                   width="600"
@@ -96,31 +103,28 @@ export default function HeroSection({ onExploreClick, lang = 'th' }) {
                   className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700 ease-out"
                 />
 
-                {/* Floating Discreet Guarantee Card */}
                 <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl border border-sand-200 shadow-soft flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700">
                       <Shield className="w-4 h-4" />
                     </div>
-                    <div className="text-left">
-                      <div className="text-xs font-bold text-ink">{t.values.v2_title}</div>
-                      <div className="text-[10px] text-ink-muted font-light">{t.values.v2_desc}</div>
+                    <div>
+                      <div className="text-xs font-bold text-ink">{settings.trust_discrete_title || '100% Secret Packaging'}</div>
+                      <div className="text-[10px] text-ink-muted">ไม่ระบุชื่อสินค้าหน้ากล่องพัสดุ</div>
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 shrink-0">
-                    100%
+                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    VERIFIED
                   </span>
                 </div>
 
               </div>
-
             </div>
 
           </div>
 
         </div>
       </div>
-
     </section>
   );
 }

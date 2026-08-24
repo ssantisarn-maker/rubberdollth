@@ -1,0 +1,66 @@
+import { useState, useEffect } from 'react';
+
+const defaultFaqs = [
+  {
+    id: 1,
+    question: 'การจัดส่งพัสดุมิดชิดแค่ไหน คนอื่นหรือคนในบ้านจะรู้ไหม?',
+    answer: 'สบายใจได้ 100% ครับ ทางร้านใช้กล่องพัสดุสีน้ำตาลหนาพิเศษ 2 ชั้น ซีลทึบสนิท ไม่มีชื่อร้าน ไม่มีรูปภาพ และไม่มีคำว่า "ตุ๊กตายาง" หรือข้อความล่อแหลมใดๆ บนหน้ากล่อง โดยจะระบุเป็น "อุปกรณ์ตกแต่งบ้าน / อะไหล่สแตนเลส" เพื่อรักษาความเป็นส่วนตัวสูงสุดของลูกค้าครับ',
+    category: 'shipping',
+    order_index: 1
+  },
+  {
+    id: 2,
+    question: 'สินค้าพร้อมส่งในไทยไหม ใช้เวลากี่วันถึง?',
+    answer: 'สำหรับสินค้าในหมวด "สินค้าพร้อมส่ง (Ready to Ship)" มีสต็อกในไทยพร้อมตรวจเช็ค QC ทันที ในเขตกรุงเทพฯ และปริมณฑล สามารถจัดส่งด่วนพิเศษได้รับของภายใน 2-3 ชั่วโมง สำหรับต่างจังหวัด จัดส่งผ่านขนส่งเอกชนชั้นนำ ถึงมือคุณภายใน 1-2 วันครับ',
+    category: 'shipping',
+    order_index: 2
+  },
+  {
+    id: 3,
+    question: 'วัสดุเป็นแบบไหน และแตกต่างจากตุ๊กตายางทั่วไปอย่างไร?',
+    answer: 'สินค้าของ RUBBER DOLL THAILAND ผลิตจาก Pure Medical Silicone เกรดการแพทย์พรีเมียม และ TPE คุณภาพสูง สัมผัสนุ่มลื่น มีความยืดหยุ่นและอุณหภูมิผิวใกล้เคียงมนุษย์จริง ปราศจากสารพิษ ไร้กลิ่นฉุน พร้อมโครงสร้างข้อต่อ Stainless-Steel Frame ปรับท่าทางได้ 360 องศา แข็งแรงทนทานใช้งานได้ยาวนานหลายปีครับ',
+    category: 'product',
+    order_index: 3
+  },
+  {
+    id: 4,
+    question: 'วิธีการทำความสะอาดและดูแลรักษาทำอย่างไร?',
+    answer: 'ทำความสะอาดง่ายมากครับ เพียงล้างด้วยน้ำอุ่นผสมสบู่อ่อนหรือน้ำยาทำความสะอาดเฉพาะทาง จากนั้นซับน้ำให้แห้งด้วยผ้าไมโครไฟเบอร์ แล้วทาด้วยแป้งฝุ่นบำรุงผิว Silky Smooth Powder ที่แถมไปในเซ็ต เพื่อให้ผิวนุ่มลื่น ไม่เหนียวเหนอะหนะ พร้อมใช้งานในครั้งต่อไปครับ',
+    category: 'care',
+    order_index: 4
+  },
+  {
+    id: 5,
+    question: 'สั่งซื้อแล้วได้รับของแถมอะไรบ้างในเซ็ต?',
+    answer: 'ทุกคำสั่งซื้อจะได้รับ The Luxury Collector Box ประกอบด้วย: ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล 1 ชุด, วิกผมเกรดพรีเมียม, แป้งฝุ่นบำรุงผิว Silky Smooth, เซ็ตอุปกรณ์ทำความสะอาดครบวงจร และคู่มือการดูแลรักษาฉบับสมบูรณ์ครับ',
+    category: 'product',
+    order_index: 5
+  }
+];
+
+export function useSiteFaqs() {
+  const [faqs, setFaqs] = useState(defaultFaqs);
+  const [loading, setLoading] = useState(false);
+
+  const fetchFaqs = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/faqs.php');
+      if (!res.ok) throw new Error('FAQs API offline');
+      const data = await res.json();
+      if (data.success && Array.isArray(data.faqs) && data.faqs.length > 0) {
+        setFaqs(data.faqs);
+      }
+    } catch (err) {
+      console.warn('Using default FAQs:', err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFaqs();
+  }, []);
+
+  return { faqs, setFaqs, reload: fetchFaqs, loading };
+}
