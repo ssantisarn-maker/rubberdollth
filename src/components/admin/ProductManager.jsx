@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Edit, Trash2, CheckCircle2, XCircle, PackageCheck, Image as ImageIcon, Sparkles, Check } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, CheckCircle2, XCircle, PackageCheck, Image as ImageIcon, Sparkles, Check, ArrowUpDown, SlidersHorizontal, ArrowDownAZ, Calendar, Zap, ListOrdered } from 'lucide-react';
 import ProductModalForm from './ProductModalForm';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
 
 export default function ProductManager({ products, categories, onUpdateProducts }) {
   const [search, setSearch] = useState('');
@@ -9,6 +10,9 @@ export default function ProductManager({ products, categories, onUpdateProducts 
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [toggleLoading, setToggleLoading] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
+  
+  const { settings, setSettings } = useSiteSettings();
+  const [sortMode, setSortMode] = useState(settings.product_sort_mode || 'ready_first');
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -17,15 +21,72 @@ export default function ProductManager({ products, categories, onUpdateProducts 
     }, 4000);
   };
 
-  // Filter
+  // Change and save sort mode
+  const handleSortChange = async (newMode) => {
+    setSortMode(newMode);
+    try {
+      const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
+      const updatedSettings = { ...settings, product_sort_mode: newMode };
+      await fetch('/api/settings.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(updatedSettings)
+      });
+      setSettings(updatedSettings);
+      showToast('✓ บันทึกรูปแบบการจัดเรียงสินค้าบนหน้าเว็บแล้ว!');
+    } catch (e) {
+      showToast('✓ ปรับการจัดเรียงแล้ว');
+    }
+  };
+
+  // Sort function helper
+  const sortProducts = (list, mode) => {
+    const arr = [...list];
+    if (mode === 'ready_first') {
+      return arr.sort((a, b) => {
+        const aReady = a.isReadyToShip || a.is_ready_to_ship ? 1 : 0;
+        const bReady = b.isReadyToShip || b.is_ready_to_ship ? 1 : 0;
+        if (bReady !== aReady) return bReady - aReady;
+        const aOrd = a.order_index ?? a.orderIndex ?? 999;
+        const bOrd = b.order_index ?? b.orderIndex ?? 999;
+        if (aOrd !== bOrd) return aOrd - bOrd;
+        return (parseInt(a.id) || 0) - (parseInt(b.id) || 0);
+      });
+    }
+    if (mode === 'custom_order') {
+      return arr.sort((a, b) => {
+        const aOrd = a.order_index ?? a.orderIndex ?? 999;
+        const bOrd = b.order_index ?? b.orderIndex ?? 999;
+        if (aOrd !== bOrd) return aOrd - bOrd;
+        return (parseInt(a.id) || 0) - (parseInt(b.id) || 0);
+      });
+    }
+    if (mode === 'updated_desc') {
+      return arr.sort((a, b) => {
+        const aDate = new Date(a.updated_at || a.updatedAt || 0).getTime();
+        const bDate = new Date(b.updated_at || b.updatedAt || 0).getTime();
+        return bDate - aDate;
+      });
+    }
+    if (mode === 'code_asc') {
+      return arr.sort((a, b) => (a.code || '').localeCompare(b.code || '', undefined, { numeric: true }));
+    }
+    if (mode === 'id_asc') {
+      return arr.sort((a, b) => (parseInt(a.id) || 0) - (parseInt(b.id) || 0));
+    }
+    return arr;
+  };
+
+  // Filter & Sort
   const filtered = useMemo(() => {
-    return products.filter(p => {
+    const list = products.filter(p => {
       const matchSearch = (p.code || '').toLowerCase().includes(search.toLowerCase()) || 
                           (p.name || '').toLowerCase().includes(search.toLowerCase());
       const matchCat = selectedCat === 'all' || (p.categories && p.categories.includes(selectedCat));
       return matchSearch && matchCat;
     });
-  }, [products, search, selectedCat]);
+    return sortProducts(list, sortMode);
+  }, [products, search, selectedCat, sortMode]);
 
   // Quick Toggle Ready to Ship
   const handleToggleReady = async (prod) => {
@@ -88,7 +149,7 @@ export default function ProductManager({ products, categories, onUpdateProducts 
       });
       const data = await res.json();
       if (data.success) {
-        showToast(`✓ บันทึกข้อมูลสินค้า ${formData.code} ลงฐานข้อมูลเรียบร้อยแล้ว!`);
+        showToast(`✓ บันทึกข้อมูลสินค้า ${formData.code} สำเร็จ!`);
       }
     } catch (e) {
       showToast(`✓ บันทึกข้อมูลสินค้า ${formData.code} เรียบร้อยแล้ว!`);
@@ -115,43 +176,77 @@ export default function ProductManager({ products, categories, onUpdateProducts 
         </div>
       )}
 
-      {/* Top Bar: Search, Category Filter, and Add Button */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-sand-300 shadow-soft">
+      {/* Top Controls: Search, Sort Mode & Add Button */}
+      <div className="bg-white p-4 sm:p-6 rounded-3xl border border-sand-300 shadow-soft space-y-4">
         
-        {/* Search */}
-        <div className="relative flex-1">
-          <Search className="w-4 h-4 text-ink-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="ค้นหารหัสรุ่น (เช่น HALF-27) หรือชื่อสินค้า..."
-            className="w-full pl-10 pr-4 py-2.5 bg-sand-50 border border-sand-300 rounded-2xl text-xs sm:text-sm text-ink focus:outline-none focus:border-bronze focus:bg-white"
-          />
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+          
+          {/* Search Input */}
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-ink-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="ค้นหารหัสสินค้า (Code) หรือชื่อโมเดล..."
+              className="w-full pl-10 pr-4 py-2.5 bg-sand-50 border border-sand-300 rounded-2xl text-xs sm:text-sm text-ink focus:outline-none focus:border-bronze focus:bg-white"
+            />
+          </div>
+
+          {/* Sort Selector Dropdown */}
+          <div className="flex items-center gap-2 bg-sand-50 p-1.5 rounded-2xl border border-sand-300 shrink-0">
+            <ArrowUpDown className="w-4 h-4 text-bronze ml-2 shrink-0" />
+            <span className="text-xs font-semibold text-ink-muted hidden sm:inline">จัดเรียงสินค้า:</span>
+            <select
+              value={sortMode}
+              onChange={e => handleSortChange(e.target.value)}
+              className="bg-transparent text-xs sm:text-sm font-bold text-ink focus:outline-none pr-2 cursor-pointer"
+            >
+              <option value="ready_first">📦 สินค้าพร้อมส่งขึ้นก่อน (Ready to Ship First)</option>
+              <option value="custom_order">📌 เรียงตามลำดับตัวเลขที่กำหนดเอง (Order Index)</option>
+              <option value="updated_desc">🆕 เรียงตามสินค้าที่แก้ไขล่าสุด (Recently Updated)</option>
+              <option value="code_asc">🔤 เรียงตามรหัสสินค้า (Code A-Z)</option>
+              <option value="id_asc">🆔 เรียงตามลำดับ ID เริ่มต้น (Default ID)</option>
+            </select>
+          </div>
+
+          {/* Add Product Button */}
+          <button
+            onClick={() => setIsAddingNew(true)}
+            className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs sm:text-sm font-semibold shadow-md flex items-center justify-center gap-2 transition-all active:scale-98 shrink-0"
+          >
+            <Plus className="w-4 h-4" />
+            <span>เพิ่มสินค้าใหม่</span>
+          </button>
+
         </div>
 
-        {/* Category Filter */}
-        <select
-          value={selectedCat}
-          onChange={e => setSelectedCat(e.target.value)}
-          className="px-4 py-2.5 bg-sand-50 border border-sand-300 rounded-2xl text-xs sm:text-sm font-medium text-ink focus:outline-none focus:border-bronze"
-        >
-          <option value="all">ทุกหมวดหมู่ ({products.length})</option>
-          {categories.filter(c => c.id !== 'reviews').map(c => (
-            <option key={c.id} value={c.id}>
-              {c.label_th || c.label}
-            </option>
+        {/* Category Tabs */}
+        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none border-t border-sand-200 pt-3">
+          <button
+            onClick={() => setSelectedCat('all')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-colors ${
+              selectedCat === 'all'
+                ? 'bg-ink text-white font-semibold shadow-2xs'
+                : 'bg-sand-100/80 text-ink-soft hover:bg-sand-200/80'
+            }`}
+          >
+            ทั้งหมด ({products.length})
+          </button>
+          {categories.map(cat => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCat(cat.id)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-colors ${
+                selectedCat === cat.id
+                  ? 'bg-ink text-white font-semibold shadow-2xs'
+                  : 'bg-sand-100/80 text-ink-soft hover:bg-sand-200/80'
+              }`}
+            >
+              {cat.label_th || cat.label}
+            </button>
           ))}
-        </select>
-
-        {/* Add Product Button */}
-        <button
-          onClick={() => setIsAddingNew(true)}
-          className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs sm:text-sm font-semibold shadow-md flex items-center justify-center gap-2 transition-all active:scale-98 shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          <span>เพิ่มสินค้าใหม่</span>
-        </button>
+        </div>
 
       </div>
 
@@ -162,10 +257,11 @@ export default function ProductManager({ products, categories, onUpdateProducts 
             <thead className="bg-sand-100/70 border-b border-sand-200 text-ink-muted font-semibold text-[11px] uppercase tracking-wider">
               <tr>
                 <th className="py-3.5 px-4">รูปภาพ</th>
-                <th className="py-3.5 px-4">รหัส / ชื่อรุ่น</th>
-                <th className="py-3.5 px-4">สเปก (ส่วนสูง/นน.)</th>
-                <th className="py-3.5 px-4">หมวดหมู่</th>
-                <th className="py-3.5 px-4 text-center">พร้อมส่งในไทย</th>
+                <th className="py-3.5 px-4">รหัส / ชื่อสินค้า</th>
+                <th className="py-3.5 px-4">ราคาพิเศษ</th>
+                <th className="py-3.5 px-4">สเปก (สูง / หนัก)</th>
+                <th className="py-3.5 px-4">สถานะสต็อกไทย</th>
+                <th className="py-3.5 px-4 text-center">ลำดับ</th>
                 <th className="py-3.5 px-4 text-right">จัดการ</th>
               </tr>
             </thead>
@@ -173,51 +269,73 @@ export default function ProductManager({ products, categories, onUpdateProducts 
               {filtered.map(p => (
                 <tr key={p.code} className="hover:bg-sand-50/60 transition-colors">
                   
-                  {/* Image */}
+                  {/* Photo thumbnail */}
                   <td className="py-3 px-4">
-                    <img
-                      src={p.image}
-                      alt={p.code}
-                      className="w-12 h-12 object-cover rounded-xl border border-sand-300 shadow-2xs"
-                      onError={e => { e.target.src = '/favicon.png'; }}
-                    />
+                    <div className="relative w-12 h-14 rounded-xl overflow-hidden border border-sand-300 bg-sand-100 shadow-2xs">
+                      <img
+                        src={p.image}
+                        alt={p.name}
+                        className="w-full h-full object-cover object-top"
+                        onError={e => { e.target.src = '/favicon.png'; }}
+                      />
+                      {p.gallery && p.gallery.length > 1 && (
+                        <div className="absolute bottom-0 right-0 bg-ink/70 text-white text-[9px] px-1 rounded-tl">
+                          {p.gallery.length}
+                        </div>
+                      )}
+                    </div>
                   </td>
 
                   {/* Code & Name */}
                   <td className="py-3 px-4">
-                    <span className="font-bold font-sans text-ink block">{p.code}</span>
-                    <span className="text-xs text-ink-muted">{p.name}</span>
+                    <span className="font-extrabold text-ink block font-mono">{p.code}</span>
+                    <span className="text-ink-soft line-clamp-1">{p.name}</span>
+                    <span className="text-[10px] text-bronze font-medium block">{p.series || p.category}</span>
+                  </td>
+
+                  {/* Price */}
+                  <td className="py-3 px-4">
+                    <span className="font-bold text-emerald-800 font-sans block">{p.price || 'สอบถาม LINE'}</span>
+                    {p.originalPrice && (
+                      <span className="text-[10px] text-ink-muted line-through font-sans block">{p.originalPrice}</span>
+                    )}
                   </td>
 
                   {/* Specs */}
                   <td className="py-3 px-4 text-xs text-ink-soft">
-                    <span>{p.height || '-'}</span> | <span>{p.weight || '-'}</span>
+                    <div>สูง: <strong className="text-ink">{p.height || '-'}</strong></div>
+                    <div>หนัก: <strong className="text-ink">{p.weight || '-'}</strong></div>
                   </td>
 
-                  {/* Categories Pills */}
+                  {/* Ready to ship quick toggle */}
                   <td className="py-3 px-4">
-                    <div className="flex flex-wrap gap-1">
-                      {p.categories?.map(c => (
-                        <span key={c} className="text-[10px] px-2 py-0.5 bg-sand-100 border border-sand-200 rounded-md text-ink-muted font-medium">
-                          {c}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
-
-                  {/* Ready Toggle */}
-                  <td className="py-3 px-4 text-center">
                     <button
+                      type="button"
                       onClick={() => handleToggleReady(p)}
                       disabled={toggleLoading === p.code}
-                      className={`px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1 transition-all ${
-                        p.isReadyToShip 
-                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs' 
-                          : 'bg-sand-100 text-ink-muted hover:bg-sand-200'
+                      className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                        p.isReadyToShip || (p.categories && p.categories.includes('ready'))
+                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-200'
+                          : 'bg-sand-200/60 text-ink-muted border border-sand-300 hover:bg-sand-200'
                       }`}
                     >
-                      {p.isReadyToShip ? '✓ พร้อมส่ง' : 'สั่งผลิต'}
+                      {p.isReadyToShip ? (
+                        <>
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>พร้อมส่ง (ไทย)</span>
+                        </>
+                      ) : (
+                        <>
+                          <XCircle className="w-3.5 h-3.5 text-ink-muted" />
+                          <span>สั่งผลิต</span>
+                        </>
+                      )}
                     </button>
+                  </td>
+
+                  {/* Order Index */}
+                  <td className="py-3 px-4 text-center font-mono font-bold text-xs text-ink-muted">
+                    {p.order_index ?? p.orderIndex ?? '-'}
                   </td>
 
                   {/* Actions */}
@@ -226,7 +344,7 @@ export default function ProductManager({ products, categories, onUpdateProducts 
                       <button
                         onClick={() => setEditingProduct(p)}
                         className="px-3 py-1.5 rounded-xl bg-sand-100 hover:bg-sand-200 text-ink text-xs font-semibold flex items-center gap-1 transition-colors border border-sand-300"
-                        title="แก้ไขสินค้า"
+                        title="แก้ไขข้อมูลสินค้า"
                       >
                         <Edit className="w-3.5 h-3.5 text-bronze" />
                         <span>แก้ไข</span>
@@ -254,7 +372,7 @@ export default function ProductManager({ products, categories, onUpdateProducts 
         )}
       </div>
 
-      {/* Modal Form for Add/Edit */}
+      {/* Edit/Create Modal */}
       {(isAddingNew || editingProduct) && (
         <ProductModalForm
           product={editingProduct}

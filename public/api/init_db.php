@@ -116,7 +116,8 @@ $columnsToAdd = [
     "skeleton VARCHAR(255) DEFAULT ''",
     "original_price VARCHAR(100) DEFAULT ''",
     "special_option VARCHAR(255) DEFAULT ''",
-    "gifts TEXT DEFAULT NULL"
+    "gifts TEXT DEFAULT NULL",
+    "order_index INT DEFAULT 999"
 ];
 foreach ($columnsToAdd as $colDef) {
     try {

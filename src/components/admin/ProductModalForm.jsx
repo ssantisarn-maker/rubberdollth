@@ -22,6 +22,7 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
     specialOption: '',
     gifts: 'ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล, วิกผมเกรดพรีเมียม สัมผัสนุ่มลื่น, แป้งฝุ่นบำรุงผิว Silky Smooth Powder, เซ็ตอุปกรณ์ทำความสะอาดและดูแลรักษาครบวงจร',
     isReadyToShip: false,
+    orderIndex: 999,
     image: '',
     secondaryImage: '',
     gallery: []
@@ -53,6 +54,7 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
         skeleton: product.skeleton || 'EVO Stainless-Steel 360° Articulated Frame',
         originalPrice: product.originalPrice || product.original_price || '',
         specialOption: product.specialOption || product.special_option || '',
+        orderIndex: product.orderIndex ?? product.order_index ?? 999,
         gifts: product.gifts || 'ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล, วิกผมเกรดพรีเมียม สัมผัสนุ่มลื่น, แป้งฝุ่นบำรุงผิว Silky Smooth Powder, เซ็ตอุปกรณ์ทำความสะอาดและดูแลรักษาครบวงจร'
       });
     }
@@ -334,15 +336,28 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="font-semibold text-ink">ซีรีส์สินค้า (Series / Subtitle)</label>
-              <input
-                type="text"
-                value={formData.series}
-                onChange={e => setFormData({ ...formData, series: e.target.value })}
-                placeholder="เช่น รุ่นครึ่งตัว 24 กิโลกรัม หรือ ตุ๊กตายางพรีเมียม รุ่น Amber Luxury"
-                className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-1.5 sm:col-span-2">
+                <label className="font-semibold text-ink">ซีรีส์สินค้า (Series / Subtitle)</label>
+                <input
+                  type="text"
+                  value={formData.series}
+                  onChange={e => setFormData({ ...formData, series: e.target.value })}
+                  placeholder="เช่น รุ่นครึ่งตัว 24 กิโลกรัม หรือ ตุ๊กตายางพรีเมียม รุ่น Amber Luxury"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">📌 ลำดับการแสดงผล (Order)</label>
+                <input
+                  type="number"
+                  value={formData.orderIndex}
+                  onChange={e => setFormData({ ...formData, orderIndex: parseInt(e.target.value) || 999 })}
+                  placeholder="เช่น 1, 2, 3 (เลขน้อยขึ้นก่อน)"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white font-mono"
+                />
+              </div>
             </div>
           </div>
 
