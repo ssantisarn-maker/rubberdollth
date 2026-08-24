@@ -21,7 +21,7 @@ export default function Footer({ lang = 'th', onSetLang }) {
           <div className="md:col-span-5 space-y-4">
             <div className="flex items-center gap-3">
               <img
-                src="/logo.webp"
+                src={settings.brand_logo_image || "/logo.webp"}
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = '/logo.png';
@@ -32,8 +32,9 @@ export default function Footer({ lang = 'th', onSetLang }) {
                 className="w-10 h-10 rounded-xl object-cover shadow-2xs border border-sand-700 shrink-0"
               />
               <span className="font-serif text-xl font-bold tracking-wider text-white">
-                RUBBER DOLL <span className="text-bronze">TH</span>
+                {settings.brand_name || 'RUBBER DOLL'} <span className="text-bronze">{settings.brand_tag || 'TH'}</span>
               </span>
+
             </div>
             <p className="text-xs text-sand-400 leading-relaxed font-light max-w-sm">
               {settings.site_subtitle || t.footer.desc}

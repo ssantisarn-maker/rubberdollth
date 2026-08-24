@@ -71,7 +71,7 @@ export default function Navbar({ onSearchClick, isAdultMode, onToggleAdultMode, 
             {/* Left: Brand Logo Lockup */}
             <a href="#" className="flex items-center gap-3 shrink-0 group">
               <img
-                src="/logo.webp"
+                src={settings.brand_logo_image || "/logo.webp"}
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = '/logo.png';
@@ -84,14 +84,14 @@ export default function Navbar({ onSearchClick, isAdultMode, onToggleAdultMode, 
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
                   <span className="font-serif text-lg sm:text-xl font-bold tracking-wider text-ink group-hover:text-bronze transition-colors whitespace-nowrap">
-                    RUBBER DOLL
+                    {settings.brand_name || 'RUBBER DOLL'}
                   </span>
                   <span className="text-[10px] font-sans font-bold tracking-widest px-1.5 py-0.5 rounded bg-sand-200 text-bronze-dark shrink-0">
-                    TH
+                    {settings.brand_tag || 'TH'}
                   </span>
                 </div>
                 <span className="text-[10px] text-ink-muted tracking-widest uppercase font-medium whitespace-nowrap">
-                  {t.nav.est}
+                  {settings.brand_est || t.nav.est}
                 </span>
               </div>
             </a>

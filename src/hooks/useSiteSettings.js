@@ -10,6 +10,12 @@ const defaultSettings = {
   announcement_enabled: true,
   announcement_badge: '🔥 โปรโมชั่นพิเศษ',
   announcement_text: 'สต็อกพร้อมส่งในไทย! สั่งซื้อวันนี้รับฟรี The Luxury Collector Box + ส่งด่วนลับเฉพาะทั่วประเทศ',
+  // Brand Identity
+  brand_logo_image: '',
+  brand_name: 'RUBBER DOLL',
+  brand_tag: 'TH',
+  brand_est: 'EST. 2019 • LUXURY COLLECTION',
+
   product_sort_mode: 'ready_first',
   product_sort_prefix: 'HALF',
   

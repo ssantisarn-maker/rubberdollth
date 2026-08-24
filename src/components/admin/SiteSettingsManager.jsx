@@ -7,11 +7,42 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
   const [saveLoading, setSaveLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
   const [uploadingHero, setUploadingHero] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
   const { products } = useLiveProducts();
 
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  // Upload custom Brand Logo
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingLogo(true);
+    const form = new FormData();
+    form.append('image', file);
+    form.append('type', 'product');
+
+    try {
+      const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
+      const res = await fetch('/api/upload.php', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: form
+      });
+      const data = await res.json();
+      if (data.success && data.url) {
+        setFormData(prev => ({ ...prev, brand_logo_image: data.url }));
+        showToast('✓ อัปโหลดรูปโลโก้แบรนด์สำเร็จ');
+      }
+    } catch (err) {
+      const localUrl = URL.createObjectURL(file);
+      setFormData(prev => ({ ...prev, brand_logo_image: localUrl }));
+    } finally {
+      setUploadingLogo(false);
+    }
   };
 
   // Upload custom Hero photo
@@ -43,6 +74,7 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
       setUploadingHero(false);
     }
   };
+
 
   // Quick 1-Click Pick from existing 70 products
   const handleSelectProductAsHero = (prodCode) => {
@@ -98,8 +130,116 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
 
       <form onSubmit={handleSave} className="space-y-6">
         
+        {/* SECTION: Brand Logo & Identity Lockup */}
+        {(subTab === 'all' || subTab === 'hero') && (
+          <div id="section-brand" className="bg-white p-5 sm:p-6 rounded-3xl border border-sand-300 shadow-soft space-y-5">
+            <div className="border-b border-sand-200 pb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Globe className="w-5 h-5 text-bronze" />
+                <div>
+                  <h3 className="font-bold text-ink text-sm sm:text-base">🏷️ โลโก้แบรนด์ & ชื่อร้าน (Brand Identity & Logo Lockup)</h3>
+                  <p className="text-xs text-ink-muted">เปลี่ยนรูปโลโก้, ชื่อแบรนด์หลัก, ป้ายย่อ TH, และสโลแกนใต้โลโก้ที่แสดงบนแถบเมนูด้านบนและท้ายเว็บ</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+              {/* Left Col: Logo Preview & Upload */}
+              <div className="lg:col-span-5 space-y-3">
+                <label className="font-bold text-ink text-xs block">🖼️ ตัวอย่างโลโก้แบรนด์ปัจจุบัน (Live Preview)</label>
+                
+                <div className="flex items-center gap-3.5 p-4 rounded-2xl bg-sand-50 border border-sand-300">
+                  <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-sand-300 bg-white shadow-2xs group shrink-0">
+                    <img
+                      src={formData.brand_logo_image || "/logo.webp"}
+                      alt="Brand Logo Preview"
+                      className="w-full h-full object-cover"
+                      onError={e => { e.target.src = '/logo.png'; }}
+                    />
+                    <label className="absolute inset-0 bg-ink/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer text-white text-[10px] font-bold">
+                      <span>เปลี่ยน</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                        disabled={uploadingLogo}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-serif text-lg font-bold text-ink whitespace-nowrap">
+                        {formData.brand_name || 'RUBBER DOLL'}
+                      </span>
+                      <span className="text-[10px] font-sans font-bold px-1.5 py-0.5 rounded bg-sand-200 text-bronze shrink-0">
+                        {formData.brand_tag || 'TH'}
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-ink-muted tracking-widest uppercase font-medium whitespace-nowrap">
+                      {formData.brand_est || 'EST. 2019 • LUXURY COLLECTION'}
+                    </span>
+                  </div>
+                </div>
+
+                <label className="w-full px-4 py-2.5 bg-sand-100 hover:bg-sand-200 text-ink text-xs font-bold rounded-xl cursor-pointer transition-all flex items-center justify-center gap-2 border border-sand-300">
+                  <Upload className="w-4 h-4 text-bronze" />
+                  <span>{uploadingLogo ? 'กำลังอัปโหลดโลโก้...' : '📸 อัปโหลดเปลี่ยนรูปโลโก้ใหม่'}</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    disabled={uploadingLogo}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+
+              {/* Right Col: Brand Text Fields */}
+              <div className="lg:col-span-7 space-y-4 text-xs sm:text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-ink">ชื่อแบรนด์หลัก (Brand Name)</label>
+                    <input
+                      type="text"
+                      value={formData.brand_name || ''}
+                      onChange={e => setFormData({ ...formData, brand_name: e.target.value })}
+                      placeholder="เช่น RUBBER DOLL"
+                      className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white font-bold text-ink"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-ink">ป้ายกำกับย่อ (Brand Tag)</label>
+                    <input
+                      type="text"
+                      value={formData.brand_tag || ''}
+                      onChange={e => setFormData({ ...formData, brand_tag: e.target.value })}
+                      placeholder="เช่น TH"
+                      className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white font-bold text-bronze"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="font-semibold text-ink">ข้อความสโลแกนใต้โลโก้ (Est / Subtitle)</label>
+                  <input
+                    type="text"
+                    value={formData.brand_est || ''}
+                    onChange={e => setFormData({ ...formData, brand_est: e.target.value })}
+                    placeholder="เช่น EST. 2019 • LUXURY COLLECTION"
+                    className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* SECTION: Hero Banner & Model Switcher */}
         {(subTab === 'all' || subTab === 'hero') && (
+
           <div id="section-hero" className="bg-white p-5 sm:p-6 rounded-3xl border border-sand-300 shadow-soft space-y-5">
             <div className="border-b border-sand-200 pb-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
