@@ -250,6 +250,7 @@ export default function AdminDashboard({ onLogout }) {
         {activeTab === 'categories' && (
           <CategoryManager
             categories={categoriesMock}
+            products={products}
             onUpdateCategories={() => {}}
           />
         )}
