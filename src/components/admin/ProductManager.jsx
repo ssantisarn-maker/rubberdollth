@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Edit, Trash2, CheckCircle2, XCircle, PackageCheck, Image as ImageIcon, Sparkles, Check, ArrowUpDown, SlidersHorizontal, ArrowDownAZ, Calendar, Zap, ListOrdered } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, CheckCircle2, XCircle, PackageCheck, Image as ImageIcon, Sparkles, Check, ArrowUpDown, SlidersHorizontal, ArrowDownAZ, Calendar, Zap, ListOrdered, Filter } from 'lucide-react';
 import ProductModalForm from './ProductModalForm';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 
@@ -12,36 +12,50 @@ export default function ProductManager({ products, categories, onUpdateProducts 
   const [toastMessage, setToastMessage] = useState(null);
   
   const { settings, setSettings } = useSiteSettings();
-  const [sortMode, setSortMode] = useState(settings.product_sort_mode || 'ready_first');
+  const sortMode = settings.product_sort_mode || 'ready_first';
+  const sortPrefix = settings.product_sort_prefix || 'HALF';
 
   const showToast = (msg) => {
     setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 4000);
+    setTimeout(() => setToastMessage(null), 4000);
   };
 
-  // Change and save sort mode
+  // Change sort mode and immediately sync to settings & localStorage
   const handleSortChange = async (newMode) => {
-    setSortMode(newMode);
-    try {
-      const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
-      const updatedSettings = { ...settings, product_sort_mode: newMode };
-      await fetch('/api/settings.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(updatedSettings)
-      });
-      setSettings(updatedSettings);
-      showToast('✓ บันทึกรูปแบบการจัดเรียงสินค้าบนหน้าเว็บแล้ว!');
-    } catch (e) {
-      showToast('✓ ปรับการจัดเรียงแล้ว');
-    }
+    await setSettings({ product_sort_mode: newMode });
+    showToast('✓ บันทึกรูปแบบการจัดเรียงบนหน้าเว็บหลักสำเร็จแล้ว!');
+  };
+
+  // Change sort prefix (e.g. HALF, SLC, RBD)
+  const handlePrefixChange = async (newPrefix) => {
+    await setSettings({ product_sort_mode: 'prefix_priority', product_sort_prefix: newPrefix });
+    showToast(`✓ ตั้งค่าให้รหัส "${newPrefix}" ขึ้นก่อนบนหน้าเว็บแล้ว!`);
   };
 
   // Sort function helper
-  const sortProducts = (list, mode) => {
+  const sortProducts = (list, mode, prefix) => {
     const arr = [...list];
+
+    if (mode === 'prefix_priority') {
+      const pref = (prefix || 'HALF').toUpperCase();
+      return arr.sort((a, b) => {
+        const aCode = (a.code || '').toUpperCase();
+        const bCode = (b.code || '').toUpperCase();
+        const aMatches = aCode.startsWith(pref) ? 1 : 0;
+        const bMatches = bCode.startsWith(pref) ? 1 : 0;
+        if (bMatches !== aMatches) return bMatches - aMatches; // Prefix matches come first
+        return aCode.localeCompare(bCode, undefined, { numeric: true });
+      });
+    }
+
+    if (mode === 'code_desc') {
+      return arr.sort((a, b) => (b.code || '').localeCompare(a.code || '', undefined, { numeric: true }));
+    }
+
+    if (mode === 'code_asc') {
+      return arr.sort((a, b) => (a.code || '').localeCompare(b.code || '', undefined, { numeric: true }));
+    }
+
     if (mode === 'ready_first') {
       return arr.sort((a, b) => {
         const aReady = a.isReadyToShip || a.is_ready_to_ship ? 1 : 0;
@@ -53,6 +67,7 @@ export default function ProductManager({ products, categories, onUpdateProducts 
         return (parseInt(a.id) || 0) - (parseInt(b.id) || 0);
       });
     }
+
     if (mode === 'custom_order') {
       return arr.sort((a, b) => {
         const aOrd = a.order_index ?? a.orderIndex ?? 999;
@@ -61,6 +76,7 @@ export default function ProductManager({ products, categories, onUpdateProducts 
         return (parseInt(a.id) || 0) - (parseInt(b.id) || 0);
       });
     }
+
     if (mode === 'updated_desc') {
       return arr.sort((a, b) => {
         const aDate = new Date(a.updated_at || a.updatedAt || 0).getTime();
@@ -68,12 +84,11 @@ export default function ProductManager({ products, categories, onUpdateProducts 
         return bDate - aDate;
       });
     }
-    if (mode === 'code_asc') {
-      return arr.sort((a, b) => (a.code || '').localeCompare(b.code || '', undefined, { numeric: true }));
-    }
+
     if (mode === 'id_asc') {
       return arr.sort((a, b) => (parseInt(a.id) || 0) - (parseInt(b.id) || 0));
     }
+
     return arr;
   };
 
@@ -85,8 +100,8 @@ export default function ProductManager({ products, categories, onUpdateProducts 
       const matchCat = selectedCat === 'all' || (p.categories && p.categories.includes(selectedCat));
       return matchSearch && matchCat;
     });
-    return sortProducts(list, sortMode);
-  }, [products, search, selectedCat, sortMode]);
+    return sortProducts(list, sortMode, sortPrefix);
+  }, [products, search, selectedCat, sortMode, sortPrefix]);
 
   // Quick Toggle Ready to Ship
   const handleToggleReady = async (prod) => {
@@ -176,7 +191,7 @@ export default function ProductManager({ products, categories, onUpdateProducts 
         </div>
       )}
 
-      {/* Top Controls: Search, Sort Mode & Add Button */}
+      {/* Top Controls */}
       <div className="bg-white p-4 sm:p-6 rounded-3xl border border-sand-300 shadow-soft space-y-4">
         
         <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
@@ -194,20 +209,48 @@ export default function ProductManager({ products, categories, onUpdateProducts 
           </div>
 
           {/* Sort Selector Dropdown */}
-          <div className="flex items-center gap-2 bg-sand-50 p-1.5 rounded-2xl border border-sand-300 shrink-0">
-            <ArrowUpDown className="w-4 h-4 text-bronze ml-2 shrink-0" />
-            <span className="text-xs font-semibold text-ink-muted hidden sm:inline">จัดเรียงสินค้า:</span>
+          <div className="flex flex-wrap items-center gap-2 bg-sand-50 p-2 rounded-2xl border border-sand-300 shrink-0">
+            <div className="flex items-center gap-1.5">
+              <ArrowUpDown className="w-4 h-4 text-bronze ml-1 shrink-0" />
+              <span className="text-xs font-bold text-ink shrink-0">รูปแบบการจัดเรียง:</span>
+            </div>
+
             <select
               value={sortMode}
               onChange={e => handleSortChange(e.target.value)}
-              className="bg-transparent text-xs sm:text-sm font-bold text-ink focus:outline-none pr-2 cursor-pointer"
+              className="bg-white px-3 py-1.5 rounded-xl border border-sand-300 text-xs sm:text-sm font-bold text-ink focus:outline-none focus:border-bronze cursor-pointer shadow-2xs"
             >
+              <option value="prefix_priority">🔤 เลือกหมวดรหัส/ตัวอักษรขึ้นก่อน (Custom Letter/Prefix)</option>
               <option value="ready_first">📦 สินค้าพร้อมส่งขึ้นก่อน (Ready to Ship First)</option>
+              <option value="code_asc">🔤 เรียงตามรหัสสินค้า A ➔ Z (ก-ฮ)</option>
+              <option value="code_desc">🔤 เรียงตามรหัสสินค้า Z ➔ A (ฮ-ก)</option>
               <option value="custom_order">📌 เรียงตามลำดับตัวเลขที่กำหนดเอง (Order Index)</option>
               <option value="updated_desc">🆕 เรียงตามสินค้าที่แก้ไขล่าสุด (Recently Updated)</option>
-              <option value="code_asc">🔤 เรียงตามรหัสสินค้า (Code A-Z)</option>
               <option value="id_asc">🆔 เรียงตามลำดับ ID เริ่มต้น (Default ID)</option>
             </select>
+
+            {/* If Prefix Priority is chosen, show quick prefix buttons / selector */}
+            {sortMode === 'prefix_priority' && (
+              <div className="flex items-center gap-1.5 pl-1 border-l border-sand-300">
+                <span className="text-xs text-ink-muted">ขึ้นก่อน:</span>
+                <select
+                  value={sortPrefix}
+                  onChange={e => handlePrefixChange(e.target.value)}
+                  className="bg-emerald-50 text-emerald-900 border border-emerald-300 font-extrabold px-2.5 py-1 rounded-xl text-xs focus:outline-none cursor-pointer"
+                >
+                  <option value="HALF">HALF (รุ่นครึ่งตัว)</option>
+                  <option value="SLC">SLC (รุ่นซิลิโคนเต็มตัว)</option>
+                  <option value="RBD">RBD (รุ่นรีวิว/Master)</option>
+                  <option value="H">ตัวอักษร H...</option>
+                  <option value="S">ตัวอักษร S...</option>
+                  <option value="R">ตัวอักษร R...</option>
+                  <option value="A">ตัวอักษร A...</option>
+                  <option value="B">ตัวอักษร B...</option>
+                  <option value="C">ตัวอักษร C...</option>
+                  <option value="T">ตัวอักษร T...</option>
+                </select>
+              </div>
+            )}
           </div>
 
           {/* Add Product Button */}
