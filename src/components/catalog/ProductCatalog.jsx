@@ -61,9 +61,9 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
     }
   ], [lang, t, products]);
 
-  // Filter Logic
+  // Filter & Sort Logic (Actively synced with Admin CMS settings)
   const filteredProducts = useMemo(() => {
-    return products.filter((item) => {
+    const list = products.filter((item) => {
       // Category filter
       if (selectedCategory !== 'all') {
         if (selectedCategory === 'ready') {
@@ -86,7 +86,65 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
 
       return true;
     });
-  }, [selectedCategory, searchQuery, products]);
+
+    const sortMode = settings?.product_sort_mode || 'ready_first';
+    const sortPrefix = (settings?.product_sort_prefix || 'HALF').toUpperCase();
+    const arr = [...list];
+
+    if (sortMode === 'prefix_priority') {
+      return arr.sort((a, b) => {
+        const aCode = (a.code || '').toUpperCase();
+        const bCode = (b.code || '').toUpperCase();
+        const aMatches = aCode.startsWith(sortPrefix) ? 1 : 0;
+        const bMatches = bCode.startsWith(sortPrefix) ? 1 : 0;
+        if (bMatches !== aMatches) return bMatches - aMatches; // Selected prefix comes first
+        return aCode.localeCompare(bCode, undefined, { numeric: true });
+      });
+    }
+
+    if (sortMode === 'code_desc') {
+      return arr.sort((a, b) => (b.code || '').localeCompare(a.code || '', undefined, { numeric: true }));
+    }
+
+    if (sortMode === 'code_asc') {
+      return arr.sort((a, b) => (a.code || '').localeCompare(b.code || '', undefined, { numeric: true }));
+    }
+
+    if (sortMode === 'ready_first') {
+      return arr.sort((a, b) => {
+        const aReady = a.isReadyToShip || a.is_ready_to_ship ? 1 : 0;
+        const bReady = b.isReadyToShip || b.is_ready_to_ship ? 1 : 0;
+        if (bReady !== aReady) return bReady - aReady;
+        const aOrd = a.order_index ?? a.orderIndex ?? 999;
+        const bOrd = b.order_index ?? b.orderIndex ?? 999;
+        if (aOrd !== bOrd) return aOrd - bOrd;
+        return (parseInt(a.id) || 0) - (parseInt(b.id) || 0);
+      });
+    }
+
+    if (sortMode === 'custom_order') {
+      return arr.sort((a, b) => {
+        const aOrd = a.order_index ?? a.orderIndex ?? 999;
+        const bOrd = b.order_index ?? b.orderIndex ?? 999;
+        if (aOrd !== bOrd) return aOrd - bOrd;
+        return (parseInt(a.id) || 0) - (parseInt(b.id) || 0);
+      });
+    }
+
+    if (sortMode === 'updated_desc') {
+      return arr.sort((a, b) => {
+        const aDate = new Date(a.updated_at || a.updatedAt || 0).getTime();
+        const bDate = new Date(b.updated_at || b.updatedAt || 0).getTime();
+        return bDate - aDate;
+      });
+    }
+
+    if (sortMode === 'id_asc') {
+      return arr.sort((a, b) => (parseInt(a.id) || 0) - (parseInt(b.id) || 0));
+    }
+
+    return arr;
+  }, [selectedCategory, searchQuery, products, settings?.product_sort_mode, settings?.product_sort_prefix]);
 
   const displayedProducts = filteredProducts.slice(0, visibleCount);
 
