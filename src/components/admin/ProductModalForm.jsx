@@ -396,7 +396,7 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
               <span>📐 ข้อมูลสเปกความพรีเมียม (Specifications)</span>
             </h3>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1.5">
                 <label className="font-semibold text-ink">🧍‍♀️ ส่วนสูง (Height)</label>
                 <input
@@ -420,17 +420,6 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-semibold text-ink">👙 ขนาดหน้าอก (Bust)</label>
-                <input
-                  type="text"
-                  value={formData.bust}
-                  onChange={e => setFormData({ ...formData, bust: e.target.value })}
-                  placeholder="เช่น คัพ D สรีระสมจริง หรือ อกนุ่มพิเศษ"
-                  className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs focus:outline-none focus:border-bronze focus:bg-white"
-                />
-              </div>
-
-              <div className="space-y-1.5">
                 <label className="font-semibold text-ink">👩 สีผิว (Skin Tone)</label>
                 <input
                   type="text"
@@ -444,12 +433,12 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="font-semibold text-ink">🧴 วัสดุและผิวกาย (Material & Skin)</label>
+                <label className="font-semibold text-ink">🧴 วัสดุเนื้อผิวตุ๊กตา</label>
                 <input
                   type="text"
                   value={formData.material}
                   onChange={e => setFormData({ ...formData, material: e.target.value })}
-                  placeholder="เช่น Pure Silicone + ปลูกผมและคิ้วเสมือนจริงเส้นต่อเส้น"
+                  placeholder="เช่น เนื้อยาง TPE หรือ Pure Silicone"
                   className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs focus:outline-none focus:border-bronze focus:bg-white"
                 />
               </div>

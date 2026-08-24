@@ -212,18 +212,14 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                   <span>ข้อมูลสเปกความพรีเมียม (SPECIFICATIONS)</span>
                 </h3>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200">
                     <span className="text-[10px] text-ink-muted block">ส่วนสูงโมเดล (Height)</span>
-                    <span className="font-bold font-sans text-xs sm:text-sm text-ink">{product.height || '85-165 cm'}</span>
+                    <span className="font-bold font-sans text-xs sm:text-sm text-ink">{product.height || '-'}</span>
                   </div>
                   <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200">
                     <span className="text-[10px] text-ink-muted block">น้ำหนักโดยประมาณ (Weight)</span>
-                    <span className="font-bold font-sans text-xs sm:text-sm text-ink">{product.weight || '24-42 kg'}</span>
-                  </div>
-                  <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200">
-                    <span className="text-[10px] text-ink-muted block">ขนาดหน้าอก (Bust)</span>
-                    <span className="font-bold text-xs sm:text-sm text-ink">{product.bust || 'คัพ D สรีระสมจริง'}</span>
+                    <span className="font-bold font-sans text-xs sm:text-sm text-ink">{product.weight || '-'}</span>
                   </div>
                   <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200">
                     <span className="text-[10px] text-ink-muted block">สีผิว (Skin Tone)</span>
@@ -232,7 +228,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 </div>
 
                 <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200 space-y-0.5">
-                  <span className="text-[10px] text-ink-muted block">วัสดุศีรษะ & ผิวกาย (Material)</span>
+                  <span className="text-[10px] text-ink-muted block">วัสดุเนื้อผิวตุ๊กตา</span>
                   <span className="font-bold text-xs text-ink">{material}</span>
                 </div>
 
