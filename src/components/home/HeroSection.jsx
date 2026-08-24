@@ -3,6 +3,7 @@ import { Shield, Sparkles, MessageCircle, ArrowRight, CheckCircle2, Star } from 
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
+import defaultHeroImage from '../../assets/hero-model.webp';
 
 export default function HeroSection({ onExploreClick, lang = 'th' }) {
   const { settings } = useSiteSettings();
@@ -95,7 +96,7 @@ export default function HeroSection({ onExploreClick, lang = 'th' }) {
 
               <div className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-modal border border-sand-300 bg-sand-200">
                 <img
-                  src={settings.hero_bg_image && !settings.hero_bg_image.includes('7ee33a0f-4684-42bb-b140-e282b3df64a3.jpg') ? settings.hero_bg_image : "/images/hero-model.webp"}
+                  src={settings.hero_bg_image && !settings.hero_bg_image.includes('7ee33a0f-4684-42bb-b140-e282b3df64a3.jpg') ? settings.hero_bg_image : defaultHeroImage}
                   alt="RUBBER DOLL THAILAND ตุ๊กตายางพรีเมียม ซิลิโคนแท้"
                   title="RUBBER DOLL THAILAND ตุ๊กตายางพรีเมียม ซิลิโคนแท้"
                   width="600"
@@ -103,6 +104,10 @@ export default function HeroSection({ onExploreClick, lang = 'th' }) {
                   loading="eager"
                   fetchpriority="high"
                   decoding="sync"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://cdn.zyrosite.com/cdn-ecommerce/store_01KYYQFNVFQMCAMTY5SZA4J5H8/assets/7ee33a0f-4684-42bb-b140-e282b3df64a3.jpg";
+                  }}
                   className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700 ease-out"
                 />
 
