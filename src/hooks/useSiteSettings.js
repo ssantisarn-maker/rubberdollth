@@ -66,6 +66,34 @@ const defaultSettings = {
   care_s4_desc: 'จัดเก็บในห้องอุณหภูมิปกติ เลี่ยงแสงแดดจัด แนะนำให้นอนราบบนเบาะนุ่มหรือแขวนด้วยอุปกรณ์เฉพาะ'
 };
 
+let globalSettingsPromise = null;
+let lastFetchTime = 0;
+
+const fetchGlobalSettings = async (force = false) => {
+  const now = Date.now();
+  if (!force && globalSettingsPromise) return globalSettingsPromise;
+  if (!force && now - lastFetchTime < 10000) return null;
+
+  globalSettingsPromise = (async () => {
+    try {
+      const res = await fetch('/api/settings.php');
+      if (!res.ok) throw new Error('Settings API offline');
+      const data = await res.json();
+      if (data.success && data.settings) {
+        lastFetchTime = Date.now();
+        return data.settings;
+      }
+    } catch (err) {
+      console.warn('Using local site settings:', err.message);
+    } finally {
+      globalSettingsPromise = null;
+    }
+    return null;
+  })();
+
+  return globalSettingsPromise;
+};
+
 export function useSiteSettings() {
   const [settings, setSettings] = useState(() => {
     try {
@@ -79,21 +107,19 @@ export function useSiteSettings() {
 
   const [loading, setLoading] = useState(false);
 
-  const fetchSettings = async () => {
+  const fetchSettings = async (force = false) => {
     try {
       setLoading(true);
-      const res = await fetch('/api/settings.php');
-      if (!res.ok) throw new Error('Settings API offline');
-      const data = await res.json();
-      if (data.success && data.settings) {
-        const merged = { ...defaultSettings, ...data.settings };
+      const newSettings = await fetchGlobalSettings(force);
+      if (newSettings) {
+        const merged = { ...defaultSettings, ...newSettings };
         setSettings(merged);
         try {
           localStorage.setItem('rbd_site_settings', JSON.stringify(merged));
         } catch (e) {}
       }
     } catch (err) {
-      console.warn('Using local site settings:', err.message);
+      console.warn('Settings load:', err.message);
     } finally {
       setLoading(false);
     }
@@ -101,6 +127,7 @@ export function useSiteSettings() {
 
   useEffect(() => {
     fetchSettings();
+
 
     const handleStorageChange = () => {
       try {

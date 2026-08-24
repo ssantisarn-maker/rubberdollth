@@ -176,7 +176,7 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
             href={lineProductUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="py-1.5 sm:py-2 px-2.5 sm:px-3.5 rounded-lg sm:rounded-xl bg-[#06C755] hover:bg-[#05b34c] text-white text-[11px] sm:text-xs font-semibold flex items-center gap-1 shadow-2xs transition-colors shrink-0"
+            className="py-1.5 sm:py-2 px-2.5 sm:px-3.5 rounded-lg sm:rounded-xl bg-[#05963c] hover:bg-[#047830] text-white text-[11px] sm:text-xs font-bold flex items-center gap-1 shadow-2xs transition-colors shrink-0"
             title="สั่งซื้อผ่าน LINE / Order via LINE"
           >
             <MessageCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-white" />

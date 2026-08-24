@@ -20,9 +20,9 @@ export default {
           900: '#342F23',
         },
         bronze: {
-          DEFAULT: '#9E7844',
-          light: '#BA945F',
-          dark: '#7D5C2C',
+          DEFAULT: '#845625',
+          light: '#9E7844',
+          dark: '#684218',
         },
         ink: {
           DEFAULT: '#19181B',

@@ -54,7 +54,7 @@ export default function DiscreetGuide({ lang = 'th' }) {
                   <div className="w-12 h-12 rounded-2xl bg-white border border-sand-200 flex items-center justify-center text-bronze shadow-2xs">
                     <Icon className="w-6 h-6" />
                   </div>
-                  <span className="font-sans text-3xl font-black tracking-tight text-sand-300">0{l.step}</span>
+                  <span className="font-sans text-3xl font-black tracking-tight text-sand-400">0{l.step}</span>
                 </div>
                 <h3 className="font-sans text-lg font-bold text-ink">{l.title}</h3>
                 <p className="text-xs text-ink-muted leading-relaxed font-light">{l.description}</p>

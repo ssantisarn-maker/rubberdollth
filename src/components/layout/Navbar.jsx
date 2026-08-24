@@ -71,7 +71,11 @@ export default function Navbar({ onSearchClick, isAdultMode, onToggleAdultMode, 
             {/* Left: Brand Logo Lockup */}
             <a href="#" className="flex items-center gap-3 shrink-0 group">
               <img
-                src="/logo.png"
+                src="/logo.webp"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/logo.png';
+                }}
                 alt="RUBBER DOLL THAILAND Official Logo"
                 width="44"
                 height="44"

@@ -38,25 +38,52 @@ const defaultFaqs = [
   }
 ];
 
-export function useSiteFaqs() {
-  const [faqs, setFaqs] = useState(defaultFaqs);
-  const [loading, setLoading] = useState(false);
+let globalFaqsPromise = null;
+let lastFaqFetchTime = 0;
 
-  const fetchFaqs = async () => {
+const fetchGlobalFaqs = async (force = false) => {
+  const now = Date.now();
+  if (!force && globalFaqsPromise) return globalFaqsPromise;
+  if (!force && now - lastFaqFetchTime < 10000) return null;
+
+  globalFaqsPromise = (async () => {
     try {
-      setLoading(true);
       const res = await fetch('/api/faqs.php');
       if (!res.ok) throw new Error('FAQs API offline');
       const data = await res.json();
       if (data.success && Array.isArray(data.faqs) && data.faqs.length > 0) {
-        setFaqs(data.faqs);
+        lastFaqFetchTime = Date.now();
+        return data.faqs;
       }
     } catch (err) {
       console.warn('Using default FAQs:', err.message);
     } finally {
+      globalFaqsPromise = null;
+    }
+    return null;
+  })();
+
+  return globalFaqsPromise;
+};
+
+export function useSiteFaqs() {
+  const [faqs, setFaqs] = useState(defaultFaqs);
+  const [loading, setLoading] = useState(false);
+
+  const fetchFaqs = async (force = false) => {
+    try {
+      setLoading(true);
+      const newFaqs = await fetchGlobalFaqs(force);
+      if (newFaqs) {
+        setFaqs(newFaqs);
+      }
+    } catch (err) {
+      console.warn('FAQs load error:', err.message);
+    } finally {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     fetchFaqs();

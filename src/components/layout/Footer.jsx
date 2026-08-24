@@ -21,7 +21,11 @@ export default function Footer({ lang = 'th', onSetLang }) {
           <div className="md:col-span-5 space-y-4">
             <div className="flex items-center gap-3">
               <img
-                src="/logo.png"
+                src="/logo.webp"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/logo.png';
+                }}
                 alt="RUBBER DOLL THAILAND Logo"
                 width="40"
                 height="40"
