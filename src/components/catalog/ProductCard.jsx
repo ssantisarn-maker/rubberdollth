@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, MessageCircle, Layers, Flame } from 'lucide-react';
+import { Eye, MessageCircle, Layers, Flame, Tag } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
 
@@ -15,9 +15,11 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
 
   const hasHover = Boolean(displayHoverImg && displayHoverImg !== displayMainImg);
 
-  const lineMessage = `สวัสดีครับ สนใจสั่งซื้อ/สอบถามสินค้า [${product.code}] ${product.name} ครับ`;
+  const lineMessage = `สวัสดีครับ สนใจสั่งซื้อ/สอบถามสินค้า [${product.code}] ${product.name} (ราคา: ${product.price || 'โปรโมชั่น'}) ครับ`;
   const lineProductUrl = `https://line.me/R/oaMessage/@RUBBERDOLL.TH/?${encodeURIComponent(lineMessage)}`;
   const seoImageAlt = `ตุ๊กตายาง ซิลิโคนแท้ระดับ Hi-End รุ่น ${product.code} ${product.name} ${product.series} สเปก ${product.height} RUBBER DOLL THAILAND`;
+
+  const originalPrice = product.originalPrice || product.original_price || '';
 
   return (
     <article className={`bg-white rounded-2xl sm:rounded-3xl border transition-all duration-300 overflow-hidden flex flex-col justify-between group ${
@@ -53,6 +55,10 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
           className={`w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105 ${
             primaryLoaded ? 'opacity-100' : 'opacity-0'
           }`}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = '/favicon.png';
+          }}
         />
 
         {/* 2. Hover Image (Desktop cross-fade) */}
@@ -68,6 +74,10 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
             height="533"
             onLoad={() => setHoverLoaded(true)}
             className="absolute inset-0 w-full h-full object-cover object-top opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out transform group-hover:scale-105 hidden sm:block"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '/favicon.png';
+            }}
           />
         )}
 
@@ -117,7 +127,7 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
       {/* Card Info */}
       <div className="p-3 sm:p-5 flex-1 flex flex-col justify-between space-y-2.5 sm:space-y-3">
         
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           {/* Series & Category */}
           <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-ink-muted">
             <span className="truncate max-w-[110px] sm:max-w-[160px]">{product.category}</span>
@@ -132,10 +142,19 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
             {product.name}
           </h3>
 
-          {/* Short Desc */}
-          <p className="text-[10px] sm:text-[11px] text-ink-muted line-clamp-2 leading-relaxed font-light hidden xs:block">
-            {product.description}
-          </p>
+          {/* Price Display Directly on Product Card */}
+          <div className="flex items-baseline justify-between gap-1 pt-0.5">
+            <div className="flex items-baseline gap-1">
+              <span className="text-[11px] font-bold text-emerald-800 font-sans">
+                {product.price || 'ติดต่อทาง LINE'}
+              </span>
+            </div>
+            {originalPrice && (
+              <span className="text-[10px] text-ink-muted line-through font-sans">
+                {originalPrice}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Action Buttons */}

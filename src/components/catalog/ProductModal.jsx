@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, MessageCircle, ShieldCheck, Sparkles, Box, Check, Star, Lock, HeartHandshake, ChevronLeft, ChevronRight, Flame, Layers, DollarSign, Gift, CheckCircle2 } from 'lucide-react';
+import { X, MessageCircle, ShieldCheck, Sparkles, Box, Check, Star, Lock, HeartHandshake, ChevronLeft, ChevronRight, Flame, Layers, DollarSign, Gift, CheckCircle2, FileText } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
 
@@ -28,7 +28,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
 
   const currentImage = galleryImages[activeImageIdx] || product.image;
 
-  const lineMessage = `สวัสดีครับ สนใจสอบถามและสั่งซื้อสินค้า [${product.code}] ${product.name} (ราคา: ${product.price || 'โปรโมชั่น'}, สเปก: ${product.height || '-'}, สีผิว: ${product.skinTone || product.skin_tone || 'ผิวขาวเหลือง'}) ครับ`;
+  const lineMessage = `สวัสดีครับ สนใจสอบถามและสั่งซื้อสินค้า [${product.code}] ${product.name} (ราคา: ${product.price || 'โปรโมชั่น'}, สเปก: ${product.height || '-'}) ครับ`;
   const lineProductUrl = `https://line.me/R/oaMessage/@RUBBERDOLL.TH/?${encodeURIComponent(lineMessage)}`;
   const seoImageAlt = `ตุ๊กตายาง ซิลิโคนแท้ระดับ Hi-End รุ่น ${product.code} ${product.name} ${product.series} สเปก ${product.height} RUBBER DOLL THAILAND`;
 
@@ -192,11 +192,17 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 )}
               </div>
 
-              {/* Description */}
+              {/* Beautiful Multiline Formatted Description */}
               {product.description && (
-                <p className="text-xs sm:text-sm text-ink-soft leading-relaxed font-light">
-                  {product.description}
-                </p>
+                <div className="p-3.5 sm:p-4 bg-sand-50/80 rounded-2xl border border-sand-200 space-y-2">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-ink border-b border-sand-200/80 pb-1.5">
+                    <FileText className="w-3.5 h-3.5 text-bronze" />
+                    <span>รายละเอียดสินค้าเพิ่มเติม</span>
+                  </div>
+                  <div className="text-xs sm:text-sm text-ink-soft leading-relaxed whitespace-pre-line font-normal">
+                    {product.description}
+                  </div>
+                </div>
               )}
 
               {/* Technical Specifications (6 Grid Boxes) */}
