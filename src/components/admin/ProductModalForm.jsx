@@ -38,6 +38,15 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Safety guardrail: Check video size (Max 25MB for direct hosting)
+    const sizeInMB = file.size / (1024 * 1024);
+    if (sizeInMB > 25) {
+      if (!window.confirm(`⚠️ ไฟล์วิดีโอนี้มีขนาด ${sizeInMB.toFixed(1)} MB ซึ่งอาจทำให้เปลืองพื้นที่โฮสติ้งและทำให้เว็บโหลดช้าลง\n\n💡 แนะนำ: ให้อัปโหลดขึ้น YouTube แบบ Unlisted แล้วนำลิงก์มาวาง จะโหลดเร็วกว่าและไม่เปลืองพื้นที่โฮสติ้งเลย\n\nคุณยังต้องการอัปโหลดไฟล์นี้ลงโฮสติ้งต่อไปหรือไม่?`)) {
+        e.target.value = '';
+        return;
+      }
+    }
+
     setUploadingVideo(true);
     const form = new FormData();
     form.append('video', file);
@@ -362,14 +371,21 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-ink-muted">หรือวางลิงก์ URL วิดีโอ (MP4, YouTube, หรือ ลิงก์ตรง):</label>
+              <label className="text-[11px] font-semibold text-ink-muted">หรือวางลิงก์ URL วิดีโอ (แนะนำ: ลิงก์ YouTube / TikTok / MP4):</label>
               <input
                 type="text"
                 value={formData.videoUrl}
                 onChange={e => setFormData({ ...formData, videoUrl: e.target.value })}
-                placeholder="เช่น https://www.youtube.com/watch?v=... หรือ /images/videos/demo.mp4"
+                placeholder="เช่น https://www.youtube.com/watch?v=... หรือ https://youtu.be/..."
                 className="w-full px-3.5 py-2 bg-white border border-purple-300 rounded-xl text-xs focus:outline-none focus:border-purple-600 font-mono"
               />
+            </div>
+
+            <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900 space-y-1">
+              <p className="font-bold flex items-center gap-1">💡 แนะนำวิธีประหยัดพื้นที่โฮสติ้ง 100%:</p>
+              <p>
+                อัปโหลดคลิปขึ้น <strong>YouTube</strong> ของคุณ โดยตั้งค่าเป็น <strong>"ไม่เป็นสาธารณะ (Unlisted)"</strong> แล้วก๊อปลิงก์มาวางในช่องนี้ จะช่วยให้วิดีโอเล่นลื่นระดับ 4K โหลดไวมาก และ <strong>ไม่กินพื้นที่โฮสต์เลยแม้แต่ 1 MB ครับ!</strong>
+              </p>
             </div>
 
             {formData.videoUrl && (
