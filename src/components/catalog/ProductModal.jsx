@@ -205,37 +205,37 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 </div>
               )}
 
-              {/* Technical Specifications (Clean 2-Column Symmetrical Layout) */}
-              <div className="space-y-2.5">
+              {/* Technical Specifications (3 Columns Top + Material & Skeleton Rows) */}
+              <div className="space-y-2">
                 <h3 className="text-xs font-bold text-ink flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-bronze" />
                   <span>ข้อมูลสเปกความพรีเมียม (SPECIFICATIONS)</span>
                 </h3>
 
-                <div className="grid grid-cols-2 gap-2.5">
-                  <div className="p-3 rounded-2xl bg-sand-50/90 border border-sand-200/80 flex flex-col justify-between">
-                    <span className="text-[11px] text-ink-muted">ส่วนสูง (Height)</span>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200 flex flex-col justify-between">
+                    <span className="text-[10px] text-ink-muted block">ส่วนสูง (Height)</span>
                     <span className="font-bold font-sans text-xs sm:text-sm text-ink pt-0.5">{product.height || '-'}</span>
                   </div>
 
-                  <div className="p-3 rounded-2xl bg-sand-50/90 border border-sand-200/80 flex flex-col justify-between">
-                    <span className="text-[11px] text-ink-muted">น้ำหนัก (Weight)</span>
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200 flex flex-col justify-between">
+                    <span className="text-[10px] text-ink-muted block">น้ำหนัก (Weight)</span>
                     <span className="font-bold font-sans text-xs sm:text-sm text-ink pt-0.5">{product.weight || '-'}</span>
                   </div>
 
-                  <div className="p-3 rounded-2xl bg-sand-50/90 border border-sand-200/80 flex flex-col justify-between">
-                    <span className="text-[11px] text-ink-muted">สีผิว (Skin Tone)</span>
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200 flex flex-col justify-between">
+                    <span className="text-[10px] text-ink-muted block">สีผิว (Skin Tone)</span>
                     <span className="font-bold text-xs sm:text-sm text-ink pt-0.5">{skinTone}</span>
-                  </div>
-
-                  <div className="p-3 rounded-2xl bg-sand-50/90 border border-sand-200/80 flex flex-col justify-between">
-                    <span className="text-[11px] text-ink-muted">วัสดุเนื้อผิวตุ๊กตา</span>
-                    <span className="font-bold text-xs sm:text-sm text-ink pt-0.5">{material}</span>
                   </div>
                 </div>
 
-                <div className="p-3 rounded-2xl bg-sand-50/90 border border-sand-200/80 space-y-0.5">
-                  <span className="text-[11px] text-ink-muted block">โครงสร้างข้อต่อ (Articulation)</span>
+                <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200 space-y-0.5">
+                  <span className="text-[10px] text-ink-muted block">วัสดุเนื้อผิวตุ๊กตา</span>
+                  <span className="font-bold text-xs sm:text-sm text-ink">{material}</span>
+                </div>
+
+                <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200 space-y-0.5">
+                  <span className="text-[10px] text-ink-muted block">โครงสร้างข้อต่อ (Articulation)</span>
                   <span className="font-bold text-xs sm:text-sm text-ink">{skeleton}</span>
                 </div>
               </div>
