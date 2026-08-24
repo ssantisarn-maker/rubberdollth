@@ -95,7 +95,7 @@ export default function HeroSection({ onExploreClick, lang = 'th' }) {
 
               <div className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-modal border border-sand-300 bg-sand-200">
                 <img
-                  src={settings.hero_bg_image || "https://cdn.zyrosite.com/cdn-ecommerce/store_01KYYQFNVFQMCAMTY5SZA4J5H8/assets/7ee33a0f-4684-42bb-b140-e282b3df64a3.jpg"}
+                  src={settings.hero_bg_image && !settings.hero_bg_image.includes('7ee33a0f-4684-42bb-b140-e282b3df64a3.jpg') ? settings.hero_bg_image : "/images/hero-model.webp"}
                   alt="RUBBER DOLL THAILAND ตุ๊กตายางพรีเมียม ซิลิโคนแท้"
                   title="RUBBER DOLL THAILAND ตุ๊กตายางพรีเมียม ซิลิโคนแท้"
                   width="600"

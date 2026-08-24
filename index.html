@@ -46,21 +46,22 @@
     <meta name="twitter:description" content="ผู้นำเข้าตุ๊กตายางพรีเมียมระดับ Hi-End เกรด SSS ซิลิโคนเกรดการแพทย์ 100% สัมผัสนุ่มเสมือนผิวคนจริง การันตีจัดส่งมิดชิด 100% ไร้ชื่อสินค้าหน้ากล่อง" />
     <meta name="twitter:image" content="https://cdn.zyrosite.com/cdn-ecommerce/store_01KYYQFNVFQMCAMTY5SZA4J5H8/assets/104d8738-5e74-4e35-9c3a-5087546f33f8.jpg" />
 
-    <!-- Google Fonts Preconnect & Stylesheets -->
+    <!-- Google Fonts Non-blocking Load -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap">
+    </noscript>
 
-    <!-- Performance: Preconnect to image CDN for faster hero image -->
-    <link rel="preconnect" href="https://cdn.zyrosite.com" crossorigin>
-    <link rel="dns-prefetch" href="https://cdn.zyrosite.com">
-
-    <!-- Performance: Preload LCP Hero image — highest priority resource -->
+    <!-- Performance: Preload Local LCP Hero image (64KB WebP) -->
     <link
       rel="preload"
       as="image"
+      type="image/webp"
       fetchpriority="high"
-      href="https://cdn.zyrosite.com/cdn-ecommerce/store_01KYYQFNVFQMCAMTY5SZA4J5H8/assets/7ee33a0f-4684-42bb-b140-e282b3df64a3.jpg"
+      href="/images/hero-model.webp"
     />
 
 
