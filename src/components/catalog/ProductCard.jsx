@@ -3,7 +3,7 @@ import { Eye, MessageCircle, Layers, Flame, Tag } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
 
-export default function ProductCard({ product, onQuickView, isAdultMode, lang = 'th' }) {
+export default function ProductCard({ product, onQuickView, isAdultMode, lang = 'th', priority = false }) {
   const [primaryLoaded, setPrimaryLoaded] = useState(false);
   const [hoverLoaded, setHoverLoaded] = useState(false);
   const t = translations[lang] || translations.th;
@@ -47,8 +47,9 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
           src={displayMainImg}
           alt={seoImageAlt}
           title={seoImageAlt}
-          loading="lazy"
-          decoding="async"
+          loading={priority ? 'eager' : 'lazy'}
+          fetchpriority={priority ? 'high' : 'low'}
+          decoding={priority ? 'sync' : 'async'}
           width="400"
           height="533"
           onLoad={() => setPrimaryLoaded(true)}

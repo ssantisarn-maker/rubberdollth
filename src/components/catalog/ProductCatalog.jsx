@@ -251,13 +251,14 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
         {/* Products Grid */}
         {displayedProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-in fade-in duration-300">
-            {displayedProducts.map((p) => (
+            {displayedProducts.map((p, idx) => (
               <ProductCard
                 key={p.id}
                 product={p}
                 onQuickView={(prod) => setSelectedProduct(prod)}
                 isAdultMode={isAdultMode}
                 lang={lang}
+                priority={idx < 4}
               />
             ))}
           </div>

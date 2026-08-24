@@ -100,6 +100,9 @@ export default function HeroSection({ onExploreClick, lang = 'th' }) {
                   title="RUBBER DOLL THAILAND ตุ๊กตายางพรีเมียม ซิลิโคนแท้"
                   width="600"
                   height="800"
+                  loading="eager"
+                  fetchpriority="high"
+                  decoding="sync"
                   className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700 ease-out"
                 />
 
