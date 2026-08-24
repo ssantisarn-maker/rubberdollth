@@ -186,6 +186,17 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
                 </div>
 
                 <div className="space-y-1.5">
+                  <label className="font-semibold text-ink">ข้อความรองเหนือหัวข้อใหญ่ (Pre-headline)</label>
+                  <input
+                    type="text"
+                    value={formData.hero_pretitle}
+                    onChange={e => setFormData({ ...formData, hero_pretitle: e.target.value })}
+                    placeholder="เช่น นิยามใหม่แห่งความสมจริงเหนือระดับ"
+                    className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
                   <label className="font-semibold text-ink">หัวข้อใหญ่หน้าแรก (Hero Headline) *</label>
                   <input
                     type="text"

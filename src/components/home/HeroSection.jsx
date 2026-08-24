@@ -10,6 +10,7 @@ export default function HeroSection({ onExploreClick, lang = 'th' }) {
   const t = translations[lang] || translations.th;
 
   const heroTag = settings.hero_tag || t.hero.badge;
+  const heroPretitle = settings.hero_pretitle || t.hero.title1;
   const heroTitle = settings.hero_title || t.hero.title2;
   const heroSubtitle = settings.hero_subtitle || t.hero.subtitle;
   const lineUrl = settings.line_url || siteConfig.lineUrl;
@@ -37,7 +38,7 @@ export default function HeroSection({ onExploreClick, lang = 'th' }) {
             {/* Main Headline */}
             <div className="space-y-3">
               <p className="text-xs sm:text-sm uppercase tracking-[0.2em] font-semibold text-bronze">
-                {t.hero.title1}
+                {heroPretitle}
               </p>
               <h1 className="font-sans text-3xl sm:text-5xl lg:text-6xl font-bold text-ink leading-[1.15] tracking-tight">
                 {heroTitle}

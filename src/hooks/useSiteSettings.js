@@ -15,6 +15,7 @@ const defaultSettings = {
   
   // Hero Section
   hero_tag: 'MASTERPIECES OF REALISM • HYPER-REALISTIC SILICONE',
+  hero_pretitle: 'นิยามใหม่แห่งความสมจริงเหนือระดับ',
   hero_title: 'สุนทรียภาพแห่งสัมผัสเสมือนจริง ระดับ Hi-End อันดับ 1 ในไทย',
   hero_subtitle: 'ตุ๊กตายางซิลิโคนแท้ 100% เกรดการแพทย์ โครงสร้างสแตนเลส 360° ปรับได้ทุกท่วงท่า จัดส่งมิดชิดลับเฉพาะ 100% รับประกันคุณภาพสูงสุด',
   hero_bg_image: '',
