@@ -1,27 +1,27 @@
 import React from 'react';
-import { Shield, Package, Lock, CheckCircle2 } from 'lucide-react';
-import { translations } from '../../data/translations';
+import { Shield, Package, Lock } from 'lucide-react';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
 
 export default function DiscreetGuide({ lang = 'th' }) {
-  const t = translations[lang] || translations.th;
+  const { settings } = useSiteSettings();
 
   const layers = [
     {
       step: '1',
-      title: t.discreetGuide.layer1Title,
-      description: t.discreetGuide.layer1Desc,
+      title: settings.discreet_l1_title || 'ปิดผนึกชั้นในมิดชิด (Protective Wrap)',
+      description: settings.discreet_l1_desc || 'ตัวสินค้าได้รับการห่อหุ้มด้วยวัสดุป้องกันการกระแทกและซีลสุญญากาศ ป้องกันฝุ่นและความชื้น 100%',
       icon: Shield
     },
     {
       step: '2',
-      title: t.discreetGuide.layer2Title,
-      description: t.discreetGuide.layer2Desc,
+      title: settings.discreet_l2_title || 'กล่องพัสดุทึบไร้โลโก้ (Double-Walled Box)',
+      description: settings.discreet_l2_desc || 'บรรจุในกล่องลูกฟูกหนา 2 ชั้น เรียบหรู ไม่มีข้อความ รูปภาพ หรือโลโก้ใดๆ ที่บ่งบอกถึงสินค้าภายใน',
       icon: Package
     },
     {
       step: '3',
-      title: t.discreetGuide.layer3Title,
-      description: t.discreetGuide.layer3Desc,
+      title: settings.discreet_l3_title || 'จัดส่งด่วนลับเฉพาะ (Direct Discreet Courier)',
+      description: settings.discreet_l3_desc || 'ส่งตรงถึงมือคุณด้วยขนส่งด่วนพิเศษ มีเลขพัสดุส่วนตัวเช็กสถานะได้ตลอด 24 ชั่วโมง',
       icon: Lock
     }
   ];
@@ -32,13 +32,13 @@ export default function DiscreetGuide({ lang = 'th' }) {
         
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <span className="text-xs font-semibold uppercase tracking-widest text-bronze">
-            {t.discreetGuide.tag}
+            {settings.discreet_tag || '100% CONFIDENTIAL & DISCREET DELIVERY'}
           </span>
           <h2 className="font-sans text-2xl sm:text-4xl font-bold text-ink">
-            {t.discreetGuide.title}
+            {settings.discreet_title || 'มาตรฐานการจัดส่ง มิดชิดและเป็นความลับขั้นสูงสุด'}
           </h2>
           <p className="text-sm text-ink-muted font-light leading-relaxed">
-            {t.discreetGuide.desc}
+            {settings.discreet_desc || 'เราเข้าใจและให้ความสำคัญกับความเป็นส่วนตัวของคุณสูงสุด ทุกคำสั่งซื้อจัดส่งในกล่องพัสดุทึบ 2 ชั้น ไม่ระบุชื่อร้านหรือชื่อสินค้าหน้ากล่องเด็ดขาด'}
           </p>
         </div>
 

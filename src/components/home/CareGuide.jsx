@@ -1,15 +1,15 @@
 import React from 'react';
-import { Sparkles, Droplets, Wind, Feather, Box } from 'lucide-react';
-import { translations } from '../../data/translations';
+import { Droplets, Wind, Feather, Box } from 'lucide-react';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
 
 export default function CareGuide({ lang = 'th' }) {
-  const t = translations[lang] || translations.th;
+  const { settings } = useSiteSettings();
 
   const steps = [
-    { title: t.careGuide.step1Title, desc: t.careGuide.step1Desc, icon: Droplets },
-    { title: t.careGuide.step2Title, desc: t.careGuide.step2Desc, icon: Wind },
-    { title: t.careGuide.step3Title, desc: t.careGuide.step3Desc, icon: Feather },
-    { title: t.careGuide.step4Title, desc: t.careGuide.step4Desc, icon: Box },
+    { title: settings.care_s1_title || '1. การทำความสะอาด (Washing)', desc: settings.care_s1_desc || 'ล้างด้วยน้ำอุณหภูมิปกติและสบู่อ่อนหรือน้ำยาฆ่าเชื้อเกรดอ่อน หลีกเลี่ยงน้ำร้อนจัด', icon: Droplets },
+    { title: settings.care_s2_title || '2. การซับให้แห้ง (Drying)', desc: settings.care_s2_desc || 'ใช้ผ้าขนหนูนุ่มซับเบาๆ ให้แห้งสนิท หรือใช้พัดลมเป่า ห้ามใช้ไดร์เป่าผมลมร้อนเด็ดขาด', icon: Wind },
+    { title: settings.care_s3_title || '3. การลงแป้งบำรุง (Silicone Powder)', desc: settings.care_s3_desc || 'ทาแป้งเด็กหรือแป้งบำรุงผิวซิลิโคนบางๆ ทั่วผิวกาย เพื่อลดความเหนียวและคงสัมผัสนุ่มลื่นดุจแพรไหม', icon: Feather },
+    { title: settings.care_s4_title || '4. การจัดเก็บที่ถูกวิธี (Storage)', desc: settings.care_s4_desc || 'จัดเก็บในห้องอุณหภูมิปกติ เลี่ยงแสงแดดจัด แนะนำให้นอนราบบนเบาะนุ่มหรือแขวนด้วยอุปกรณ์เฉพาะ', icon: Box },
   ];
 
   return (
@@ -18,13 +18,13 @@ export default function CareGuide({ lang = 'th' }) {
         
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <span className="text-xs font-semibold uppercase tracking-widest text-bronze">
-            {t.careGuide.tag}
+            {settings.care_tag || 'THE LONGEVITY CARE'}
           </span>
           <h2 className="font-sans text-2xl sm:text-4xl font-bold text-ink">
-            {t.careGuide.title}
+            {settings.care_title || 'คู่มือการดูแลรักษา เพื่อยืดอายุการใช้งานยาวนาน'}
           </h2>
           <p className="text-sm text-ink-muted font-light leading-relaxed">
-            {t.careGuide.desc}
+            {settings.care_desc || 'ขั้นตอนง่ายๆ ในการดูแลและทำความสะอาดซิลิโคน เพื่อคงสัมผัสนุ่มละมุนเสมือนผิวจริงอยู่เสมอ'}
           </p>
         </div>
 

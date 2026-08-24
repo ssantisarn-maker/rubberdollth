@@ -1,210 +1,241 @@
-import React, { useState, useEffect } from 'react';
-import { Package, Tag, Settings, Globe, LogOut, ShieldCheck, Database, RefreshCw, Star, HelpCircle, Sliders } from 'lucide-react';
+import React, { useState } from 'react';
+import { Package, Tag, Settings, LogOut, ExternalLink, RefreshCw, MessageSquareQuote, HelpCircle, Sparkles, Bell, Lock, Droplets, Menu, X, ChevronRight, LayoutDashboard, Sliders } from 'lucide-react';
 import ProductManager from './ProductManager';
 import CategoryManager from './CategoryManager';
 import ReviewManager from './ReviewManager';
 import SiteSettingsManager from './SiteSettingsManager';
 import FaqManager from './FaqManager';
-import AdminLogin from './AdminLogin';
 import { useLiveProducts } from '../../hooks/useLiveProducts';
 import { useLiveReviews } from '../../hooks/useLiveReviews';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 import { useSiteFaqs } from '../../hooks/useSiteFaqs';
 
-export default function AdminDashboard({ onBackToShop }) {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState('products'); // 'products' | 'reviews' | 'settings' | 'faqs' | 'categories'
-  
-  const { products, setProducts, reload: reloadProducts, loading: prodLoading } = useLiveProducts();
-  const { reviews, setReviews, reload: reloadReviews, loading: revLoading } = useLiveReviews();
-  const { settings, setSettings, reload: reloadSettings, loading: setLoading } = useSiteSettings();
-  const { faqs, setFaqs, reload: reloadFaqs, loading: faqLoading } = useSiteFaqs();
+export default function AdminDashboard({ onLogout }) {
+  const [activeTab, setActiveTab] = useState('products');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const [categories, setCategories] = useState([
-    { id: 'all', label_th: 'สินค้าทั้งหมด', label_en: 'All Masterpieces' },
-    { id: 'ready', label_th: 'สินค้าพร้อมส่ง (ไทย)', label_en: 'Ready to Ship (TH)' },
-    { id: 'toys', label_th: 'ของเล่นสำหรับผู้ใหญ่', label_en: 'Adult Toys' },
-    { id: 'anime', label_th: 'ตุ๊กตาซิลิโคน สาวสวยและอนิเมะ การ์ตูน', label_en: 'Anime & Fantasy' },
-    { id: 'western', label_th: 'ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวฝรั่ง / ยุโรป', label_en: 'Western / European' },
-    { id: 'asian', label_th: 'ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวเอเชีย', label_en: 'Asian Aesthetics' },
-    { id: 'torso', label_th: 'ตุ๊กตายางครึ่งตัว TORSO', label_en: 'Torso & Half Body' },
-    { id: 'reviews', label_th: 'รีวิวตุ๊กตายางจากลูกค้า', label_en: 'Customer Reviews' },
-  ]);
+  const { products, setProducts, reload: reloadProducts } = useLiveProducts();
+  const { reviews, setReviews, reload: reloadReviews } = useLiveReviews();
+  const { settings, setSettings, reload: reloadSettings } = useSiteSettings();
+  const { faqs, setFaqs, reload: reloadFaqs } = useSiteFaqs();
 
-  useEffect(() => {
-    const token = localStorage.getItem('rbd_admin_token');
-    if (token) {
-      setAuthenticated(true);
+  const handleRefreshAll = async () => {
+    await Promise.all([reloadProducts(), reloadReviews(), reloadSettings(), reloadFaqs()]);
+    alert('รีเฟรชดึงข้อมูลล่าสุดจากเซิร์ฟเวอร์เรียบร้อยแล้ว!');
+  };
+
+  const navMenuItems = [
+    {
+      group: '🛍️ คลังสินค้าและรีวิว',
+      items: [
+        { id: 'products', label: 'จัดการสินค้า (70 รายการ)', icon: Package, badge: products.length, desc: 'สเปก, ราคา, รูปภาพ, วิดีโอ, จัดเรียง' },
+        { id: 'reviews', label: 'จัดการรีวิวจากลูกค้า', icon: MessageSquareQuote, badge: reviews.length, desc: 'รีวิว, ให้ดาว, รูปถ่ายจริง' },
+        { id: 'categories', label: 'จัดการหมวดหมู่สินค้า', icon: Tag, desc: 'แถบกรองและหมวดหมู่' },
+      ]
+    },
+    {
+      group: '🎨 ปรับแต่งเนื้อหาหน้าเว็บ (CMS)',
+      items: [
+        { id: 'hero', label: 'แบนเนอร์หลัก & สินค้า Hero', icon: Sparkles, desc: 'รูปโมเดลเด่น, หัวข้อ, สโลแกน' },
+        { id: 'contact', label: 'แถบประกาศ & ข้อมูลติดต่อ', icon: Bell, desc: 'ประกาศบนสุด, LINE, เบอร์โทร' },
+        { id: 'values', label: 'The Masterpiece Difference', icon: Sparkles, desc: '4 จุดเด่นและเอกลักษณ์' },
+        { id: 'discreet', label: '100% Confidential Delivery', icon: Lock, desc: 'มาตรฐานการส่งลับเฉพาะ 3 ชั้น' },
+        { id: 'care', label: 'The Longevity Care Guide', icon: Droplets, desc: 'คู่มือการดูแลรักษา 4 ขั้นตอน' },
+        { id: 'faqs', label: 'คำถามที่พบบ่อย (FAQs)', icon: HelpCircle, badge: faqs.length, desc: 'คำถาม-คำตอบยอดฮิต' },
+      ]
     }
-
-    fetch('/api/categories.php')
-      .then(res => res.json())
-      .then(data => {
-        if (data.success && Array.isArray(data.categories)) {
-          setCategories(data.categories);
-        }
-      })
-      .catch(() => {});
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('rbd_admin_token');
-    localStorage.removeItem('rbd_admin_user');
-    fetch('/api/auth.php?action=logout').catch(() => {});
-    setAuthenticated(false);
-  };
-
-  const handleRefreshAll = () => {
-    reloadProducts();
-    reloadReviews();
-    reloadSettings();
-    reloadFaqs();
-  };
-
-  if (!authenticated) {
-    return <AdminLogin onLoginSuccess={() => setAuthenticated(true)} onBackToShop={onBackToShop} />;
-  }
-
-  const isLoading = prodLoading || revLoading || setLoading || faqLoading;
+  ];
 
   return (
-    <div className="min-h-screen bg-sand-100 flex flex-col selection:bg-bronze selection:text-white">
+    <div className="min-h-screen bg-sand-100/60 font-sans text-ink flex flex-col lg:flex-row">
       
-      {/* Top Navbar */}
-      <header className="bg-white border-b border-sand-300 sticky top-0 z-40 shadow-2xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          
-          {/* Brand */}
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-ink text-white rounded-xl flex items-center justify-center font-serif font-bold text-sm shadow-2xs">
-              RBD
-            </div>
-            <div>
-              <h1 className="text-sm font-bold text-ink leading-tight">RUBBER DOLL THAILAND</h1>
-              <span className="text-[10px] text-bronze font-semibold">ระบบจัดการหลังบ้าน (Full-Site Admin CMS)</span>
-            </div>
+      {/* Mobile Top Header */}
+      <header className="lg:hidden bg-ink text-white p-4 flex items-center justify-between shadow-md sticky top-0 z-40">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 bg-white/10 hover:bg-white/20 rounded-xl transition-colors"
+          >
+            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+          <div className="flex items-center gap-2">
+            <span className="font-serif font-black tracking-widest text-amber-400 text-sm">RUBBER DOLL</span>
+            <span className="text-[10px] bg-amber-500/20 text-amber-300 font-bold px-1.5 py-0.5 rounded border border-amber-500/30">CMS</span>
           </div>
-
-          {/* Controls */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            <button
-              onClick={handleRefreshAll}
-              disabled={isLoading}
-              className="p-2 rounded-xl text-ink-muted hover:text-ink hover:bg-sand-100 transition-colors"
-              title="รีเฟรชข้อมูล"
-            >
-              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-            </button>
-
-            <button
-              onClick={onBackToShop}
-              className="px-3.5 py-1.5 rounded-xl border border-sand-300 text-ink-soft hover:text-ink hover:bg-sand-50 text-xs font-semibold flex items-center gap-1.5 transition-colors"
-            >
-              <Globe className="w-3.5 h-3.5 text-bronze" />
-              <span className="hidden sm:inline">ดูหน้าร้านค้าจริง</span>
-            </button>
-
-            <button
-              onClick={handleLogout}
-              className="px-3.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold flex items-center gap-1.5 transition-colors"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>ออกจากระบบ</span>
-            </button>
-          </div>
-
         </div>
+
+        <a
+          href="/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-xl font-medium flex items-center gap-1.5"
+        >
+          <ExternalLink className="w-3.5 h-3.5" />
+          <span>ดูหน้าเว็บ</span>
+        </a>
       </header>
 
-      {/* Subheader Navigation Tabs */}
-      <div className="bg-white border-b border-sand-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex gap-2 sm:gap-4 overflow-x-auto scrollbar-none py-2">
-          
-          {/* Tab 1: Products */}
+      {/* LEFT SIDEBAR NAVIGATION */}
+      <aside
+        className={`fixed lg:sticky top-0 left-0 z-50 lg:z-30 w-72 sm:w-80 h-screen bg-ink text-white flex flex-col justify-between border-r border-sand-300/20 shadow-2xl transition-transform duration-300 ease-in-out ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        }`}
+      >
+        {/* Sidebar Top: Branding */}
+        <div className="p-6 border-b border-white/10 flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-serif font-black tracking-widest text-amber-400 text-base sm:text-lg">
+                RUBBER DOLL
+              </span>
+              <span className="text-[10px] bg-amber-500/20 text-amber-300 font-bold px-2 py-0.5 rounded-full border border-amber-500/30">
+                MASTER CMS
+              </span>
+            </div>
+            <p className="text-[11px] text-gray-400 font-light mt-0.5">ระบบควบคุมและปรับแต่งเว็บไซต์</p>
+          </div>
+
           <button
-            onClick={() => setActiveTab('products')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${
-              activeTab === 'products'
-                ? 'bg-ink text-white shadow-sm'
-                : 'text-ink-soft hover:bg-sand-100 hover:text-ink'
-            }`}
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden p-1.5 text-gray-400 hover:text-white"
           >
-            <Package className="w-4 h-4 text-bronze" />
-            <span>จัดการสินค้า ({products.length})</span>
+            <X className="w-5 h-5" />
           </button>
-
-          {/* Tab 2: Reviews */}
-          <button
-            onClick={() => setActiveTab('reviews')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${
-              activeTab === 'reviews'
-                ? 'bg-ink text-white shadow-sm'
-                : 'text-ink-soft hover:bg-sand-100 hover:text-ink'
-            }`}
-          >
-            <Star className="w-4 h-4 text-amber-500 fill-amber-400" />
-            <span>จัดการรีวิวลูกค้า ({reviews.length})</span>
-          </button>
-
-          {/* Tab 3: Site Settings */}
-          <button
-            onClick={() => setActiveTab('settings')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${
-              activeTab === 'settings'
-                ? 'bg-ink text-white shadow-sm'
-                : 'text-ink-soft hover:bg-sand-100 hover:text-ink'
-            }`}
-          >
-            <Sliders className="w-4 h-4 text-bronze" />
-            <span>ตั้งค่าเว็บไซต์ & ข้อมูลติดต่อ</span>
-          </button>
-
-          {/* Tab 4: FAQs */}
-          <button
-            onClick={() => setActiveTab('faqs')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${
-              activeTab === 'faqs'
-                ? 'bg-ink text-white shadow-sm'
-                : 'text-ink-soft hover:bg-sand-100 hover:text-ink'
-            }`}
-          >
-            <HelpCircle className="w-4 h-4 text-amber-600" />
-            <span>คำถามที่พบบ่อย ({faqs.length})</span>
-          </button>
-
-          {/* Tab 5: Categories */}
-          <button
-            onClick={() => setActiveTab('categories')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${
-              activeTab === 'categories'
-                ? 'bg-ink text-white shadow-sm'
-                : 'text-ink-soft hover:bg-sand-100 hover:text-ink'
-            }`}
-          >
-            <Tag className="w-4 h-4 text-bronze" />
-            <span>จัดการหมวดหมู่ ({categories.length})</span>
-          </button>
-
-          {/* Database installer link */}
-          <a
-            href="/api/init_db.php"
-            target="_blank"
-            rel="noreferrer"
-            className="px-4 py-2 rounded-xl text-xs sm:text-sm font-medium text-ink-muted hover:text-ink hover:bg-sand-100 flex items-center gap-2 transition-all whitespace-nowrap"
-          >
-            <Database className="w-4 h-4 text-emerald-600" />
-            <span>ตัวติดตั้ง MySQL (Init DB) ↗</span>
-          </a>
-
         </div>
-      </div>
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Sidebar Middle: Scrollable Menu Groups */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-thin scrollbar-thumb-gray-800">
+          {navMenuItems.map((grp, gIdx) => (
+            <div key={gIdx} className="space-y-1.5">
+              <span className="px-3 text-[10px] font-extrabold uppercase tracking-wider text-gray-400 block">
+                {grp.group}
+              </span>
+
+              <div className="space-y-1">
+                {grp.items.map(item => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setActiveTab(item.id);
+                        setSidebarOpen(false);
+                      }}
+                      className={`w-full text-left p-3 rounded-2xl transition-all flex items-center justify-between group ${
+                        isActive
+                          ? 'bg-amber-500 text-gray-950 font-bold shadow-lg shadow-amber-500/20 scale-[1.02]'
+                          : 'text-gray-300 hover:bg-white/5 hover:text-white font-medium'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                          isActive ? 'bg-black/20 text-gray-950' : 'bg-white/5 text-gray-400 group-hover:text-amber-400 group-hover:bg-white/10'
+                        }`}>
+                          <Icon className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-xs sm:text-sm block truncate leading-snug">{item.label}</span>
+                          <span className={`text-[10px] block truncate font-normal ${isActive ? 'text-gray-900/80' : 'text-gray-500'}`}>
+                            {item.desc}
+                          </span>
+                        </div>
+                      </div>
+
+                      {item.badge !== undefined && (
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold shrink-0 ${
+                          isActive ? 'bg-black text-amber-400' : 'bg-white/10 text-gray-300'
+                        }`}>
+                          {item.badge}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Sidebar Bottom: Live Site & Logout */}
+        <div className="p-4 border-t border-white/10 space-y-2 bg-black/20">
+          <div className="flex items-center gap-2">
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 py-2 px-3 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>เปิดหน้าเว็บจริง</span>
+            </a>
+
+            <button
+              onClick={handleRefreshAll}
+              className="p-2 bg-white/10 hover:bg-white/20 text-amber-400 rounded-xl transition-colors"
+              title="รีเฟรชข้อมูลล่าสุด"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </button>
+          </div>
+
+          <button
+            onClick={onLogout}
+            className="w-full py-2 px-3 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>ออกจากระบบ</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* Backdrop overlay on mobile */}
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 lg:hidden"
+        />
+      )}
+
+      {/* MAIN CONTENT AREA */}
+      <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 space-y-6">
+        
+        {/* Top Breadcrumb Bar */}
+        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-sand-300 shadow-soft flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2 text-xs text-ink-muted">
+              <span>ระบบหลังบ้าน</span>
+              <ChevronRight className="w-3 h-3" />
+              <span className="font-bold text-bronze uppercase">
+                {activeTab}
+              </span>
+            </div>
+            <h1 className="text-lg sm:text-xl font-bold text-ink mt-0.5">
+              {activeTab === 'products' && '🛍️ จัดการรายการสินค้า (70 โมเดล)'}
+              {activeTab === 'reviews' && '⭐ จัดการรีวิวจากลูกค้า'}
+              {activeTab === 'categories' && '🏷️ จัดการหมวดหมู่สินค้า'}
+              {activeTab === 'hero' && '🖼️ แบนเนอร์หลัก & สินค้า Hero หน้าแรก'}
+              {activeTab === 'contact' && '📢 แถบประกาศบนสุด & ข้อมูลติดต่อร้านค้า'}
+              {activeTab === 'values' && '💎 จุดเด่น (The Masterpiece Difference)'}
+              {activeTab === 'discreet' && '📦 การจัดส่งลับเฉพาะ 100% (Discreet Delivery)'}
+              {activeTab === 'care' && '🧼 คู่มือการดูแลรักษาซิลิโคน (The Longevity Care)'}
+              {activeTab === 'faqs' && '❓ คำถามที่พบบ่อย (FAQ Manager)'}
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-emerald-800 bg-emerald-50 border border-emerald-300 font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>เชื่อมต่อฐานข้อมูล MySQL สด</span>
+            </span>
+          </div>
+        </div>
+
+        {/* Tab Content Panels */}
         {activeTab === 'products' && (
           <ProductManager
             products={products}
-            categories={categories}
+            categories={categoriesMock}
             onUpdateProducts={setProducts}
           />
         )}
@@ -216,10 +247,50 @@ export default function AdminDashboard({ onBackToShop }) {
           />
         )}
 
-        {activeTab === 'settings' && (
+        {activeTab === 'categories' && (
+          <CategoryManager
+            categories={categoriesMock}
+            onUpdateCategories={() => {}}
+          />
+        )}
+
+        {activeTab === 'hero' && (
           <SiteSettingsManager
             settings={settings}
             onUpdateSettings={setSettings}
+            subTab="hero"
+          />
+        )}
+
+        {activeTab === 'contact' && (
+          <SiteSettingsManager
+            settings={settings}
+            onUpdateSettings={setSettings}
+            subTab="contact"
+          />
+        )}
+
+        {activeTab === 'values' && (
+          <SiteSettingsManager
+            settings={settings}
+            onUpdateSettings={setSettings}
+            subTab="values"
+          />
+        )}
+
+        {activeTab === 'discreet' && (
+          <SiteSettingsManager
+            settings={settings}
+            onUpdateSettings={setSettings}
+            subTab="discreet"
+          />
+        )}
+
+        {activeTab === 'care' && (
+          <SiteSettingsManager
+            settings={settings}
+            onUpdateSettings={setSettings}
+            subTab="care"
           />
         )}
 
@@ -230,15 +301,19 @@ export default function AdminDashboard({ onBackToShop }) {
           />
         )}
 
-        {activeTab === 'categories' && (
-          <CategoryManager
-            categories={categories}
-            products={products}
-            onUpdateCategories={setCategories}
-          />
-        )}
       </main>
 
     </div>
   );
 }
+
+const categoriesMock = [
+  { id: 'all', label_th: 'สินค้าทั้งหมด', label_en: 'All Masterpieces' },
+  { id: 'ready', label_th: 'สินค้าพร้อมส่ง (ไทย)', label_en: 'Ready to Ship (TH)' },
+  { id: 'toys', label_th: 'ของเล่นสำหรับผู้ใหญ่', label_en: 'Adult Toys' },
+  { id: 'anime', label_th: 'ตุ๊กตาซิลิโคน สาวสวยและอนิเมะ การ์ตูน', label_en: 'Anime & Fantasy' },
+  { id: 'western', label_th: 'ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวฝรั่ง / ยุโรป', label_en: 'Western / European' },
+  { id: 'asian', label_th: 'ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวเอเชีย', label_en: 'Asian Aesthetics' },
+  { id: 'torso', label_th: 'ตุ๊กตายางครึ่งตัว TORSO', label_en: 'Torso & Half Body' },
+  { id: 'reviews', label_th: 'รีวิวตุ๊กตายางจากลูกค้า', label_en: 'Customer Reviews' },
+];
