@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Eye, MessageCircle, Layers, Flame, Tag } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
 
 export default function ProductCard({ product, onQuickView, isAdultMode, lang = 'th', priority = false }) {
   const [primaryLoaded, setPrimaryLoaded] = useState(false);
   const [hoverLoaded, setHoverLoaded] = useState(false);
+  const { settings } = useSiteSettings();
   const t = translations[lang] || translations.th;
 
   // Gallery determination
@@ -15,8 +17,8 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
 
   const hasHover = Boolean(displayHoverImg && displayHoverImg !== displayMainImg);
 
-  const lineMessage = `สวัสดีครับ สนใจสั่งซื้อ/สอบถามสินค้า [${product.code}] ${product.name} (ราคา: ${product.price || 'โปรโมชั่น'}) ครับ`;
-  const lineProductUrl = `https://line.me/R/oaMessage/@RUBBERDOLL.TH/?${encodeURIComponent(lineMessage)}`;
+  const lineProductUrl = settings.line_url || siteConfig.lineUrl || 'https://line.me/R/ti/p/@RUBBERDOLL.TH';
+
   const seoImageAlt = `ตุ๊กตายาง ซิลิโคนแท้ระดับ Hi-End รุ่น ${product.code} ${product.name} ${product.series} สเปก ${product.height} RUBBER DOLL THAILAND`;
 
   const originalPrice = product.originalPrice || product.original_price || '';

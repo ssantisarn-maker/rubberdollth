@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { X, MessageCircle, ShieldCheck, Sparkles, Box, Check, Star, Lock, HeartHandshake, ChevronLeft, ChevronRight, Flame, Layers, DollarSign, Gift, CheckCircle2, FileText } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
 
 export default function ProductModal({ product, onClose, isAdultMode, lang = 'th' }) {
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [showVideo, setShowVideo] = useState(false);
+  const { settings } = useSiteSettings();
   const t = translations[lang] || translations.th;
 
   useEffect(() => {
@@ -29,8 +31,8 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
 
   const currentImage = galleryImages[activeImageIdx] || product.image;
 
-  const lineMessage = `สวัสดีครับ สนใจสอบถามและสั่งซื้อสินค้า [${product.code}] ${product.name} (ราคา: ${product.price || 'โปรโมชั่น'}, สเปก: ${product.height || '-'}) ครับ`;
-  const lineProductUrl = `https://line.me/R/oaMessage/@RUBBERDOLL.TH/?${encodeURIComponent(lineMessage)}`;
+  const lineProductUrl = settings.line_url || siteConfig.lineUrl || 'https://line.me/R/ti/p/@RUBBERDOLL.TH';
+
   const seoImageAlt = `ตุ๊กตายาง ซิลิโคนแท้ระดับ Hi-End รุ่น ${product.code} ${product.name} ${product.series} สเปก ${product.height} RUBBER DOLL THAILAND`;
 
   const skinTone = product.skinTone || product.skin_tone || 'ผิวขาว/สีขาวเหลือง';
