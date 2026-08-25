@@ -137,9 +137,8 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
         
         <div className="space-y-1.5">
           {/* Series & Category */}
-          <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-ink-muted">
-            <span className="truncate max-w-[110px] sm:max-w-[160px]">{product.category}</span>
-            <span className="text-bronze font-medium shrink-0 text-[10px]">{t.catalog.card.gradeText}</span>
+          <div className="text-[10px] sm:text-[11px] text-ink-muted">
+            <span className="truncate block">{product.category}</span>
           </div>
 
           {/* Model Name */}

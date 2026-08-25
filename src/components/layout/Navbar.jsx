@@ -3,18 +3,21 @@ import { MessageCircle, Search, Menu, X, Flame, Bell, Phone } from 'lucide-react
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
+import { useLiveProducts } from '../../hooks/useLiveProducts';
 
 export default function Navbar({ onSearchClick, isAdultMode, onToggleAdultMode, lang, onSetLang }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { settings } = useSiteSettings();
+  const { products } = useLiveProducts();
   const t = translations[lang] || translations.th;
 
+  const productCount = products && products.length > 0 ? products.length : 70;
   const lineUrl = settings.line_url || siteConfig.lineUrl;
   const lineId = settings.line_id || siteConfig.lineId;
 
   // Primary curated links
   const desktopLinks = [
-    { id: 'catalog', label: lang === 'th' ? 'คอลเลกชัน 70 รุ่น' : '70 Models', href: '#catalog' },
+    { id: 'catalog', label: lang === 'th' ? `คอลเลกชัน ${productCount} รุ่น` : `${productCount} Models`, href: '#catalog' },
     { id: 'ready', label: lang === 'th' ? 'พร้อมส่งทันที (ไทย)' : 'Ready Stock (TH)', href: '#catalog' },
     { id: 'discreet', label: lang === 'th' ? 'จัดส่งลับเฉพาะ' : 'Discreet Box', href: '#discreet' },
     { id: 'reviews', label: lang === 'th' ? 'รีวิวลูกค้า' : 'Reviews', href: '#reviews' },
@@ -22,7 +25,7 @@ export default function Navbar({ onSearchClick, isAdultMode, onToggleAdultMode, 
   ];
 
   const allDrawerLinks = [
-    { id: 'catalog', label: lang === 'th' ? 'คอลเลกชัน 70 รุ่น ทั้งหมด' : 'All 70 Models Collection', href: '#catalog' },
+    { id: 'catalog', label: lang === 'th' ? `คอลเลกชัน ${productCount} รุ่น ทั้งหมด` : `All ${productCount} Models Collection`, href: '#catalog' },
     { id: 'ready', label: lang === 'th' ? 'สินค้าพร้อมส่งทันทีในไทย (ด่วน 1-2 วัน)' : 'Ready to Ship in Thailand (Express)', href: '#catalog' },
     { id: 'discreet', label: lang === 'th' ? 'นโยบายจัดส่งลับเฉพาะ 100% (Secret Box)' : '100% Secret & Discreet Shipping', href: '#discreet' },
     { id: 'care', label: lang === 'th' ? 'ศิลปะการดูแลรักษา (The Longevity Care)' : 'Care & Maintenance Guide', href: '#care' },

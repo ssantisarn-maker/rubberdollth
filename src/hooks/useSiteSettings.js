@@ -41,12 +41,16 @@ const defaultSettings = {
   values_heading: 'เอกลักษณ์แห่งความสมบูรณ์แบบ ที่สัมผัสได้จริง',
   values_p1_title: 'Medical-Grade Silicone 100%',
   values_p1_desc: 'ซิลิโคนแท้เกรดการแพทย์ ให้สัมผัสอ่อนนุ่ม อุ่นละมุน ยืดหยุ่นเสมือนผิวจริง ปลอดภัย ไร้กลิ่น',
+  values_p1_image: '',
   values_p2_title: '100% Discreet Packaging',
   values_p2_desc: 'แพ็กเกจกล่องทึบ 2 ชั้น ไม่ระบุชื่อร้านหรือชื่อสินค้าหน้ากล่อง รักษาความเป็นส่วนตัวสูงสุด',
+  values_p2_image: '',
   values_p3_title: 'Full 360° Articulation',
   values_p3_desc: 'โครงสร้างสแตนเลสข้อต่อปรับได้ 360 องศา รองรับทุกท่วงท่าอย่างเป็นธรรมชาติและแข็งแรง',
+  values_p3_image: '',
   values_p4_title: 'Direct Care & Support',
   values_p4_desc: 'บริการให้คำแนะนำและดูแลตลอดอายุการใช้งาน โดยทีมงานคนไทยผู้เชี่ยวชาญ 24 ชม.',
+  values_p4_image: '',
 
   // Discreet Delivery (100% Confidential)
   discreet_tag: '100% CONFIDENTIAL & DISCREET DELIVERY',

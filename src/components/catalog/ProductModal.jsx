@@ -143,7 +143,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
               )}
 
               <div className="absolute bottom-3 left-3 right-3 bg-ink/80 backdrop-blur-md text-white text-[10px] sm:text-[11px] p-1.5 sm:p-2 rounded-xl text-center">
-                ภาพถ่ายสเปกจริงจากโรงงาน {activeImageIdx + 1} / {galleryImages.length} • Hyper-Realistic Pure Silicone SSS
+                ภาพถ่ายสเปกจริงจากโรงงาน {activeImageIdx + 1} / {galleryImages.length}
               </div>
             </div>
 
@@ -281,11 +281,6 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200 space-y-0.5">
                   <span className="text-[10px] text-ink-muted block">วัสดุเนื้อผิวตุ๊กตา</span>
                   <span className="font-bold text-xs sm:text-sm text-ink">{material}</span>
-                </div>
-
-                <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200 space-y-0.5">
-                  <span className="text-[10px] text-ink-muted block">โครงสร้างข้อต่อ (Articulation)</span>
-                  <span className="font-bold text-xs sm:text-sm text-ink">{skeleton}</span>
                 </div>
               </div>
 

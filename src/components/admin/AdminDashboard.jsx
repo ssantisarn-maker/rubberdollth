@@ -28,7 +28,7 @@ export default function AdminDashboard({ onLogout }) {
     {
       group: '🛍️ คลังสินค้าและรีวิว',
       items: [
-        { id: 'products', label: 'จัดการสินค้า (70 รายการ)', icon: Package, badge: products.length, desc: 'สเปก, ราคา, รูปภาพ, วิดีโอ, จัดเรียง' },
+        { id: 'products', label: `จัดการสินค้า (${products.length} รายการ)`, icon: Package, badge: products.length, desc: 'สเปก, ราคา, รูปภาพ, วิดีโอ, จัดเรียง' },
         { id: 'reviews', label: 'จัดการรีวิวจากลูกค้า', icon: MessageSquareQuote, badge: reviews.length, desc: 'รีวิว, ให้ดาว, รูปถ่ายจริง' },
         { id: 'categories', label: 'จัดการหมวดหมู่สินค้า', icon: Tag, desc: 'แถบกรองและหมวดหมู่' },
       ]
@@ -211,7 +211,7 @@ export default function AdminDashboard({ onLogout }) {
               </span>
             </div>
             <h1 className="text-lg sm:text-xl font-bold text-ink mt-0.5">
-              {activeTab === 'products' && '🛍️ จัดการรายการสินค้า (70 โมเดล)'}
+              {activeTab === 'products' && `🛍️ จัดการรายการสินค้า (${products.length} โมเดล)`}
               {activeTab === 'reviews' && '⭐ จัดการรีวิวจากลูกค้า'}
               {activeTab === 'categories' && '🏷️ จัดการหมวดหมู่สินค้า'}
               {activeTab === 'hero' && '🖼️ แบนเนอร์หลัก & สินค้า Hero หน้าแรก'}

@@ -6,14 +6,45 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
   const [formData, setFormData] = useState({ ...settings });
   const [saveLoading, setSaveLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
-  const [uploadingHero, setUploadingHero] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingPillar, setUploadingPillar] = useState(null);
   const { products } = useLiveProducts();
 
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 4000);
   };
+
+  // Upload Pillar Image
+  const handlePillarImageUpload = async (pillarNum, e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingPillar(pillarNum);
+    const form = new FormData();
+    form.append('image', file);
+    form.append('type', 'product');
+
+    try {
+      const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
+      const res = await fetch('/api/upload.php', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: form
+      });
+      const data = await res.json();
+      if (data.success && data.url) {
+        setFormData(prev => ({ ...prev, [`values_p${pillarNum}_image`]: data.url }));
+        showToast(`✓ อัปโหลดรูปภาพจุดเด่นที่ ${pillarNum} สำเร็จ`);
+      }
+    } catch (err) {
+      const localUrl = URL.createObjectURL(file);
+      setFormData(prev => ({ ...prev, [`values_p${pillarNum}_image`]: localUrl }));
+    } finally {
+      setUploadingPillar(null);
+    }
+  };
+
 
   // Upload custom Brand Logo
   const handleLogoUpload = async (e) => {
@@ -539,18 +570,61 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
               {/* Pillar 1 */}
-              <div className="p-4 bg-sand-50 border border-sand-200 rounded-2xl space-y-2">
-                <span className="font-bold text-bronze block">จุดเด่นที่ 1</span>
+              <div className="p-4 bg-sand-50 border border-sand-200 rounded-2xl space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-bronze block">จุดเด่นที่ 1</span>
+                  {formData.values_p1_image && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, values_p1_image: '' })}
+                      className="text-[10px] text-rose-600 hover:underline"
+                    >
+                      ลบรูป
+                    </button>
+                  )}
+                </div>
+
+                {/* Image Preview & Upload */}
+                <div className="space-y-1.5">
+                  {formData.values_p1_image ? (
+                    <div className="relative aspect-[16/10] rounded-xl overflow-hidden border border-sand-300 bg-sand-100 group">
+                      <img src={formData.values_p1_image} alt="Pillar 1" className="w-full h-full object-cover" />
+                      <label className="absolute inset-0 bg-ink/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer text-white text-[10px] font-bold">
+                        <span>เปลี่ยนรูป</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={e => handlePillarImageUpload(1, e)}
+                          disabled={uploadingPillar === 1}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                  ) : (
+                    <label className="w-full py-3 bg-white hover:bg-sand-100 text-ink text-[11px] font-semibold rounded-xl cursor-pointer transition-all flex flex-col items-center justify-center gap-1 border border-dashed border-sand-300">
+                      <Upload className="w-4 h-4 text-bronze" />
+                      <span>{uploadingPillar === 1 ? 'กำลังอัปโหลด...' : '+ ใส่รูปภาพจุดเด่น 1'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={e => handlePillarImageUpload(1, e)}
+                        disabled={uploadingPillar === 1}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
+                </div>
+
                 <input
                   type="text"
-                  value={formData.values_p1_title}
+                  value={formData.values_p1_title || ''}
                   onChange={e => setFormData({ ...formData, values_p1_title: e.target.value })}
                   placeholder="หัวข้อ"
                   className="w-full px-3 py-1.5 bg-white border border-sand-300 rounded-lg font-bold"
                 />
                 <textarea
                   rows={3}
-                  value={formData.values_p1_desc}
+                  value={formData.values_p1_desc || ''}
                   onChange={e => setFormData({ ...formData, values_p1_desc: e.target.value })}
                   placeholder="คำอธิบาย"
                   className="w-full px-3 py-1.5 bg-white border border-sand-300 rounded-lg text-xs"
@@ -558,18 +632,61 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
               </div>
 
               {/* Pillar 2 */}
-              <div className="p-4 bg-sand-50 border border-sand-200 rounded-2xl space-y-2">
-                <span className="font-bold text-bronze block">จุดเด่นที่ 2</span>
+              <div className="p-4 bg-sand-50 border border-sand-200 rounded-2xl space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-bronze block">จุดเด่นที่ 2</span>
+                  {formData.values_p2_image && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, values_p2_image: '' })}
+                      className="text-[10px] text-rose-600 hover:underline"
+                    >
+                      ลบรูป
+                    </button>
+                  )}
+                </div>
+
+                {/* Image Preview & Upload */}
+                <div className="space-y-1.5">
+                  {formData.values_p2_image ? (
+                    <div className="relative aspect-[16/10] rounded-xl overflow-hidden border border-sand-300 bg-sand-100 group">
+                      <img src={formData.values_p2_image} alt="Pillar 2" className="w-full h-full object-cover" />
+                      <label className="absolute inset-0 bg-ink/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer text-white text-[10px] font-bold">
+                        <span>เปลี่ยนรูป</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={e => handlePillarImageUpload(2, e)}
+                          disabled={uploadingPillar === 2}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                  ) : (
+                    <label className="w-full py-3 bg-white hover:bg-sand-100 text-ink text-[11px] font-semibold rounded-xl cursor-pointer transition-all flex flex-col items-center justify-center gap-1 border border-dashed border-sand-300">
+                      <Upload className="w-4 h-4 text-bronze" />
+                      <span>{uploadingPillar === 2 ? 'กำลังอัปโหลด...' : '+ ใส่รูปภาพจุดเด่น 2'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={e => handlePillarImageUpload(2, e)}
+                        disabled={uploadingPillar === 2}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
+                </div>
+
                 <input
                   type="text"
-                  value={formData.values_p2_title}
+                  value={formData.values_p2_title || ''}
                   onChange={e => setFormData({ ...formData, values_p2_title: e.target.value })}
                   placeholder="หัวข้อ"
                   className="w-full px-3 py-1.5 bg-white border border-sand-300 rounded-lg font-bold"
                 />
                 <textarea
                   rows={3}
-                  value={formData.values_p2_desc}
+                  value={formData.values_p2_desc || ''}
                   onChange={e => setFormData({ ...formData, values_p2_desc: e.target.value })}
                   placeholder="คำอธิบาย"
                   className="w-full px-3 py-1.5 bg-white border border-sand-300 rounded-lg text-xs"
@@ -577,18 +694,61 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
               </div>
 
               {/* Pillar 3 */}
-              <div className="p-4 bg-sand-50 border border-sand-200 rounded-2xl space-y-2">
-                <span className="font-bold text-bronze block">จุดเด่นที่ 3</span>
+              <div className="p-4 bg-sand-50 border border-sand-200 rounded-2xl space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-bronze block">จุดเด่นที่ 3</span>
+                  {formData.values_p3_image && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, values_p3_image: '' })}
+                      className="text-[10px] text-rose-600 hover:underline"
+                    >
+                      ลบรูป
+                    </button>
+                  )}
+                </div>
+
+                {/* Image Preview & Upload */}
+                <div className="space-y-1.5">
+                  {formData.values_p3_image ? (
+                    <div className="relative aspect-[16/10] rounded-xl overflow-hidden border border-sand-300 bg-sand-100 group">
+                      <img src={formData.values_p3_image} alt="Pillar 3" className="w-full h-full object-cover" />
+                      <label className="absolute inset-0 bg-ink/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer text-white text-[10px] font-bold">
+                        <span>เปลี่ยนรูป</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={e => handlePillarImageUpload(3, e)}
+                          disabled={uploadingPillar === 3}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                  ) : (
+                    <label className="w-full py-3 bg-white hover:bg-sand-100 text-ink text-[11px] font-semibold rounded-xl cursor-pointer transition-all flex flex-col items-center justify-center gap-1 border border-dashed border-sand-300">
+                      <Upload className="w-4 h-4 text-bronze" />
+                      <span>{uploadingPillar === 3 ? 'กำลังอัปโหลด...' : '+ ใส่รูปภาพจุดเด่น 3'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={e => handlePillarImageUpload(3, e)}
+                        disabled={uploadingPillar === 3}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
+                </div>
+
                 <input
                   type="text"
-                  value={formData.values_p3_title}
+                  value={formData.values_p3_title || ''}
                   onChange={e => setFormData({ ...formData, values_p3_title: e.target.value })}
                   placeholder="หัวข้อ"
                   className="w-full px-3 py-1.5 bg-white border border-sand-300 rounded-lg font-bold"
                 />
                 <textarea
                   rows={3}
-                  value={formData.values_p3_desc}
+                  value={formData.values_p3_desc || ''}
                   onChange={e => setFormData({ ...formData, values_p3_desc: e.target.value })}
                   placeholder="คำอธิบาย"
                   className="w-full px-3 py-1.5 bg-white border border-sand-300 rounded-lg text-xs"
@@ -596,18 +756,61 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
               </div>
 
               {/* Pillar 4 */}
-              <div className="p-4 bg-sand-50 border border-sand-200 rounded-2xl space-y-2">
-                <span className="font-bold text-bronze block">จุดเด่นที่ 4</span>
+              <div className="p-4 bg-sand-50 border border-sand-200 rounded-2xl space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-bronze block">จุดเด่นที่ 4</span>
+                  {formData.values_p4_image && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, values_p4_image: '' })}
+                      className="text-[10px] text-rose-600 hover:underline"
+                    >
+                      ลบรูป
+                    </button>
+                  )}
+                </div>
+
+                {/* Image Preview & Upload */}
+                <div className="space-y-1.5">
+                  {formData.values_p4_image ? (
+                    <div className="relative aspect-[16/10] rounded-xl overflow-hidden border border-sand-300 bg-sand-100 group">
+                      <img src={formData.values_p4_image} alt="Pillar 4" className="w-full h-full object-cover" />
+                      <label className="absolute inset-0 bg-ink/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer text-white text-[10px] font-bold">
+                        <span>เปลี่ยนรูป</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={e => handlePillarImageUpload(4, e)}
+                          disabled={uploadingPillar === 4}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                  ) : (
+                    <label className="w-full py-3 bg-white hover:bg-sand-100 text-ink text-[11px] font-semibold rounded-xl cursor-pointer transition-all flex flex-col items-center justify-center gap-1 border border-dashed border-sand-300">
+                      <Upload className="w-4 h-4 text-bronze" />
+                      <span>{uploadingPillar === 4 ? 'กำลังอัปโหลด...' : '+ ใส่รูปภาพจุดเด่น 4'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={e => handlePillarImageUpload(4, e)}
+                        disabled={uploadingPillar === 4}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
+                </div>
+
                 <input
                   type="text"
-                  value={formData.values_p4_title}
+                  value={formData.values_p4_title || ''}
                   onChange={e => setFormData({ ...formData, values_p4_title: e.target.value })}
                   placeholder="หัวข้อ"
                   className="w-full px-3 py-1.5 bg-white border border-sand-300 rounded-lg font-bold"
                 />
                 <textarea
                   rows={3}
-                  value={formData.values_p4_desc}
+                  value={formData.values_p4_desc || ''}
                   onChange={e => setFormData({ ...formData, values_p4_desc: e.target.value })}
                   placeholder="คำอธิบาย"
                   className="w-full px-3 py-1.5 bg-white border border-sand-300 rounded-lg text-xs"
