@@ -291,31 +291,30 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
                         onError={e => { e.target.src = '/favicon.png'; }}
                       />
                       {isMain && (
-                        <div className="absolute top-1.5 left-1.5 bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md flex items-center gap-1">
+                        <div className="absolute top-1.5 left-1.5 bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md flex items-center gap-1 z-10">
                           <Star className="w-2.5 h-2.5 fill-white" /> ปกหลัก
                         </div>
                       )}
                       
-                      <div className="absolute inset-0 bg-ink/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        {!isMain && (
-                          <button
-                            type="button"
-                            onClick={() => handleSetMainImage(imgUrl)}
-                            className="p-2 rounded-xl bg-amber-500 text-white hover:bg-amber-600 shadow-md transition-colors"
-                            title="ตั้งเป็นรูปปกหลัก"
-                          >
-                            <Star className="w-4 h-4" />
-                          </button>
-                        )}
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteImage(index)}
+                        className="absolute top-1.5 right-1.5 p-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white shadow-md transition-all active:scale-90 z-10"
+                        title="ลบรูปนี้ออก"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+
+                      {!isMain && (
                         <button
                           type="button"
-                          onClick={() => handleDeleteImage(index)}
-                          className="p-2 rounded-xl bg-rose-600 text-white hover:bg-rose-700 shadow-md transition-colors"
-                          title="ลบรูปนี้ออก"
+                          onClick={() => handleSetMainImage(imgUrl)}
+                          className="absolute bottom-1.5 right-1.5 p-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white shadow-md transition-all active:scale-90 z-10 flex items-center gap-1 text-[10px] font-bold"
+                          title="ตั้งเป็นรูปปกหลัก"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Star className="w-3.5 h-3.5" /> ตั้งปก
                         </button>
-                      </div>
+                      )}
                     </div>
                     <div className="p-1.5 text-center text-[10px] text-ink-muted truncate px-2 bg-sand-50/50">
                       รูปที่ {index + 1} {isMain ? '⭐' : ''}

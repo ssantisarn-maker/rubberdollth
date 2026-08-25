@@ -12,10 +12,20 @@ $pdo = getDbConnection();
 $jsonCacheFile = __DIR__ . '/products_cache.json';
 
 function formatProductRow($r) {
-    $r['gallery'] = json_decode($r['gallery_json'] ?? '[]', true) ?: [$r['image']];
+    $gallery = json_decode($r['gallery_json'] ?? '[]', true) ?: [$r['image']];
+    $localImgs = array_values(array_filter($gallery, function($img) {
+        return is_string($img) && strpos($img, '/images/products/') === 0;
+    }));
+    if (!empty($localImgs)) {
+        $r['gallery'] = $localImgs;
+    } else {
+        $r['gallery'] = array_values(array_filter($gallery, function($img) {
+            return is_string($img) && strpos($img, 'https://cdn.zyrosite.com/') !== 0;
+        })) ?: [$r['image']];
+    }
     $r['categories'] = json_decode($r['categories_json'] ?? '[]', true) ?: ['all'];
     $r['isReadyToShip'] = (bool)($r['is_ready_to_ship'] ?? 0);
-    $r['totalAngles'] = (int)($r['total_angles'] ?? count($r['gallery']));
+    $r['totalAngles'] = count($r['gallery']);
     $r['skinTone'] = $r['skin_tone'] ?? '';
     $r['material'] = $r['material'] ?? '';
     $r['skeleton'] = $r['skeleton'] ?? '';
