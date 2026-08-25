@@ -4,14 +4,61 @@ import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 
+function getVideoEmbedInfo(rawUrl) {
+  if (!rawUrl || typeof rawUrl !== 'string') return null;
+  const url = rawUrl.trim();
+
+  // YouTube Shorts: https://www.youtube.com/shorts/VIDEO_ID
+  const ytShorts = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/i);
+  if (ytShorts) {
+    return { type: 'iframe', src: `https://www.youtube-nocookie.com/embed/${ytShorts[1]}?autoplay=1&rel=0` };
+  }
+
+  // YouTube youtu.be: https://youtu.be/VIDEO_ID
+  const youtuBe = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/i);
+  if (youtuBe) {
+    return { type: 'iframe', src: `https://www.youtube-nocookie.com/embed/${youtuBe[1]}?autoplay=1&rel=0` };
+  }
+
+  // YouTube watch: https://www.youtube.com/watch?v=VIDEO_ID
+  const ytWatch = url.match(/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/i);
+  if (ytWatch) {
+    return { type: 'iframe', src: `https://www.youtube-nocookie.com/embed/${ytWatch[1]}?autoplay=1&rel=0` };
+  }
+
+  // YouTube embed: https://www.youtube.com/embed/VIDEO_ID
+  const ytEmbed = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/i);
+  if (ytEmbed) {
+    return { type: 'iframe', src: `https://www.youtube-nocookie.com/embed/${ytEmbed[1]}?autoplay=1&rel=0` };
+  }
+
+  // Google Drive: https://drive.google.com/file/d/FILE_ID/view...
+  const gDrive = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/i);
+  if (gDrive) {
+    return { type: 'iframe', src: `https://drive.google.com/file/d/${gDrive[1]}/preview` };
+  }
+
+  // Vimeo: https://vimeo.com/VIDEO_ID
+  const vimeo = url.match(/vimeo\.com\/(\d+)/i);
+  if (vimeo) {
+    return { type: 'iframe', src: `https://player.vimeo.com/video/${vimeo[1]}?autoplay=1` };
+  }
+
+  // Direct MP4 / WebM / Cloud file URL
+  return { type: 'video', src: url };
+}
+
 export default function ProductModal({ product, onClose, isAdultMode, lang = 'th' }) {
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [showVideo, setShowVideo] = useState(false);
+  const [videoError, setVideoError] = useState(false);
   const { settings } = useSiteSettings();
   const t = translations[lang] || translations.th;
 
   useEffect(() => {
     setActiveImageIdx(0);
+    setShowVideo(false);
+    setVideoError(false);
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
     };
@@ -74,23 +121,66 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
             <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-sand-100 border border-sand-200 shadow-sm">
               {showVideo && (product.videoUrl || product.video_url) ? (
                 <div className="w-full h-full bg-black flex items-center justify-center relative">
-                  {(product.videoUrl || product.video_url).includes('youtube.com') || (product.videoUrl || product.video_url).includes('youtu.be') ? (
-                    <iframe
-                      src={(product.videoUrl || product.video_url).replace('watch?v=', 'embed/')}
-                      title="วิดีโอตัวอย่างสินค้า"
-                      className="w-full h-full"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  ) : (
-                    <video
-                      src={product.videoUrl || product.video_url}
-                      controls
-                      autoPlay
-                      playsInline
-                      className="w-full h-full object-contain"
-                    />
-                  )}
+                  {videoError ? (
+                    <div className="w-full h-full bg-sand-950 text-white flex flex-col items-center justify-center p-6 text-center space-y-3">
+                      <div className="w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center text-xl font-bold">
+                        ⚠️
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-xs sm:text-sm font-bold text-white">ไม่สามารถเปิดเล่นวิดีโอนี้ได้</p>
+                        <p className="text-[11px] text-sand-400 max-w-xs leading-relaxed">
+                          รูปแบบไฟล์อาจไม่รองรับ หรือลิงก์ปลายทางติดสิทธิ์การเข้าถึง (แนะนำอัปโหลดเป็นไฟล์ .mp4 หรือวางลิงก์ YouTube)
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 pt-1">
+                        <a
+                          href={product.videoUrl || product.video_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-4 py-2 bg-purple-700 hover:bg-purple-800 text-white text-xs font-semibold rounded-xl transition-colors shadow-sm"
+                        >
+                          เปิดดูลิงก์วิดีโอตรง ↗
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => { setVideoError(false); setShowVideo(false); }}
+                          className="px-4 py-2 bg-white/15 hover:bg-white/25 text-white text-xs font-semibold rounded-xl transition-colors"
+                        >
+                          กลับไปดูรูปภาพ
+                        </button>
+                      </div>
+                    </div>
+                  ) : (() => {
+                    const embedInfo = getVideoEmbedInfo(product.videoUrl || product.video_url);
+                    if (!embedInfo) return null;
+
+                    if (embedInfo.type === 'iframe') {
+                      return (
+                        <iframe
+                          src={embedInfo.src}
+                          title="วิดีโอตัวอย่างสินค้า"
+                          className="w-full h-full border-0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                        />
+                      );
+                    }
+
+                    return (
+                      <video
+                        src={embedInfo.src}
+                        controls
+                        autoPlay
+                        playsInline
+                        onError={() => setVideoError(true)}
+                        className="w-full h-full object-contain"
+                      >
+                        <source src={embedInfo.src} type="video/mp4" />
+                        <source src={embedInfo.src} type="video/webm" />
+                        เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอนี้
+                      </video>
+                    );
+                  })()}
                 </div>
               ) : (
                 <img
