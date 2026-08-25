@@ -142,17 +142,11 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
               image: prev.image || data.url
             };
           });
+        } else {
+          alert(`⚠️ ไม่สามารถอัปโหลดรูปภาพ "${file.name}" ได้: ${data.message || 'โปรดลองใหม่อีกครั้ง'}`);
         }
       } catch (err) {
-        const localUrl = URL.createObjectURL(file);
-        setFormData(prev => {
-          const updatedGallery = [...(prev.gallery || []), localUrl];
-          return {
-            ...prev,
-            gallery: updatedGallery,
-            image: prev.image || localUrl
-          };
-        });
+        alert(`⚠️ ไม่สามารถเชื่อมต่อกับระบบอัปโหลดสำหรับรูป "${file.name}"`);
       }
     }
 

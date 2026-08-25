@@ -87,6 +87,11 @@ if ($isVideo) {
     }
 }
 
+// Verify that file was physically written to disk
+if (!file_exists($targetPath) || filesize($targetPath) === 0) {
+    sendError('ไม่สามารถบันทึกไฟล์ลงเซิร์ฟเวอร์ได้ กรุณาตรวจสอบสิทธิ์การเขียนโฟลเดอร์ images/');
+}
+
 $publicUrl = '/images/' . $subDir . $filename;
 
 sendResponse([
@@ -96,3 +101,4 @@ sendResponse([
     'filename' => $filename,
     'is_video' => $isVideo
 ]);
+
