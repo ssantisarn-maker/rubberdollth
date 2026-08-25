@@ -13,16 +13,44 @@ $jsonCacheFile = __DIR__ . '/products_cache.json';
 
 function formatProductRow($r) {
     $gallery = json_decode($r['gallery_json'] ?? '[]', true) ?: [$r['image']];
-    $localImgs = array_values(array_filter($gallery, function($img) {
-        return is_string($img) && strpos($img, '/images/products/') === 0;
-    }));
-    if (!empty($localImgs)) {
-        $r['gallery'] = $localImgs;
-    } else {
-        $r['gallery'] = array_values(array_filter($gallery, function($img) {
-            return is_string($img) && strpos($img, 'https://cdn.zyrosite.com/') !== 0;
-        })) ?: [$r['image']];
+    $baseDir = dirname(__DIR__); // public_html
+
+    // Filter gallery images: must exist on disk if local, or valid external URL
+    $validGallery = [];
+    foreach ($gallery as $img) {
+        if (!is_string($img) || empty($img)) continue;
+        if (strpos($img, '/images/products/') === 0) {
+            $fullPath = $baseDir . $img;
+            if (file_exists($fullPath)) {
+                $validGallery[] = $img;
+            }
+        } elseif (strpos($img, 'http://') === 0 || strpos($img, 'https://') === 0) {
+            if (strpos($img, 'https://cdn.zyrosite.com/') !== 0) {
+                $validGallery[] = $img;
+            }
+        }
     }
+
+    if (empty($validGallery)) {
+        $validGallery = !empty($r['image']) ? [$r['image']] : [];
+    }
+
+    $r['gallery'] = array_values($validGallery);
+    $r['image'] = $validGallery[0] ?? ($r['image'] ?? '');
+    $r['secondary_image'] = $validGallery[1] ?? ($r['secondary_image'] ?? $r['image']);
+    $r['secondaryImage'] = $r['secondary_image'];
+
+    // Check video_url: if local file, ensure it exists on disk
+    $videoUrl = trim($r['video_url'] ?? '');
+    if (strpos($videoUrl, '/images/videos/') === 0) {
+        $videoFullPath = $baseDir . $videoUrl;
+        if (!file_exists($videoFullPath)) {
+            $videoUrl = '';
+        }
+    }
+    $r['video_url'] = $videoUrl;
+    $r['videoUrl'] = $videoUrl;
+
     $r['categories'] = json_decode($r['categories_json'] ?? '[]', true) ?: ['all'];
     $r['isReadyToShip'] = (bool)($r['is_ready_to_ship'] ?? 0);
     $r['totalAngles'] = count($r['gallery']);
@@ -32,8 +60,6 @@ function formatProductRow($r) {
     $r['originalPrice'] = $r['original_price'] ?? '';
     $r['specialOption'] = $r['special_option'] ?? '';
     $r['gifts'] = $r['gifts'] ?? '';
-    $r['video_url'] = $r['video_url'] ?? '';
-    $r['videoUrl'] = $r['video_url'] ?? '';
     $r['order_index'] = (int)($r['order_index'] ?? 999);
     $r['orderIndex'] = (int)($r['order_index'] ?? 999);
     return $r;
