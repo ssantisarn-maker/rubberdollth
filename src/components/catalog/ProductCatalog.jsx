@@ -87,39 +87,135 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
       return true;
     });
 
-    const sortMode = settings?.product_sort_mode || 'ready_first';
+    const sortMode = settings?.product_sort_mode || 'ready_then_code_asc';
     const sortPrefix = (settings?.product_sort_prefix || 'HALF').toUpperCase();
     const arr = [...list];
 
-    if (sortMode === 'prefix_priority') {
+    // Helper: Compare Ready To Ship status
+    const compareReady = (a, b) => {
+      const aReady = a.isReadyToShip || a.is_ready_to_ship ? 1 : 0;
+      const bReady = b.isReadyToShip || b.is_ready_to_ship ? 1 : 0;
+      return bReady - aReady;
+    };
+
+    // Helper: Compare Code A-Z
+    const compareCodeAsc = (a, b) => {
+      return (a.code || '').localeCompare(b.code || '', undefined, { numeric: true });
+    };
+
+    // Helper: Compare Code Z-A
+    const compareCodeDesc = (a, b) => {
+      return (b.code || '').localeCompare(a.code || '', undefined, { numeric: true });
+    };
+
+    // Helper: Compare Prefix
+    const comparePrefix = (a, b, pref) => {
+      const aCode = (a.code || '').toUpperCase();
+      const bCode = (b.code || '').toUpperCase();
+      const aMatches = aCode.startsWith(pref) ? 1 : 0;
+      const bMatches = bCode.startsWith(pref) ? 1 : 0;
+      if (bMatches !== aMatches) return bMatches - aMatches;
+      return aCode.localeCompare(bCode, undefined, { numeric: true });
+    };
+
+    // Helper: Compare Newest (updated_at)
+    const compareNewest = (a, b) => {
+      const aDate = new Date(a.updated_at || a.updatedAt || 0).getTime();
+      const bDate = new Date(b.updated_at || b.updatedAt || 0).getTime();
+      return bDate - aDate;
+    };
+
+    // Helper: Compare Price Low to High
+    const comparePriceAsc = (a, b) => {
+      const aPrice = parseFloat(String(a.price || 0).replace(/[^0-9.]/g, '')) || 0;
+      const bPrice = parseFloat(String(b.price || 0).replace(/[^0-9.]/g, '')) || 0;
+      return aPrice - bPrice;
+    };
+
+    // Helper: Compare Price High to Low
+    const comparePriceDesc = (a, b) => {
+      const aPrice = parseFloat(String(a.price || 0).replace(/[^0-9.]/g, '')) || 0;
+      const bPrice = parseFloat(String(b.price || 0).replace(/[^0-9.]/g, '')) || 0;
+      return bPrice - aPrice;
+    };
+
+    // 1. Ready to ship first + Code A-Z (Default & Recommended)
+    if (sortMode === 'ready_then_code_asc' || sortMode === 'ready_first') {
       return arr.sort((a, b) => {
-        const aCode = (a.code || '').toUpperCase();
-        const bCode = (b.code || '').toUpperCase();
-        const aMatches = aCode.startsWith(sortPrefix) ? 1 : 0;
-        const bMatches = bCode.startsWith(sortPrefix) ? 1 : 0;
-        if (bMatches !== aMatches) return bMatches - aMatches; // Selected prefix comes first
-        return aCode.localeCompare(bCode, undefined, { numeric: true });
+        const readyDiff = compareReady(a, b);
+        if (readyDiff !== 0) return readyDiff;
+        return compareCodeAsc(a, b);
       });
+    }
+
+    // 2. Ready to ship first + Code Z-A
+    if (sortMode === 'ready_then_code_desc') {
+      return arr.sort((a, b) => {
+        const readyDiff = compareReady(a, b);
+        if (readyDiff !== 0) return readyDiff;
+        return compareCodeDesc(a, b);
+      });
+    }
+
+    // 3. Ready to ship first + Prefix Priority (e.g. HALF / SLC)
+    if (sortMode === 'ready_then_prefix') {
+      return arr.sort((a, b) => {
+        const readyDiff = compareReady(a, b);
+        if (readyDiff !== 0) return readyDiff;
+        return comparePrefix(a, b, sortPrefix);
+      });
+    }
+
+    // 4. Ready to ship first + Newest Updated
+    if (sortMode === 'ready_then_newest') {
+      return arr.sort((a, b) => {
+        const readyDiff = compareReady(a, b);
+        if (readyDiff !== 0) return readyDiff;
+        return compareNewest(a, b);
+      });
+    }
+
+    // 5. Ready to ship first + Price Low to High
+    if (sortMode === 'ready_then_price_asc') {
+      return arr.sort((a, b) => {
+        const readyDiff = compareReady(a, b);
+        if (readyDiff !== 0) return readyDiff;
+        return comparePriceAsc(a, b);
+      });
+    }
+
+    // 6. Ready to ship first + Price High to Low
+    if (sortMode === 'ready_then_price_desc') {
+      return arr.sort((a, b) => {
+        const readyDiff = compareReady(a, b);
+        if (readyDiff !== 0) return readyDiff;
+        return comparePriceDesc(a, b);
+      });
+    }
+
+    // Pure Sorts (Without Ready Priority)
+    if (sortMode === 'code_asc') {
+      return arr.sort(compareCodeAsc);
     }
 
     if (sortMode === 'code_desc') {
-      return arr.sort((a, b) => (b.code || '').localeCompare(a.code || '', undefined, { numeric: true }));
+      return arr.sort(compareCodeDesc);
     }
 
-    if (sortMode === 'code_asc') {
-      return arr.sort((a, b) => (a.code || '').localeCompare(b.code || '', undefined, { numeric: true }));
+    if (sortMode === 'prefix_priority') {
+      return arr.sort((a, b) => comparePrefix(a, b, sortPrefix));
     }
 
-    if (sortMode === 'ready_first') {
-      return arr.sort((a, b) => {
-        const aReady = a.isReadyToShip || a.is_ready_to_ship ? 1 : 0;
-        const bReady = b.isReadyToShip || b.is_ready_to_ship ? 1 : 0;
-        if (bReady !== aReady) return bReady - aReady;
-        const aOrd = a.order_index ?? a.orderIndex ?? 999;
-        const bOrd = b.order_index ?? b.orderIndex ?? 999;
-        if (aOrd !== bOrd) return aOrd - bOrd;
-        return (parseInt(a.id) || 0) - (parseInt(b.id) || 0);
-      });
+    if (sortMode === 'updated_desc') {
+      return arr.sort(compareNewest);
+    }
+
+    if (sortMode === 'price_asc') {
+      return arr.sort(comparePriceAsc);
+    }
+
+    if (sortMode === 'price_desc') {
+      return arr.sort(comparePriceDesc);
     }
 
     if (sortMode === 'custom_order') {
@@ -129,18 +225,6 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
         if (aOrd !== bOrd) return aOrd - bOrd;
         return (parseInt(a.id) || 0) - (parseInt(b.id) || 0);
       });
-    }
-
-    if (sortMode === 'updated_desc') {
-      return arr.sort((a, b) => {
-        const aDate = new Date(a.updated_at || a.updatedAt || 0).getTime();
-        const bDate = new Date(b.updated_at || b.updatedAt || 0).getTime();
-        return bDate - aDate;
-      });
-    }
-
-    if (sortMode === 'id_asc') {
-      return arr.sort((a, b) => (parseInt(a.id) || 0) - (parseInt(b.id) || 0));
     }
 
     return arr;

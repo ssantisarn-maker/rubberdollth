@@ -16,7 +16,7 @@ const defaultSettings = {
   brand_tag: 'TH',
   brand_est: 'EST. 2019 • LUXURY COLLECTION',
 
-  product_sort_mode: 'ready_first',
+  product_sort_mode: 'ready_then_code_asc',
   product_sort_prefix: 'HALF',
   
   // Hero Section

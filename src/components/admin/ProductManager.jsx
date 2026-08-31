@@ -32,40 +32,137 @@ export default function ProductManager({ products, categories, onUpdateProducts 
     showToast(`✓ ตั้งค่าให้รหัส "${newPrefix}" ขึ้นก่อนบนหน้าเว็บแล้ว!`);
   };
 
-  // Sort function helper
+  // Sort function helper (Multi-Tier Product Sorting System)
   const sortProducts = (list, mode, prefix) => {
     const arr = [...list];
 
-    if (mode === 'prefix_priority') {
+    // Helper: Compare Ready To Ship status
+    const compareReady = (a, b) => {
+      const aReady = a.isReadyToShip || a.is_ready_to_ship ? 1 : 0;
+      const bReady = b.isReadyToShip || b.is_ready_to_ship ? 1 : 0;
+      return bReady - aReady; // 1 (ready) comes before 0
+    };
+
+    // Helper: Compare Code A-Z
+    const compareCodeAsc = (a, b) => {
+      return (a.code || '').localeCompare(b.code || '', undefined, { numeric: true });
+    };
+
+    // Helper: Compare Code Z-A
+    const compareCodeDesc = (a, b) => {
+      return (b.code || '').localeCompare(a.code || '', undefined, { numeric: true });
+    };
+
+    // Helper: Compare Prefix
+    const comparePrefix = (a, b, pref) => {
+      const aCode = (a.code || '').toUpperCase();
+      const bCode = (b.code || '').toUpperCase();
+      const aMatches = aCode.startsWith(pref) ? 1 : 0;
+      const bMatches = bCode.startsWith(pref) ? 1 : 0;
+      if (bMatches !== aMatches) return bMatches - aMatches;
+      return aCode.localeCompare(bCode, undefined, { numeric: true });
+    };
+
+    // Helper: Compare Newest (updated_at)
+    const compareNewest = (a, b) => {
+      const aDate = new Date(a.updated_at || a.updatedAt || 0).getTime();
+      const bDate = new Date(b.updated_at || b.updatedAt || 0).getTime();
+      return bDate - aDate;
+    };
+
+    // Helper: Compare Price Low to High
+    const comparePriceAsc = (a, b) => {
+      const aPrice = parseFloat(String(a.price || 0).replace(/[^0-9.]/g, '')) || 0;
+      const bPrice = parseFloat(String(b.price || 0).replace(/[^0-9.]/g, '')) || 0;
+      return aPrice - bPrice;
+    };
+
+    // Helper: Compare Price High to Low
+    const comparePriceDesc = (a, b) => {
+      const aPrice = parseFloat(String(a.price || 0).replace(/[^0-9.]/g, '')) || 0;
+      const bPrice = parseFloat(String(b.price || 0).replace(/[^0-9.]/g, '')) || 0;
+      return bPrice - aPrice;
+    };
+
+    // 1. Ready to ship first + Code A-Z (Default & Recommended)
+    if (mode === 'ready_then_code_asc' || mode === 'ready_first') {
+      return arr.sort((a, b) => {
+        const readyDiff = compareReady(a, b);
+        if (readyDiff !== 0) return readyDiff;
+        return compareCodeAsc(a, b);
+      });
+    }
+
+    // 2. Ready to ship first + Code Z-A
+    if (mode === 'ready_then_code_desc') {
+      return arr.sort((a, b) => {
+        const readyDiff = compareReady(a, b);
+        if (readyDiff !== 0) return readyDiff;
+        return compareCodeDesc(a, b);
+      });
+    }
+
+    // 3. Ready to ship first + Prefix Priority (e.g. HALF / SLC)
+    if (mode === 'ready_then_prefix') {
       const pref = (prefix || 'HALF').toUpperCase();
       return arr.sort((a, b) => {
-        const aCode = (a.code || '').toUpperCase();
-        const bCode = (b.code || '').toUpperCase();
-        const aMatches = aCode.startsWith(pref) ? 1 : 0;
-        const bMatches = bCode.startsWith(pref) ? 1 : 0;
-        if (bMatches !== aMatches) return bMatches - aMatches; // Prefix matches come first
-        return aCode.localeCompare(bCode, undefined, { numeric: true });
+        const readyDiff = compareReady(a, b);
+        if (readyDiff !== 0) return readyDiff;
+        return comparePrefix(a, b, pref);
       });
+    }
+
+    // 4. Ready to ship first + Newest Updated
+    if (mode === 'ready_then_newest') {
+      return arr.sort((a, b) => {
+        const readyDiff = compareReady(a, b);
+        if (readyDiff !== 0) return readyDiff;
+        return compareNewest(a, b);
+      });
+    }
+
+    // 5. Ready to ship first + Price Low to High
+    if (mode === 'ready_then_price_asc') {
+      return arr.sort((a, b) => {
+        const readyDiff = compareReady(a, b);
+        if (readyDiff !== 0) return readyDiff;
+        return comparePriceAsc(a, b);
+      });
+    }
+
+    // 6. Ready to ship first + Price High to Low
+    if (mode === 'ready_then_price_desc') {
+      return arr.sort((a, b) => {
+        const readyDiff = compareReady(a, b);
+        if (readyDiff !== 0) return readyDiff;
+        return comparePriceDesc(a, b);
+      });
+    }
+
+    // Pure Sorts (Without Ready Priority)
+    if (mode === 'code_asc') {
+      return arr.sort(compareCodeAsc);
     }
 
     if (mode === 'code_desc') {
-      return arr.sort((a, b) => (b.code || '').localeCompare(a.code || '', undefined, { numeric: true }));
+      return arr.sort(compareCodeDesc);
     }
 
-    if (mode === 'code_asc') {
-      return arr.sort((a, b) => (a.code || '').localeCompare(b.code || '', undefined, { numeric: true }));
+    if (mode === 'prefix_priority') {
+      const pref = (prefix || 'HALF').toUpperCase();
+      return arr.sort((a, b) => comparePrefix(a, b, pref));
     }
 
-    if (mode === 'ready_first') {
-      return arr.sort((a, b) => {
-        const aReady = a.isReadyToShip || a.is_ready_to_ship ? 1 : 0;
-        const bReady = b.isReadyToShip || b.is_ready_to_ship ? 1 : 0;
-        if (bReady !== aReady) return bReady - aReady;
-        const aOrd = a.order_index ?? a.orderIndex ?? 999;
-        const bOrd = b.order_index ?? b.orderIndex ?? 999;
-        if (aOrd !== bOrd) return aOrd - bOrd;
-        return (parseInt(a.id) || 0) - (parseInt(b.id) || 0);
-      });
+    if (mode === 'updated_desc') {
+      return arr.sort(compareNewest);
+    }
+
+    if (mode === 'price_asc') {
+      return arr.sort(comparePriceAsc);
+    }
+
+    if (mode === 'price_desc') {
+      return arr.sort(comparePriceDesc);
     }
 
     if (mode === 'custom_order') {
@@ -75,18 +172,6 @@ export default function ProductManager({ products, categories, onUpdateProducts 
         if (aOrd !== bOrd) return aOrd - bOrd;
         return (parseInt(a.id) || 0) - (parseInt(b.id) || 0);
       });
-    }
-
-    if (mode === 'updated_desc') {
-      return arr.sort((a, b) => {
-        const aDate = new Date(a.updated_at || a.updatedAt || 0).getTime();
-        const bDate = new Date(b.updated_at || b.updatedAt || 0).getTime();
-        return bDate - aDate;
-      });
-    }
-
-    if (mode === 'id_asc') {
-      return arr.sort((a, b) => (parseInt(a.id) || 0) - (parseInt(b.id) || 0));
     }
 
     return arr;
@@ -100,18 +185,21 @@ export default function ProductManager({ products, categories, onUpdateProducts 
       const matchCat = selectedCat === 'all' || (p.categories && p.categories.includes(selectedCat));
       return matchSearch && matchCat;
     });
+
     return sortProducts(list, sortMode, sortPrefix);
   }, [products, search, selectedCat, sortMode, sortPrefix]);
 
-  // Quick Toggle Ready to Ship
+  // Toggle Ready To Ship Status directly from table
   const handleToggleReady = async (prod) => {
+    const current = prod.isReadyToShip || prod.is_ready_to_ship;
+    const newStatus = !current;
     setToggleLoading(prod.code);
-    const newStatus = !prod.isReadyToShip;
-    let newCats = prod.categories ? [...prod.categories] : ['all'];
-    if (newStatus && !newCats.includes('ready')) newCats.push('ready');
-    if (!newStatus) newCats = newCats.filter(c => c !== 'ready');
 
-    const updated = { ...prod, isReadyToShip: newStatus, categories: newCats };
+    const updated = {
+      ...prod,
+      isReadyToShip: newStatus,
+      is_ready_to_ship: newStatus
+    };
 
     try {
       const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
@@ -220,17 +308,27 @@ export default function ProductManager({ products, categories, onUpdateProducts 
               onChange={e => handleSortChange(e.target.value)}
               className="bg-white px-3 py-1.5 rounded-xl border border-sand-300 text-xs sm:text-sm font-bold text-ink focus:outline-none focus:border-bronze cursor-pointer shadow-2xs"
             >
-              <option value="prefix_priority">🔤 เลือกหมวดรหัส/ตัวอักษรขึ้นก่อน (Custom Letter/Prefix)</option>
-              <option value="ready_first">📦 สินค้าพร้อมส่งขึ้นก่อน (Ready to Ship First)</option>
-              <option value="code_asc">🔤 เรียงตามรหัสสินค้า A ➔ Z (ก-ฮ)</option>
-              <option value="code_desc">🔤 เรียงตามรหัสสินค้า Z ➔ A (ฮ-ก)</option>
-              <option value="custom_order">📌 เรียงตามลำดับตัวเลขที่กำหนดเอง (Order Index)</option>
-              <option value="updated_desc">🆕 เรียงตามสินค้าที่แก้ไขล่าสุด (Recently Updated)</option>
-              <option value="id_asc">🆔 เรียงตามลำดับ ID เริ่มต้น (Default ID)</option>
+              <optgroup label="⚡ สินค้าพร้อมส่งขึ้นก่อน (Ready to Ship First)">
+                <option value="ready_then_code_asc">⚡ สินค้าพร้อมส่งขึ้นก่อน ➔ เรียงรหัส A-Z (แนะนำ)</option>
+                <option value="ready_then_code_desc">⚡ สินค้าพร้อมส่งขึ้นก่อน ➔ เรียงรหัส Z-A</option>
+                <option value="ready_then_prefix">⚡ สินค้าพร้อมส่งขึ้นก่อน ➔ ดันกลุ่มรหัสขึ้นก่อน (HALF/SLC)</option>
+                <option value="ready_then_newest">⚡ สินค้าพร้อมส่งขึ้นก่อน ➔ สินค้าลงใหม่/อัปเดตล่าสุด</option>
+                <option value="ready_then_price_asc">⚡ สินค้าพร้อมส่งขึ้นก่อน ➔ ราคา: ต่ำ ➔ สูง</option>
+                <option value="ready_then_price_desc">⚡ สินค้าพร้อมส่งขึ้นก่อน ➔ ราคา: สูง ➔ ต่ำ</option>
+              </optgroup>
+              <optgroup label="🔤 การจัดเรียงทั่วไป (General Sorting)">
+                <option value="code_asc">🔤 เรียงตามรหัสโมเดล A ➔ Z (ก-ฮ)</option>
+                <option value="code_desc">🔤 เรียงตามรหัสโมเดล Z ➔ A (ฮ-ก)</option>
+                <option value="prefix_priority">🎯 เลือกหมวดรหัส/ตัวอักษรขึ้นก่อน (Custom Prefix)</option>
+                <option value="updated_desc">🆕 เรียงตามสินค้าที่แก้ไขล่าสุด (Recently Updated)</option>
+                <option value="price_asc">💰 เรียงตามราคา: น้อย ➔ มาก</option>
+                <option value="price_desc">💎 เรียงตามราคา: มาก ➔ น้อย</option>
+                <option value="custom_order">📌 เรียงตามลำดับตัวเลขที่กำหนดเอง (Order Index)</option>
+              </optgroup>
             </select>
 
             {/* If Prefix Priority is chosen, show quick prefix buttons / selector */}
-            {sortMode === 'prefix_priority' && (
+            {(sortMode === 'prefix_priority' || sortMode === 'ready_then_prefix') && (
               <div className="flex items-center gap-1.5 pl-1 border-l border-sand-300">
                 <span className="text-xs text-ink-muted">ขึ้นก่อน:</span>
                 <select
