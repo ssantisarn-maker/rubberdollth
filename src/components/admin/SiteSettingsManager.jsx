@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Save, Bell, Phone, MessageCircle, Image as ImageIcon, ShieldCheck, Sparkles, CheckCircle2, Upload, Flame, Globe, Layers, ArrowRight, Lock, HeartHandshake, Droplets } from 'lucide-react';
 import { useLiveProducts } from '../../hooks/useLiveProducts';
 
@@ -6,9 +6,16 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
   const [formData, setFormData] = useState({ ...settings });
   const [saveLoading, setSaveLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+  const [uploadingHero, setUploadingHero] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [uploadingPillar, setUploadingPillar] = useState(null);
   const { products } = useLiveProducts();
+
+  useEffect(() => {
+    if (settings && Object.keys(settings).length > 0) {
+      setFormData({ ...settings });
+    }
+  }, [settings]);
 
   const showToast = (msg) => {
     setToastMessage(msg);
