@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Bell, Phone, MessageCircle, Image as ImageIcon, ShieldCheck, Sparkles, CheckCircle2, Upload, Flame, Globe, Layers, ArrowRight, Lock, HeartHandshake, Droplets } from 'lucide-react';
+import { Save, Bell, Phone, MessageCircle, Image as ImageIcon, ShieldCheck, Sparkles, CheckCircle2, Upload, Flame, Globe, Layers, ArrowRight, Lock, HeartHandshake, Droplets, MessageSquareQuote, Share2 } from 'lucide-react';
 import { useLiveProducts } from '../../hooks/useLiveProducts';
 
 export default function SiteSettingsManager({ settings, onUpdateSettings, subTab = 'all' }) {
@@ -9,6 +9,7 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
   const [uploadingHero, setUploadingHero] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [uploadingPillar, setUploadingPillar] = useState(null);
+  const [uploadingOgImage, setUploadingOgImage] = useState(false);
   const { products } = useLiveProducts();
 
   useEffect(() => {
@@ -20,6 +21,36 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  // Upload Social Share / OG Preview Image
+  const handleOgImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingOgImage(true);
+    const form = new FormData();
+    form.append('image', file);
+    form.append('type', 'product');
+
+    try {
+      const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
+      const res = await fetch('/api/upload.php', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: form
+      });
+      const data = await res.json();
+      if (data.success && data.url) {
+        setFormData(prev => ({ ...prev, seo_og_image: data.url }));
+        showToast('✓ อัปโหลดรูปภาพตัวอย่างแชร์ลิงก์ (LINE/Social Preview) สำเร็จ');
+      }
+    } catch (err) {
+      const localUrl = URL.createObjectURL(file);
+      setFormData(prev => ({ ...prev, seo_og_image: localUrl }));
+    } finally {
+      setUploadingOgImage(false);
+    }
   };
 
   // Upload Pillar Image
@@ -168,6 +199,173 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
 
       <form onSubmit={handleSave} className="space-y-6">
         
+        {/* SECTION: Social Share & LINE Link Preview (Open Graph / SEO) */}
+        {(subTab === 'all' || subTab === 'social_share') && (
+          <div id="section-social-share" className="bg-white p-5 sm:p-6 rounded-3xl border border-sand-300 shadow-soft space-y-6">
+            <div className="border-b border-sand-200 pb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Globe className="w-5 h-5 text-emerald-600" />
+                <div>
+                  <h3 className="font-bold text-ink text-sm sm:text-base">🌐 ตั้งค่าการแชร์ลิงก์ & LINE Preview (Social Share / Open Graph)</h3>
+                  <p className="text-xs text-ink-muted">กำหนดข้อความหัวข้อ, คำบรรยาย, และรูปภาพที่จะแสดงในกล่องพรีวิวเวลาส่งลิงก์เว็บให้ลูกค้าใน LINE, Facebook หรือ Messenger</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Left Col: Live LINE Chat Bubble Preview */}
+              <div className="lg:col-span-5 space-y-3">
+                <label className="font-bold text-ink text-xs flex items-center gap-1.5">
+                  <span>📱 ตัวอย่างกล่องข้อความเวลาส่งใน LINE (Live Preview)</span>
+                </label>
+
+                {/* LINE Preview Bubble Mockup */}
+                <div className="bg-[#849EB8] p-4 rounded-2xl shadow-inner flex flex-col items-end space-y-2">
+                  <div className="bg-[#A7E26B] text-ink text-xs px-3 py-1.5 rounded-2xl rounded-tr-none font-medium shadow-2xs">
+                    https://rubberdollth.com
+                  </div>
+
+                  {/* Open Graph Card Bubble */}
+                  <div className="w-full max-w-[280px] bg-white rounded-2xl overflow-hidden shadow-md border border-black/10">
+                    <div className="aspect-[16/9] w-full bg-sand-200 relative overflow-hidden group">
+                      <img
+                        src={formData.seo_og_image || formData.hero_bg_image || "/logo.png"}
+                        alt="OG Preview"
+                        className="w-full h-full object-cover"
+                        onError={e => { e.target.src = '/logo.png'; }}
+                      />
+                      <label className="absolute inset-0 bg-ink/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer text-white text-[11px] font-bold">
+                        <span>เปลี่ยนรูปพรีวิว</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleOgImageUpload}
+                          disabled={uploadingOgImage}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+
+                    <div className="p-3 bg-[#FFF3F5] space-y-1">
+                      <h4 className="font-bold text-xs text-ink line-clamp-2 leading-snug">
+                        {formData.seo_og_title || 'RUBBER DOLL THAILAND | ผู้นำเข้าตุ๊กตายางซิลิโคนแท้เกรดพรีเมียมอันดับ 1'}
+                      </h4>
+                      <p className="text-[11px] text-ink-muted line-clamp-2 leading-tight font-light">
+                        {formData.seo_og_desc || 'ตุ๊กตายางซิลิโคนเกรดการแพทย์ 100% สัมผัสนุ่มเสมือนผิวคนจริง การันตีจัดส่งมิดชิด 100% ไร้ชื่อสินค้าหน้ากล่อง'}
+                      </p>
+                      <span className="text-[9px] text-gray-400 block pt-0.5">rubberdollth.com</span>
+                    </div>
+                  </div>
+                </div>
+
+                <label className="w-full px-4 py-2.5 bg-sand-100 hover:bg-sand-200 text-ink text-xs font-bold rounded-xl cursor-pointer transition-all flex items-center justify-center gap-2 border border-sand-300">
+                  <Upload className="w-4 h-4 text-bronze" />
+                  <span>{uploadingOgImage ? 'กำลังอัปโหลดรูปพรีวิว...' : '📸 อัปโหลดรูปภาพตัวอย่างแชร์ลิงก์'}</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleOgImageUpload}
+                    disabled={uploadingOgImage}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+
+              {/* Right Col: Fields */}
+              <div className="lg:col-span-7 space-y-4 text-xs sm:text-sm">
+                <div className="space-y-1.5">
+                  <label className="font-semibold text-ink flex items-center justify-between">
+                    <span>1. หัวข้อตอนส่งลิงก์ (Social Title)</span>
+                    <span className="text-[10px] text-ink-muted">แนะนำไม่เกิน 60-70 ตัวอักษร</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.seo_og_title || ''}
+                    onChange={e => setFormData({ ...formData, seo_og_title: e.target.value })}
+                    placeholder="เช่น RUBBER DOLL THAILAND | ผู้นำเข้าตุ๊กตายางซิลิโคนแท้เกรดพรีเมียมอันดับ 1"
+                    className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white font-bold text-ink"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="font-semibold text-ink flex items-center justify-between">
+                    <span>2. คำบรรยายใต้ลิงก์ (Social Description)</span>
+                    <span className="text-[10px] text-ink-muted">แสดง 1-2 บรรทัดใน LINE</span>
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={formData.seo_og_desc || ''}
+                    onChange={e => setFormData({ ...formData, seo_og_desc: e.target.value })}
+                    placeholder="เช่น ตุ๊กตายางซิลิโคนเกรดการแพทย์ 100% สัมผัสนุ่มเสมือนผิวคนจริง โครงสร้างสแตนเลส 360° การันตีจัดส่งมิดชิด 100% ไร้ชื่อสินค้าหน้ากล่อง"
+                    className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white text-xs leading-relaxed"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="font-semibold text-ink">3. หรือวางลิงก์รูปภาพปกโดยตรง (Image URL)</label>
+                  <input
+                    type="text"
+                    value={formData.seo_og_image || ''}
+                    onChange={e => setFormData({ ...formData, seo_og_image: e.target.value })}
+                    placeholder="เช่น https://rubberdollth.com/images/... หรือ /images/..."
+                    className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl font-mono text-xs"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* SECTION: Reviews Header */}
+        {(subTab === 'all' || subTab === 'reviews_header') && (
+          <div id="section-reviews-header" className="bg-white p-5 sm:p-6 rounded-3xl border border-sand-300 shadow-soft space-y-5">
+            <div className="border-b border-sand-200 pb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <MessageSquareQuote className="w-5 h-5 text-amber-500" />
+                <div>
+                  <h3 className="font-bold text-ink text-sm sm:text-base">⭐ ปรับแต่งหัวข้อหมวดรีวิวลูกค้า (Customer Reviews Header)</h3>
+                  <p className="text-xs text-ink-muted">แก้ไขป้ายแท็กบนสุด, หัวข้อหลัก และข้อความการันตีเรตติ้ง 5.0 ในส่วนแสดงรีวิวของหน้าแรก</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm">
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">1. ป้ายข้อความเล็กบนสุด (Review Tag)</label>
+                <input
+                  type="text"
+                  value={formData.reviews_tag || ''}
+                  onChange={e => setFormData({ ...formData, reviews_tag: e.target.value })}
+                  placeholder="เช่น VERIFIED CUSTOMER STORIES"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white font-bold text-bronze uppercase"
+                />
+              </div>
+
+              <div className="space-y-1.5 sm:col-span-2">
+                <label className="font-semibold text-ink">2. หัวข้อหลักของหมวดรีวิว (Review Main Title)</label>
+                <input
+                  type="text"
+                  value={formData.reviews_title || ''}
+                  onChange={e => setFormData({ ...formData, reviews_title: e.target.value })}
+                  placeholder="เช่น เสียงตอบรับและความประทับใจจากลูกค้าตัวจริง"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white font-bold text-ink"
+                />
+              </div>
+
+              <div className="space-y-1.5 sm:col-span-3">
+                <label className="font-semibold text-ink">3. ข้อความเรตติ้งใต้ดาว (Rating Badge Text)</label>
+                <input
+                  type="text"
+                  value={formData.reviews_rating_text || ''}
+                  onChange={e => setFormData({ ...formData, reviews_rating_text: e.target.value })}
+                  placeholder="เช่น 5.0 / 5.0 (รีวิวลูกค้าจริง 100%)"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white text-xs font-semibold text-ink"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* SECTION: Brand Logo & Identity Lockup */}
         {(subTab === 'all' || subTab === 'hero') && (
           <div id="section-brand" className="bg-white p-5 sm:p-6 rounded-3xl border border-sand-300 shadow-soft space-y-5">

@@ -36,8 +36,10 @@ export default function AdminDashboard({ onLogout }) {
     {
       group: '🎨 ปรับแต่งเนื้อหาหน้าเว็บ (CMS)',
       items: [
+        { id: 'social_share', label: 'แชร์ลิงก์ & LINE Preview', icon: Globe, desc: 'ข้อความ/รูปตอนส่งลิงก์ให้ลูกค้า' },
         { id: 'hero', label: 'แบนเนอร์หลัก & สินค้า Hero', icon: Sparkles, desc: 'รูปโมเดลเด่น, หัวข้อ, สโลแกน' },
         { id: 'contact', label: 'แถบประกาศ & ข้อมูลติดต่อ', icon: Bell, desc: 'ประกาศบนสุด, LINE, เบอร์โทร' },
+        { id: 'reviews_header', label: 'หัวข้อหมวดรีวิวลูกค้า', icon: MessageSquareQuote, desc: 'ปรับแต่งหัวข้อรีวิว, ดาว 5.0' },
         { id: 'values', label: 'The Masterpiece Difference', icon: Sparkles, desc: '4 จุดเด่นและเอกลักษณ์' },
         { id: 'discreet', label: '100% Confidential Delivery', icon: Lock, desc: 'มาตรฐานการส่งลับเฉพาะ 3 ชั้น' },
         { id: 'care', label: 'The Longevity Care Guide', icon: Droplets, desc: 'คู่มือการดูแลรักษา 4 ขั้นตอน' },
@@ -214,8 +216,10 @@ export default function AdminDashboard({ onLogout }) {
               {activeTab === 'products' && `🛍️ จัดการรายการสินค้า (${products.length} โมเดล)`}
               {activeTab === 'reviews' && '⭐ จัดการรีวิวจากลูกค้า'}
               {activeTab === 'categories' && '🏷️ จัดการหมวดหมู่สินค้า'}
+              {activeTab === 'social_share' && '🌐 ตั้งค่าการแชร์ลิงก์ & LINE Preview (Social Share / SEO)'}
               {activeTab === 'hero' && '🖼️ แบนเนอร์หลัก & สินค้า Hero หน้าแรก'}
               {activeTab === 'contact' && '📢 แถบประกาศบนสุด & ข้อมูลติดต่อร้านค้า'}
+              {activeTab === 'reviews_header' && '⭐ ปรับแต่งหัวข้อหมวดรีวิวลูกค้า'}
               {activeTab === 'values' && '💎 จุดเด่น (The Masterpiece Difference)'}
               {activeTab === 'discreet' && '📦 การจัดส่งลับเฉพาะ 100% (Discreet Delivery)'}
               {activeTab === 'care' && '🧼 คู่มือการดูแลรักษาซิลิโคน (The Longevity Care)'}
@@ -252,6 +256,22 @@ export default function AdminDashboard({ onLogout }) {
             categories={categoriesMock}
             products={products}
             onUpdateCategories={() => {}}
+          />
+        )}
+
+        {activeTab === 'social_share' && (
+          <SiteSettingsManager
+            settings={settings}
+            onUpdateSettings={setSettings}
+            subTab="social_share"
+          />
+        )}
+
+        {activeTab === 'reviews_header' && (
+          <SiteSettingsManager
+            settings={settings}
+            onUpdateSettings={setSettings}
+            subTab="reviews_header"
           />
         )}
 

@@ -63,6 +63,16 @@ const defaultSettings = {
   discreet_l3_title: 'จัดส่งด่วนลับเฉพาะ (Direct Discreet Courier)',
   discreet_l3_desc: 'ส่งตรงถึงมือคุณด้วยขนส่งด่วนพิเศษ มีเลขพัสดุส่วนตัวเช็กสถานะได้ตลอด 24 ชั่วโมง',
 
+  // Customer Reviews Section
+  reviews_tag: 'VERIFIED CUSTOMER STORIES',
+  reviews_title: 'เสียงตอบรับและความประทับใจจากลูกค้าตัวจริง',
+  reviews_rating_text: '5.0 / 5.0 (รีวิวลูกค้าจริง 100%)',
+
+  // Social Share & LINE Link Preview (Open Graph)
+  seo_og_title: 'RUBBER DOLL THAILAND | ผู้นำเข้าตุ๊กตายางซิลิโคนแท้เกรดพรีเมียมอันดับ 1',
+  seo_og_desc: 'ตุ๊กตายางซิลิโคนเกรดการแพทย์ 100% สัมผัสนุ่มเสมือนผิวคนจริง โครงสร้างสแตนเลส 360° การันตีจัดส่งมิดชิด 100% ไร้ชื่อสินค้าหน้ากล่อง',
+  seo_og_image: '',
+
   // Longevity Care
   care_tag: 'THE LONGEVITY CARE',
   care_title: 'คู่มือการดูแลรักษา เพื่อยืดอายุการใช้งานยาวนาน',

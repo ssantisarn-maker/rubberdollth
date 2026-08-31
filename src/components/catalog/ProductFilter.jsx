@@ -66,27 +66,48 @@ export default function ProductFilter({
       <div className="space-y-3 sm:space-y-4">
         
         <div className="flex items-center justify-between">
-          <h3 className="font-sans text-base sm:text-xl font-bold text-ink tracking-tight flex items-center gap-2">
-            <span>{t.catalog.searchTitle}</span>
-          </h3>
-          <span className="text-[11px] text-ink-muted sm:hidden">เลื่อนซ้าย-ขวาเพื่อเลือก ➔</span>
-          <div className="h-0.5 flex-1 ml-4 bg-sand-200 hidden sm:block"></div>
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-bronze" />
+            <h3 className="font-sans text-sm sm:text-base font-bold text-ink tracking-tight">
+              {t.catalog.searchTitle}
+            </h3>
+          </div>
+          <span className="text-[11px] text-bronze font-medium sm:hidden">เลื่อนดูหมวดหมู่ ➔</span>
+          <div className="h-px flex-1 ml-4 bg-sand-200 hidden sm:block"></div>
         </div>
 
-        {/* Mobile: Horizontal Swipeable Carousel | Desktop: 4-Column Grid */}
-        <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5 overflow-x-auto pb-2 sm:pb-0 scrollbar-none touch-pan-x snap-x">
+        {/* Mobile: Horizontal Swipeable Bar | Desktop: 4-Column Grid */}
+        <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 overflow-x-auto pb-2 sm:pb-0 scrollbar-none touch-pan-x snap-x">
           {categories.map((cat) => {
             const isActive = selectedCategory === cat.id;
+
+            // Distinctive Category Icons
+            const getCategoryIcon = (id) => {
+              switch (id) {
+                case 'all': return '💎';
+                case 'ready': return '⚡';
+                case 'asian': return '🌸';
+                case 'western': return '✨';
+                case 'anime': return '🎀';
+                case 'torso': return '⏳';
+                case 'toys': return '🎁';
+                case 'reviews': return '⭐';
+                default: return '🏷️';
+              }
+            };
             
             if (cat.id === 'reviews') {
               return (
                 <a
                   key={cat.id}
                   href="#reviews"
-                  className="shrink-0 snap-start flex items-center justify-between gap-3 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border border-sand-200 bg-sand-50/70 hover:bg-sand-100 hover:text-bronze text-ink-soft text-xs sm:text-sm font-medium transition-all whitespace-nowrap sm:whitespace-normal"
+                  className="shrink-0 snap-start flex items-center justify-between gap-3 px-3.5 py-3 rounded-2xl border border-sand-200/90 bg-sand-50/80 hover:bg-amber-50 hover:border-amber-300 text-ink text-xs sm:text-sm font-medium transition-all shadow-2xs group"
                 >
-                  <span>{cat.label}</span>
-                  <span className="text-bronze text-xs font-semibold">→</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-base group-hover:scale-110 transition-transform">⭐</span>
+                    <span className="font-semibold text-ink group-hover:text-bronze">{cat.label}</span>
+                  </div>
+                  <span className="text-bronze text-xs font-bold group-hover:translate-x-0.5 transition-transform">→</span>
                 </a>
               );
             }
@@ -95,22 +116,27 @@ export default function ProductFilter({
               <button
                 key={cat.id}
                 onClick={() => onSelectCategory(cat.id)}
-                className={`shrink-0 snap-start flex items-center justify-between gap-3 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border text-left transition-all duration-200 text-xs sm:text-sm whitespace-nowrap sm:whitespace-normal active:scale-98 ${
+                className={`shrink-0 snap-start flex items-center justify-between gap-2.5 px-3.5 py-3 rounded-2xl border text-left transition-all duration-300 text-xs sm:text-sm shadow-2xs active:scale-95 cursor-pointer ${
                   isActive
-                    ? 'bg-ink text-white border-ink shadow-sm font-semibold'
-                    : 'bg-white border-sand-200 text-ink-soft hover:bg-sand-50 hover:border-sand-300 hover:text-ink font-medium'
+                    ? 'bg-gradient-to-r from-sand-900 to-ink text-white border-amber-500/80 shadow-md ring-2 ring-amber-400/20 font-bold'
+                    : 'bg-sand-50/70 border-sand-200 text-ink-soft hover:bg-sand-100/80 hover:border-bronze hover:text-ink font-medium'
                 }`}
               >
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  {isActive && <CheckCircle2 className="w-3.5 h-3.5 text-bronze shrink-0" />}
-                  <span className={isActive ? 'underline decoration-bronze underline-offset-4' : ''}>
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className={`text-base shrink-0 transition-transform ${isActive ? 'scale-110' : ''}`}>
+                    {getCategoryIcon(cat.id)}
+                  </span>
+                  <span className="truncate">
                     {cat.label}
                   </span>
                 </div>
+
                 {cat.count !== undefined && (
                   <span
-                    className={`text-[10px] sm:text-[11px] font-sans font-bold px-2 py-0.5 rounded-full shrink-0 ${
-                      isActive ? 'bg-white/20 text-white' : 'bg-sand-100 text-ink-muted'
+                    className={`text-[10px] sm:text-[11px] font-sans font-extrabold px-2 py-0.5 rounded-full shrink-0 transition-colors ${
+                      isActive
+                        ? 'bg-amber-500/20 text-amber-300 border border-amber-400/30'
+                        : 'bg-white border border-sand-200 text-ink-muted'
                     }`}
                   >
                     {cat.count}

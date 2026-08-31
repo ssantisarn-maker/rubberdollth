@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { Star, ShieldCheck, CheckCircle2, Image as ImageIcon, X } from 'lucide-react';
 import { useLiveReviews } from '../../hooks/useLiveReviews';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
 import { translations } from '../../data/translations';
 
 export default function ReviewSection({ lang = 'th' }) {
   const { reviews } = useLiveReviews();
+  const { settings } = useSiteSettings();
   const [lightboxImage, setLightboxImage] = useState(null);
   const t = translations[lang] || translations.th;
+
+  const reviewTag = settings.reviews_tag || t.reviews.tag;
+  const reviewTitle = settings.reviews_title || t.reviews.title;
+  const ratingText = settings.reviews_rating_text || '5.0 / 5.0 (รีวิวลูกค้าจริง 100%)';
 
   return (
     <section id="reviews" className="py-16 sm:py-24 bg-white border-b border-sand-200">
@@ -15,16 +21,16 @@ export default function ReviewSection({ lang = 'th' }) {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <span className="text-xs font-semibold uppercase tracking-widest text-bronze">
-            {t.reviews.tag}
+            {reviewTag}
           </span>
           <h2 className="font-sans text-2xl sm:text-4xl font-bold text-ink">
-            {t.reviews.title}
+            {reviewTitle}
           </h2>
           <div className="flex items-center justify-center gap-1 text-amber-500 pt-1">
             {[...Array(5)].map((_, i) => (
               <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
             ))}
-            <span className="text-xs text-ink font-semibold ml-2">5.0 / 5.0 (รีวิวลูกค้าจริง 100%)</span>
+            <span className="text-xs text-ink font-semibold ml-2">{ratingText}</span>
           </div>
         </div>
 

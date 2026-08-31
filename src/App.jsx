@@ -111,7 +111,6 @@ export default function App() {
       {/* Main Content Sections */}
       <main className="flex-1 pb-20 sm:pb-0">
         <HeroSection onExploreClick={scrollToCatalog} lang={lang} />
-        <ValuePillars lang={lang} />
         <ProductCatalog
           activeTab={activeTab}
           setActiveTab={setActiveTab}
@@ -119,6 +118,7 @@ export default function App() {
           onToggleAdultMode={handleToggleAdultMode}
           lang={lang}
         />
+        <ValuePillars lang={lang} />
         <DiscreetGuide lang={lang} />
         <CareGuide lang={lang} />
         <ReviewSection lang={lang} />
