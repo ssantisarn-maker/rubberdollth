@@ -26,11 +26,32 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
       if (cat.id === 'all') {
         count = products.length;
       } else if (cat.id === 'ready') {
-        count = products.filter(p => p.isReadyToShip || p.is_ready_to_ship || (p.categories && p.categories.includes('ready'))).length;
+        count = products.filter(p => p.isReadyToShip || p.is_ready_to_ship || (Array.isArray(p.categories) && p.categories.includes('ready'))).length;
       } else if (cat.id === 'reviews') {
         count = 25;
       } else {
-        count = products.filter(p => p.categories && p.categories.includes(cat.id)).length;
+        const catId = String(cat.id || '').toLowerCase().trim();
+        const labelTh = String(cat.label_th || '').toLowerCase().trim();
+        const labelEn = String(cat.label_en || '').toLowerCase().trim();
+
+        count = products.filter(p => {
+          let pCats = [];
+          if (Array.isArray(p.categories)) {
+            pCats = p.categories.map(c => String(c).toLowerCase().trim());
+          } else if (typeof p.categories === 'string') {
+            try {
+              const parsed = JSON.parse(p.categories);
+              if (Array.isArray(parsed)) pCats = parsed.map(c => String(c).toLowerCase().trim());
+              else pCats = [p.categories.toLowerCase().trim()];
+            } catch (e) {
+              pCats = [p.categories.toLowerCase().trim()];
+            }
+          }
+          const catStr = String(p.category || '').toLowerCase().trim();
+
+          return pCats.some(c => c === catId || (labelTh && c === labelTh) || (labelEn && c === labelEn)) ||
+                 (catStr && (catStr.includes(catId) || (labelTh && (catStr.includes(labelTh) || labelTh.includes(catStr)))));
+        }).length;
       }
 
       const label = lang === 'en' ? (cat.label_en || cat.label_th) : (cat.label_th || cat.label_en || cat.id);
@@ -51,8 +72,30 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
           if (!item.isReadyToShip && !item.is_ready_to_ship && (!item.categories || !item.categories.includes('ready'))) {
             return false;
           }
-        } else if (!item.categories || !item.categories.includes(selectedCategory)) {
-          return false;
+        } else {
+          const currentCatObj = (liveCats || []).find(c => c.id === selectedCategory);
+          const catId = String(selectedCategory).toLowerCase().trim();
+          const labelTh = String(currentCatObj?.label_th || '').toLowerCase().trim();
+          const labelEn = String(currentCatObj?.label_en || '').toLowerCase().trim();
+
+          let pCats = [];
+          if (Array.isArray(item.categories)) {
+            pCats = item.categories.map(c => String(c).toLowerCase().trim());
+          } else if (typeof item.categories === 'string') {
+            try {
+              const parsed = JSON.parse(item.categories);
+              if (Array.isArray(parsed)) pCats = parsed.map(c => String(c).toLowerCase().trim());
+              else pCats = [item.categories.toLowerCase().trim()];
+            } catch (e) {
+              pCats = [item.categories.toLowerCase().trim()];
+            }
+          }
+          const catStr = String(item.category || '').toLowerCase().trim();
+
+          const isMatched = pCats.some(c => c === catId || (labelTh && c === labelTh) || (labelEn && c === labelEn)) ||
+                            (catStr && (catStr.includes(catId) || (labelTh && (catStr.includes(labelTh) || labelTh.includes(catStr)))));
+
+          if (!isMatched) return false;
         }
       }
 

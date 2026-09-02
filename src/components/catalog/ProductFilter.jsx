@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Search, X, Flame, CheckCircle2, Sparkles } from 'lucide-react';
 import { translations } from '../../data/translations';
 
@@ -76,8 +76,8 @@ export default function ProductFilter({
           <div className="h-px flex-1 ml-4 bg-sand-200 hidden sm:block"></div>
         </div>
 
-        {/* Mobile: Horizontal Swipeable Bar | Desktop: 4-Column Grid */}
-        <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 overflow-x-auto pb-2 sm:pb-0 scrollbar-none touch-pan-x snap-x">
+        {/* Mobile: Horizontal Swipeable Bar | Desktop: Clean Grid with Full Text */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-3">
           {categories.map((cat) => {
             const isActive = selectedCategory === cat.id;
 
@@ -101,13 +101,13 @@ export default function ProductFilter({
                 <a
                   key={cat.id}
                   href="#reviews"
-                  className="shrink-0 snap-start flex items-center justify-between gap-3 px-3.5 py-3 rounded-2xl border border-sand-200/90 bg-sand-50/80 hover:bg-amber-50 hover:border-amber-300 text-ink text-xs sm:text-sm font-medium transition-all shadow-2xs group"
+                  className="flex items-center justify-between gap-2.5 px-4 py-3 rounded-2xl border border-sand-200/90 bg-sand-50/80 hover:bg-amber-50 hover:border-amber-300 text-ink text-xs sm:text-sm font-medium transition-all shadow-2xs group min-h-[52px]"
                 >
-                  <div className="flex items-center gap-2">
-                    <span className="text-base group-hover:scale-110 transition-transform">⭐</span>
-                    <span className="font-semibold text-ink group-hover:text-bronze">{cat.label}</span>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-base shrink-0 group-hover:scale-110 transition-transform">⭐</span>
+                    <span className="font-bold text-ink group-hover:text-bronze leading-snug break-words">{cat.label}</span>
                   </div>
-                  <span className="text-bronze text-xs font-bold group-hover:translate-x-0.5 transition-transform">→</span>
+                  <span className="text-bronze text-xs font-bold group-hover:translate-x-0.5 transition-transform shrink-0">→</span>
                 </a>
               );
             }
@@ -116,24 +116,24 @@ export default function ProductFilter({
               <button
                 key={cat.id}
                 onClick={() => onSelectCategory(cat.id)}
-                className={`shrink-0 snap-start flex items-center justify-between gap-2.5 px-3.5 py-3 rounded-2xl border text-left transition-all duration-300 text-xs sm:text-sm shadow-2xs active:scale-95 cursor-pointer ${
+                className={`flex items-center justify-between gap-2.5 px-4 py-3 rounded-2xl border text-left transition-all duration-300 text-xs sm:text-sm shadow-2xs active:scale-98 cursor-pointer min-h-[52px] ${
                   isActive
                     ? 'bg-gradient-to-r from-sand-900 to-ink text-white border-amber-500/80 shadow-md ring-2 ring-amber-400/20 font-bold'
-                    : 'bg-sand-50/70 border-sand-200 text-ink-soft hover:bg-sand-100/80 hover:border-bronze hover:text-ink font-medium'
+                    : 'bg-sand-50/80 border-sand-200 text-ink hover:bg-sand-100/90 hover:border-bronze font-medium'
                 }`}
               >
-                <div className="flex items-center gap-2 min-w-0">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   <span className={`text-base shrink-0 transition-transform ${isActive ? 'scale-110' : ''}`}>
                     {getCategoryIcon(cat.id)}
                   </span>
-                  <span className="truncate">
+                  <span className="leading-snug break-words flex-1">
                     {cat.label}
                   </span>
                 </div>
 
                 {cat.count !== undefined && (
                   <span
-                    className={`text-[10px] sm:text-[11px] font-sans font-extrabold px-2 py-0.5 rounded-full shrink-0 transition-colors ${
+                    className={`text-[10px] sm:text-[11px] font-sans font-extrabold px-2 py-0.5 rounded-full shrink-0 transition-colors ml-1 ${
                       isActive
                         ? 'bg-amber-500/20 text-amber-300 border border-amber-400/30'
                         : 'bg-white border border-sand-200 text-ink-muted'
