@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Package, Tag, Settings, LogOut, ExternalLink, RefreshCw, MessageSquareQuote, HelpCircle, Sparkles, Bell, Lock, Droplets, Menu, X, ChevronRight, LayoutDashboard, Sliders, Globe } from 'lucide-react';
+import { Package, Tag, Settings, LogOut, ExternalLink, RefreshCw, MessageSquareQuote, HelpCircle, Sparkles, Bell, Lock, Droplets, Menu, X, ChevronRight, LayoutDashboard, Sliders, Globe, Layers } from 'lucide-react';
 import ProductManager from './ProductManager';
 import CategoryManager from './CategoryManager';
 import ReviewManager from './ReviewManager';

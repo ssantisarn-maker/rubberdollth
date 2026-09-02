@@ -13,6 +13,7 @@ import ContactSection from './components/contact/ContactSection';
 import Footer from './components/layout/Footer';
 import StickyMobileBar from './components/layout/StickyMobileBar';
 import AdminDashboard from './components/admin/AdminDashboard';
+import AdminLogin from './components/admin/AdminLogin';
 import { Flame, Check, ArrowUp } from 'lucide-react';
 import { translations } from './data/translations';
 import { useSiteSettings } from './hooks/useSiteSettings';
@@ -21,6 +22,10 @@ export default function App() {
   const { settings } = useSiteSettings();
   const [route, setRoute] = useState(() => {
     return window.location.pathname.startsWith('/admin') || window.location.hash === '#admin' ? 'admin' : 'shop';
+  });
+
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
+    return !!localStorage.getItem('rbd_admin_token');
   });
 
   const [activeTab, setActiveTab] = useState('catalog');
@@ -91,8 +96,24 @@ export default function App() {
   };
 
   if (route === 'admin') {
+    if (!isAdminAuthenticated) {
+      return (
+        <AdminLogin
+          onLoginSuccess={() => setIsAdminAuthenticated(true)}
+          onBackToShop={() => {
+            window.history.pushState({}, '', '/');
+            setRoute('shop');
+          }}
+        />
+      );
+    }
     return (
       <AdminDashboard
+        onLogout={() => {
+          localStorage.removeItem('rbd_admin_token');
+          localStorage.removeItem('rbd_admin_user');
+          setIsAdminAuthenticated(false);
+        }}
         onBackToShop={() => {
           window.history.pushState({}, '', '/');
           setRoute('shop');
