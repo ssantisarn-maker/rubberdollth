@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { ChevronDown, HelpCircle } from 'lucide-react';
 import { translations } from '../../data/translations';
 import { useSiteFaqs } from '../../hooks/useSiteFaqs';
@@ -13,31 +13,31 @@ export default function FaqSection({ lang = 'th' }) {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         
         <div className="text-center space-y-3">
-          <span className="text-xs font-semibold uppercase tracking-widest text-bronze">{t.faq.tag}</span>
-          <h2 className="font-sans text-2xl sm:text-4xl font-bold text-ink">{t.faq.title}</h2>
-          <p className="text-sm text-ink-muted font-light">{t.faq.desc}</p>
+          <span className="text-xs sm:text-sm font-bold uppercase tracking-widest text-bronze">{t.faq.tag}</span>
+          <h2 className="font-sans text-2xl sm:text-4xl font-extrabold text-ink">{t.faq.title}</h2>
+          <p className="text-sm sm:text-base text-ink-muted font-normal">{t.faq.desc}</p>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-3.5">
           {faqs.map((f, idx) => {
             const isOpen = openIdx === idx;
             return (
               <div
                 key={f.id || idx}
-                className="rounded-2xl bg-white border border-sand-200 overflow-hidden shadow-2xs transition-all"
+                className="rounded-2xl sm:rounded-3xl bg-white border border-sand-300 overflow-hidden shadow-2xs transition-all"
               >
                 <button
                   onClick={() => setOpenIdx(isOpen ? -1 : idx)}
-                  className="w-full p-5 text-left flex items-center justify-between gap-4 font-sans font-bold text-sm sm:text-base text-ink hover:text-bronze transition-colors tracking-normal"
+                  className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 font-sans font-bold text-base sm:text-lg text-ink hover:text-bronze transition-colors tracking-normal"
                 >
-                  <span className="flex items-center gap-2">
-                    <span className="text-bronze font-mono text-xs">{idx + 1}.</span>
+                  <span className="flex items-center gap-2.5">
+                    <span className="text-bronze font-mono text-sm sm:text-base font-extrabold">{idx + 1}.</span>
                     <span>{f.question || f.q}</span>
                   </span>
-                  <ChevronDown className={`w-4 h-4 text-bronze transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-5 h-5 text-bronze transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {isOpen && (
-                  <div className="px-5 pb-5 text-xs sm:text-sm text-ink-muted font-light leading-relaxed border-t border-sand-100 pt-3 whitespace-pre-line">
+                  <div className="px-5 sm:px-6 pb-6 text-sm sm:text-base text-ink-soft font-normal leading-relaxed border-t border-sand-200 pt-4 whitespace-pre-line">
                     {f.answer || f.a}
                   </div>
                 )}

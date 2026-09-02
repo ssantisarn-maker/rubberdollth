@@ -1,4 +1,4 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -9,25 +9,45 @@
     color: #19181B;
     overflow-x: hidden;
     letter-spacing: -0.01em;
-    font-size: 15.5px;
+    font-size: 16px;
+    font-weight: 500;
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
   
   h1, h2, h3, h4, h5, h6 {
     letter-spacing: -0.02em;
-    font-weight: 700;
+    font-weight: 800;
   }
 }
 
-/* Typography Scales */
+/* Typography Scales & Boldness Engine */
 .font-scale-normal {
-  font-size: 14.5px;
+  font-size: 15px;
+  font-weight: 500;
 }
+
 .font-scale-large {
-  font-size: 16px;
+  font-size: 17px;
+  font-weight: 550;
 }
+.font-scale-large p, 
+.font-scale-large span, 
+.font-scale-large article,
+.font-scale-large div {
+  font-weight: 500;
+}
+
 .font-scale-xl {
-  font-size: 17.5px;
+  font-size: 19px;
+  font-weight: 600;
+}
+.font-scale-xl p, 
+.font-scale-xl span, 
+.font-scale-xl article,
+.font-scale-xl div {
+  font-weight: 600;
 }
 
 /* Custom subtle scrollbar */

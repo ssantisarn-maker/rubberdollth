@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { ShieldCheck, Package, RotateCcw, Sparkles } from 'lucide-react';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 
@@ -33,14 +33,14 @@ export default function ValuePillars({ lang = 'th' }) {
   ];
 
   return (
-    <section className="py-12 sm:py-16 bg-white border-b border-sand-200">
+    <section className="py-14 sm:py-20 bg-white border-b border-sand-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
-          <span className="text-[11px] font-bold tracking-widest text-bronze uppercase">
+        <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+          <span className="text-xs sm:text-sm font-bold tracking-widest text-bronze uppercase">
             {settings.values_tag || 'THE MASTERPIECE DIFFERENCE'}
           </span>
-          <h2 className="font-sans text-2xl sm:text-3xl font-bold text-ink">
+          <h2 className="font-sans text-2xl sm:text-4xl font-extrabold text-ink">
             {settings.values_heading || 'เอกลักษณ์แห่งความสมบูรณ์แบบ ที่สัมผัสได้จริง'}
           </h2>
         </div>
@@ -51,11 +51,11 @@ export default function ValuePillars({ lang = 'th' }) {
             return (
               <div
                 key={idx}
-                className="p-5 sm:p-6 rounded-2xl bg-sand-50/70 border border-sand-200/80 hover:border-bronze hover:bg-sand-50 transition-all duration-300 shadow-2xs hover:shadow-soft flex flex-col justify-between group overflow-hidden"
+                className="p-6 rounded-3xl bg-sand-50/90 border border-sand-300 hover:border-bronze hover:bg-white transition-all duration-300 shadow-2xs hover:shadow-soft flex flex-col justify-between group overflow-hidden space-y-4"
               >
-                <div className="space-y-3">
+                <div className="space-y-3.5">
                   {item.image ? (
-                    <div className="w-full aspect-[16/10] rounded-xl overflow-hidden border border-sand-200 bg-sand-100 shadow-2xs">
+                    <div className="w-full aspect-[16/10] rounded-2xl overflow-hidden border border-sand-200 bg-sand-100 shadow-2xs">
                       <img
                         src={item.image}
                         alt={item.title}
@@ -68,15 +68,15 @@ export default function ValuePillars({ lang = 'th' }) {
                       />
                     </div>
                   ) : (
-                    <div className="w-12 h-12 rounded-xl bg-white border border-sand-200 flex items-center justify-center text-bronze shadow-2xs">
-                      <Icon className="w-6 h-6" />
+                    <div className="w-14 h-14 rounded-2xl bg-white border border-sand-300 flex items-center justify-center text-bronze shadow-2xs">
+                      <Icon className="w-7 h-7 text-amber-700" />
                     </div>
                   )}
 
-                  <h3 className="font-serif text-base font-bold text-ink group-hover:text-bronze transition-colors">
+                  <h3 className="font-sans text-base sm:text-lg font-bold text-ink group-hover:text-bronze transition-colors">
                     {item.title}
                   </h3>
-                  <p className="text-xs text-ink-muted leading-relaxed font-light">
+                  <p className="text-sm text-ink-soft leading-relaxed font-normal">
                     {item.description}
                   </p>
                 </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Droplets, Wind, Feather, Box } from 'lucide-react';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 
@@ -17,13 +17,13 @@ export default function CareGuide({ lang = 'th' }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <span className="text-xs font-semibold uppercase tracking-widest text-bronze">
+          <span className="text-xs sm:text-sm font-bold uppercase tracking-widest text-bronze">
             {settings.care_tag || 'THE LONGEVITY CARE'}
           </span>
-          <h2 className="font-sans text-2xl sm:text-4xl font-bold text-ink">
+          <h2 className="font-sans text-2xl sm:text-4xl font-extrabold text-ink">
             {settings.care_title || 'คู่มือการดูแลรักษา เพื่อยืดอายุการใช้งานยาวนาน'}
           </h2>
-          <p className="text-sm text-ink-muted font-light leading-relaxed">
+          <p className="text-sm sm:text-base text-ink-muted font-normal leading-relaxed">
             {settings.care_desc || 'ขั้นตอนง่ายๆ ในการดูแลและทำความสะอาดซิลิโคน เพื่อคงสัมผัสนุ่มละมุนเสมือนผิวจริงอยู่เสมอ'}
           </p>
         </div>
@@ -34,13 +34,13 @@ export default function CareGuide({ lang = 'th' }) {
             return (
               <div
                 key={idx}
-                className="p-6 rounded-3xl bg-white border border-sand-200 shadow-soft hover:shadow-soft-hover transition-all duration-300 space-y-3.5"
+                className="p-6 sm:p-7 rounded-3xl bg-white border border-sand-300 shadow-soft hover:shadow-soft-hover transition-all duration-300 space-y-4"
               >
-                <div className="w-12 h-12 rounded-2xl bg-sand-50 border border-sand-200 flex items-center justify-center text-bronze">
-                  <Icon className="w-6 h-6" />
+                <div className="w-14 h-14 rounded-2xl bg-sand-50 border border-sand-300 flex items-center justify-center text-bronze shadow-2xs">
+                  <Icon className="w-7 h-7 text-amber-700" />
                 </div>
-                <h3 className="font-sans text-base font-bold text-ink">{s.title}</h3>
-                <p className="text-xs text-ink-muted leading-relaxed font-light">{s.desc}</p>
+                <h3 className="font-sans text-base sm:text-lg font-bold text-ink">{s.title}</h3>
+                <p className="text-sm text-ink-soft leading-relaxed font-normal">{s.desc}</p>
               </div>
             );
           })}
