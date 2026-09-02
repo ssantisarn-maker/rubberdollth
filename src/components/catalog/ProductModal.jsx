@@ -57,28 +57,49 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
   const { settings } = useSiteSettings();
   const t = translations[lang] || translations.th;
 
+  // Reset states ONLY when a different product is opened
   useEffect(() => {
     setActiveImageIdx(0);
     setShowVideo(false);
     setVideoError(false);
     setIsZoomOpen(false);
     setZoomScale(1);
+  }, [product?.id, product?.code]);
+
+  // Handle keyboard events (ESC, Arrow Left, Arrow Right) and body scroll lock
+  useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         if (isZoomOpen) {
           setIsZoomOpen(false);
+          setZoomScale(1);
         } else {
           onClose();
         }
+      } else if (e.key === 'ArrowLeft') {
+        const total = (product?.gallery && product.gallery.length > 0)
+          ? product.gallery.length
+          : [product?.image, product?.secondaryImage].filter(Boolean).length;
+        if (total > 1) {
+          setActiveImageIdx(prev => (prev > 0 ? prev - 1 : total - 1));
+        }
+      } else if (e.key === 'ArrowRight') {
+        const total = (product?.gallery && product.gallery.length > 0)
+          ? product.gallery.length
+          : [product?.image, product?.secondaryImage].filter(Boolean).length;
+        if (total > 1) {
+          setActiveImageIdx(prev => (prev < total - 1 ? prev + 1 : 0));
+        }
       }
     };
+
     window.addEventListener('keydown', handleKeyDown);
     document.body.style.overflow = 'hidden';
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'auto';
     };
-  }, [product, onClose, isZoomOpen]);
+  }, [isZoomOpen, onClose, product]);
 
   if (!product) return null;
 
