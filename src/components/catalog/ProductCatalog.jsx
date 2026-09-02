@@ -4,12 +4,14 @@ import ProductFilter from './ProductFilter';
 import ProductModal from './ProductModal';
 import { useLiveProducts } from '../../hooks/useLiveProducts';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
+import { useLiveCategories } from '../../hooks/useLiveCategories';
 import { Sparkles, PackageCheck, Flame, CheckCircle2, ArrowDown } from 'lucide-react';
 import { translations } from '../../data/translations';
 
 export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, onToggleAdultMode, lang = 'th' }) {
   const { products } = useLiveProducts();
   const { settings } = useSiteSettings();
+  const { categories: liveCats } = useLiveCategories();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -17,49 +19,28 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
   const productsGridRef = useRef(null);
   const t = translations[lang] || translations.th;
 
-  // Bilingual Categories from User's Screenshot + Ready to Ship
-  const categories = useMemo(() => [
-    {
-      id: 'all',
-      label: t.catalog.categories.all,
-      count: products.length
-    },
-    {
-      id: 'ready',
-      label: t.catalog.categories.ready,
-      count: products.filter(p => p.isReadyToShip || p.is_ready_to_ship || (p.categories && p.categories.includes('ready'))).length
-    },
-    {
-      id: 'toys',
-      label: t.catalog.categories.toys,
-      count: products.filter(p => p.categories && p.categories.includes('toys')).length
-    },
-    {
-      id: 'anime',
-      label: t.catalog.categories.anime,
-      count: products.filter(p => p.categories && p.categories.includes('anime')).length
-    },
-    {
-      id: 'western',
-      label: t.catalog.categories.western,
-      count: products.filter(p => p.categories && p.categories.includes('western')).length
-    },
-    {
-      id: 'asian',
-      label: t.catalog.categories.asian,
-      count: products.filter(p => p.categories && p.categories.includes('asian')).length
-    },
-    {
-      id: 'torso',
-      label: t.catalog.categories.torso,
-      count: products.filter(p => p.categories && p.categories.includes('torso')).length
-    },
-    {
-      id: 'reviews',
-      label: t.catalog.categories.reviews,
-      count: 24
-    }
-  ], [lang, t, products]);
+  // Bilingual Categories from Live MySQL / Cache + Dynamic Product Counts
+  const categories = useMemo(() => {
+    return (liveCats || []).map(cat => {
+      let count = 0;
+      if (cat.id === 'all') {
+        count = products.length;
+      } else if (cat.id === 'ready') {
+        count = products.filter(p => p.isReadyToShip || p.is_ready_to_ship || (p.categories && p.categories.includes('ready'))).length;
+      } else if (cat.id === 'reviews') {
+        count = 25;
+      } else {
+        count = products.filter(p => p.categories && p.categories.includes(cat.id)).length;
+      }
+
+      const label = lang === 'en' ? (cat.label_en || cat.label_th) : (cat.label_th || cat.label_en || cat.id);
+      return {
+        id: cat.id,
+        label,
+        count
+      };
+    });
+  }, [liveCats, products, lang]);
 
   // Filter & Sort Logic (Actively synced with Admin CMS settings)
   const filteredProducts = useMemo(() => {

@@ -31,7 +31,7 @@ if ($method === 'GET') {
     sendResponse(['success' => true, 'categories' => $defaultCategories]);
 }
 
-if ($method === 'POST') {
+if ($method === 'POST' || $method === 'PUT') {
     checkAdminAuth();
     $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
 
@@ -45,14 +45,26 @@ if ($method === 'POST') {
     }
 
     if ($pdo) {
-        $stmt = $pdo->prepare("INSERT INTO categories (id, label_th, label_en, order_index, is_active) VALUES (:id, :label_th, :label_en, :order_index, 1) ON DUPLICATE KEY UPDATE label_th = :label_th, label_en = :label_en, order_index = :order_index");
-        $stmt->execute([
-            'id' => $id,
-            'label_th' => $label_th,
-            'label_en' => $label_en,
-            'order_index' => $order_index
-        ]);
-        sendResponse(['success' => true, 'message' => 'บันทึกหมวดหมู่สำเร็จ']);
+        try {
+            $pdo->exec("CREATE TABLE IF NOT EXISTS categories (
+                id VARCHAR(50) PRIMARY KEY,
+                label_th VARCHAR(255) NOT NULL,
+                label_en VARCHAR(255) NOT NULL,
+                order_index INT DEFAULT 99,
+                is_active TINYINT(1) DEFAULT 1
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+            $stmt = $pdo->prepare("INSERT INTO categories (id, label_th, label_en, order_index, is_active) VALUES (:id, :label_th, :label_en, :order_index, 1) ON DUPLICATE KEY UPDATE label_th = :label_th, label_en = :label_en, order_index = :order_index, is_active = 1");
+            $stmt->execute([
+                'id' => $id,
+                'label_th' => $label_th,
+                'label_en' => $label_en,
+                'order_index' => $order_index
+            ]);
+            sendResponse(['success' => true, 'message' => 'บันทึกหมวดหมู่สำเร็จ', 'category' => ['id' => $id, 'label_th' => $label_th, 'label_en' => $label_en, 'order_index' => $order_index]]);
+        } catch (PDOException $e) {
+            sendError('Database error: ' . $e->getMessage(), 500);
+        }
     } else {
         sendError('Database connection unavailable');
     }

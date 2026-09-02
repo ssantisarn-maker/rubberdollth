@@ -226,7 +226,7 @@ export default function ProductManager({ products, categories, onUpdateProducts 
 
     try {
       const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
-      await fetch(`/api/products.php?code=${prod.code}`, {
+      await fetch(`/api/products.php?code=${encodeURIComponent(prod.code)}&id=${encodeURIComponent(prod.id || prod.code)}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -235,12 +235,20 @@ export default function ProductManager({ products, categories, onUpdateProducts 
       showToast(`✓ ลบสินค้า ${prod.code} เรียบร้อยแล้ว`);
     }
 
-    onUpdateProducts(products.filter(p => p.code !== prod.code));
+    onUpdateProducts(products.filter(p => p.code !== prod.code && p.id !== (prod.id || prod.code)));
   };
 
   // Save Product (Create or Edit)
   const handleSaveProduct = async (formData) => {
     const isEdit = !!editingProduct;
+    const originalCode = editingProduct?.code;
+    const originalId = editingProduct?.id || originalCode;
+
+    const payload = {
+      ...formData,
+      originalCode,
+      id: originalId || formData.code
+    };
 
     try {
       const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
@@ -248,7 +256,7 @@ export default function ProductManager({ products, categories, onUpdateProducts 
       const res = await fetch('/api/products.php', {
         method,
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       });
       const data = await res.json();
       if (data.success) {
@@ -259,9 +267,9 @@ export default function ProductManager({ products, categories, onUpdateProducts 
     }
 
     if (isEdit) {
-      onUpdateProducts(products.map(p => p.code === formData.code ? formData : p));
+      onUpdateProducts(products.map(p => (p.code === originalCode || p.code === formData.code || p.id === originalId) ? { ...formData, id: originalId } : p));
     } else {
-      onUpdateProducts([formData, ...products]);
+      onUpdateProducts([{ ...formData, id: formData.code }, ...products]);
     }
 
     setEditingProduct(null);

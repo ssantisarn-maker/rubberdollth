@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './components/layout/Navbar';
 import PromoBanner from './components/home/PromoBanner';
 import HeroSection from './components/home/HeroSection';
+import SpotlightShowcase from './components/home/SpotlightShowcase';
 import ValuePillars from './components/home/ValuePillars';
 import ProductCatalog from './components/catalog/ProductCatalog';
 import DiscreetGuide from './components/home/DiscreetGuide';
@@ -14,8 +15,10 @@ import StickyMobileBar from './components/layout/StickyMobileBar';
 import AdminDashboard from './components/admin/AdminDashboard';
 import { Flame, Check, ArrowUp } from 'lucide-react';
 import { translations } from './data/translations';
+import { useSiteSettings } from './hooks/useSiteSettings';
 
 export default function App() {
+  const { settings } = useSiteSettings();
   const [route, setRoute] = useState(() => {
     return window.location.pathname.startsWith('/admin') || window.location.hash === '#admin' ? 'admin' : 'shop';
   });
@@ -27,6 +30,12 @@ export default function App() {
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   const t = translations[lang] || translations.th;
+
+  const fontScaleClass = settings?.font_size_scale === 'xlarge'
+    ? 'font-scale-xl'
+    : settings?.font_size_scale === 'normal'
+      ? 'font-scale-normal'
+      : 'font-scale-large';
 
   useEffect(() => {
     const handlePopState = () => {
@@ -93,7 +102,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-sand-50 text-ink overflow-x-hidden w-full">
+    <div className={`min-h-screen flex flex-col bg-sand-50 text-ink overflow-x-hidden w-full ${fontScaleClass}`}>
       {/* Top Promotional Bar */}
       <PromoBanner lang={lang} />
 
@@ -111,6 +120,7 @@ export default function App() {
       {/* Main Content Sections */}
       <main className="flex-1 pb-20 sm:pb-0">
         <HeroSection onExploreClick={scrollToCatalog} lang={lang} />
+        <SpotlightShowcase lang={lang} />
         <ProductCatalog
           activeTab={activeTab}
           setActiveTab={setActiveTab}

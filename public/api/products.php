@@ -143,6 +143,9 @@ if ($method === 'POST' || $method === 'PUT') {
     $gifts = $data['gifts'] ?? 'ชุดแฟชั่นสั่งตัด, วิกผมพรีเมียม, แป้งฝุ่นบำรุงผิว Silky Smooth, เซ็ตอุปกรณ์ทำความสะอาด';
     $isReadyToShip = !empty($data['isReadyToShip']) ? 1 : 0;
 
+    $originalCode = trim($data['originalCode'] ?? ($data['original_code'] ?? ($data['old_code'] ?? '')));
+    $id = trim($data['id'] ?? $code);
+
     if ($isReadyToShip && !in_array('ready', $categories)) {
         $categories[] = 'ready';
     }
@@ -161,15 +164,25 @@ if ($method === 'POST' || $method === 'PUT') {
                 "video_url VARCHAR(500) DEFAULT ''"
             ];
             foreach ($columnsToAdd as $colDef) {
-                $colName = explode(' ', $colDef)[0];
                 try {
                     $pdo->exec("ALTER TABLE products ADD COLUMN $colDef");
                 } catch (Exception $e) {}
             }
 
+            // If renaming code from an existing product
+            if (!empty($originalCode) && $originalCode !== $code) {
+                $checkStmt = $pdo->prepare("SELECT id FROM products WHERE code = :origCode OR id = :origCode LIMIT 1");
+                $checkStmt->execute(['origCode' => $originalCode]);
+                $existing = $checkStmt->fetch();
+                if ($existing) {
+                    $id = $existing['id'];
+                }
+            }
+
             $sql = "INSERT INTO products (id, code, name, series, description, image, secondary_image, gallery_json, total_angles, category, categories_json, height, weight, bust, skin_tone, material, skeleton, price, original_price, special_option, gifts, order_index, video_url, is_ready_to_ship, is_active) 
                     VALUES (:id, :code, :name, :series, :description, :image, :secondary_image, :gallery_json, :total_angles, :category, :categories_json, :height, :weight, :bust, :skin_tone, :material, :skeleton, :price, :original_price, :special_option, :gifts, :order_index, :video_url, :is_ready_to_ship, 1)
                     ON DUPLICATE KEY UPDATE 
+                        code = VALUES(code),
                         name = VALUES(name),
                         series = VALUES(series),
                         description = VALUES(description),
@@ -197,7 +210,7 @@ if ($method === 'POST' || $method === 'PUT') {
             
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
-                'id' => $data['id'] ?? $code,
+                'id' => $id,
                 'code' => $code,
                 'name' => $name,
                 'series' => $series,
@@ -238,16 +251,17 @@ if ($method === 'POST' || $method === 'PUT') {
 if ($method === 'DELETE') {
     checkAdminAuth();
     $code = $_GET['code'] ?? $_GET['id'] ?? null;
+    $id = $_GET['id'] ?? $code;
     if (!$code) {
         sendError('Missing product code');
     }
 
     if ($pdo) {
         try {
-            $stmt = $pdo->prepare("DELETE FROM products WHERE code = :code OR id = :code");
-            $stmt->execute(['code' => $code]);
+            $stmt = $pdo->prepare("DELETE FROM products WHERE code = :code OR id = :code OR code = :id OR id = :id");
+            $stmt->execute(['code' => $code, 'id' => $id]);
             syncCacheFromDb($pdo, $jsonCacheFile);
-            sendResponse(['success' => true, 'message' => 'ลบสินค้าสำเร็จ']);
+            sendResponse(['success' => true, 'message' => 'ลบสินค้าสำเร็จ', 'code' => $code]);
         } catch (PDOException $e) {
             sendError('Database error: ' . $e->getMessage(), 500);
         }

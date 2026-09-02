@@ -9,6 +9,7 @@ import { useLiveProducts } from '../../hooks/useLiveProducts';
 import { useLiveReviews } from '../../hooks/useLiveReviews';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 import { useSiteFaqs } from '../../hooks/useSiteFaqs';
+import { useLiveCategories } from '../../hooks/useLiveCategories';
 
 export default function AdminDashboard({ onLogout }) {
   const [activeTab, setActiveTab] = useState('products');
@@ -18,9 +19,10 @@ export default function AdminDashboard({ onLogout }) {
   const { reviews, setReviews, reload: reloadReviews } = useLiveReviews();
   const { settings, setSettings, reload: reloadSettings } = useSiteSettings();
   const { faqs, setFaqs, reload: reloadFaqs } = useSiteFaqs();
+  const { categories, setCategories, reload: reloadCategories } = useLiveCategories();
 
   const handleRefreshAll = async () => {
-    await Promise.all([reloadProducts(), reloadReviews(), reloadSettings(), reloadFaqs()]);
+    await Promise.all([reloadProducts(), reloadReviews(), reloadSettings(), reloadFaqs(), reloadCategories()]);
     alert('รีเฟรชดึงข้อมูลล่าสุดจากเซิร์ฟเวอร์เรียบร้อยแล้ว!');
   };
 
@@ -36,9 +38,12 @@ export default function AdminDashboard({ onLogout }) {
     {
       group: '🎨 ปรับแต่งเนื้อหาหน้าเว็บ (CMS)',
       items: [
+        { id: 'typography', label: 'ขนาดตัวอักษร & ฟอนต์', icon: Sliders, desc: 'ปรับขนาดตัวอักษรทั้งเว็บ' },
+        { id: 'spotlight', label: 'ไฮไลท์สินค้าพร้อมส่ง (Spotlight)', icon: Sparkles, desc: 'กล่องวิดีโอ/รูป/ราคาพร้อมส่ง' },
+        { id: 'modal_content', label: 'หัวข้อสเปก & กล่องของขวัญ', icon: Layers, desc: 'ปรับแต่งหัวข้อหน้าต่างสินค้า' },
         { id: 'social_share', label: 'แชร์ลิงก์ & LINE Preview', icon: Globe, desc: 'ข้อความ/รูปตอนส่งลิงก์ให้ลูกค้า' },
         { id: 'hero', label: 'แบนเนอร์หลัก & สินค้า Hero', icon: Sparkles, desc: 'รูปโมเดลเด่น, หัวข้อ, สโลแกน' },
-        { id: 'contact', label: 'แถบประกาศ & ข้อมูลติดต่อ', icon: Bell, desc: 'ประกาศบนสุด, LINE, เบอร์โทร' },
+        { id: 'contact', label: 'แถบประกาศ & ข้อมูลติดต่อ', icon: Bell, desc: 'ประกาศบนสุด, Email, LINE, โทร' },
         { id: 'reviews_header', label: 'หัวข้อหมวดรีวิวลูกค้า', icon: MessageSquareQuote, desc: 'ปรับแต่งหัวข้อรีวิว, ดาว 5.0' },
         { id: 'values', label: 'The Masterpiece Difference', icon: Sparkles, desc: '4 จุดเด่นและเอกลักษณ์' },
         { id: 'discreet', label: '100% Confidential Delivery', icon: Lock, desc: 'มาตรฐานการส่งลับเฉพาะ 3 ชั้น' },
@@ -239,7 +244,7 @@ export default function AdminDashboard({ onLogout }) {
         {activeTab === 'products' && (
           <ProductManager
             products={products}
-            categories={categoriesMock}
+            categories={categories}
             onUpdateProducts={setProducts}
           />
         )}
@@ -253,9 +258,33 @@ export default function AdminDashboard({ onLogout }) {
 
         {activeTab === 'categories' && (
           <CategoryManager
-            categories={categoriesMock}
+            categories={categories}
             products={products}
-            onUpdateCategories={() => {}}
+            onUpdateCategories={setCategories}
+          />
+        )}
+
+        {activeTab === 'typography' && (
+          <SiteSettingsManager
+            settings={settings}
+            onUpdateSettings={setSettings}
+            subTab="typography"
+          />
+        )}
+
+        {activeTab === 'spotlight' && (
+          <SiteSettingsManager
+            settings={settings}
+            onUpdateSettings={setSettings}
+            subTab="spotlight"
+          />
+        )}
+
+        {activeTab === 'modal_content' && (
+          <SiteSettingsManager
+            settings={settings}
+            onUpdateSettings={setSettings}
+            subTab="modal_content"
           />
         )}
 

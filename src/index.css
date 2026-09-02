@@ -9,11 +9,25 @@
     color: #19181B;
     overflow-x: hidden;
     letter-spacing: -0.01em;
+    font-size: 15.5px;
+    line-height: 1.6;
   }
   
   h1, h2, h3, h4, h5, h6 {
     letter-spacing: -0.02em;
+    font-weight: 700;
   }
+}
+
+/* Typography Scales */
+.font-scale-normal {
+  font-size: 14.5px;
+}
+.font-scale-large {
+  font-size: 16px;
+}
+.font-scale-xl {
+  font-size: 17.5px;
 }
 
 /* Custom subtle scrollbar */

@@ -6,10 +6,18 @@ const defaultSettings = {
   line_id: '@RUBBERDOLL.TH',
   line_url: 'https://line.me/R/ti/p/@RUBBERDOLL.TH',
   phone: '086-004-3541',
+  email: 'contact@rubberdollth.com',
   business_hours: 'เปิดบริการทุกวัน 24 ชม. (จัดส่งด่วนทุกวัน)',
   announcement_enabled: true,
   announcement_badge: '🔥 โปรโมชั่นพิเศษ',
   announcement_text: 'สต็อกพร้อมส่งในไทย! สั่งซื้อวันนี้รับฟรี The Luxury Collector Box + ส่งด่วนลับเฉพาะทั่วประเทศ',
+  shipping_badge_text: '📦 บริการจัดส่งลับเฉพาะ 100%',
+  shipping_announcement_text: 'การันตีจัดส่งมิดชิด 100% กล่องทึบ 2 ชั้น ไร้ชื่อร้าน/ชื่อสินค้าหน้ากล่องเด็ดขาด',
+
+  // Typography & Sizing
+  font_size_scale: 'large', // 'normal' | 'large' | 'xlarge'
+  font_family_preset: 'modern_prompt',
+
   // Brand Identity
   brand_logo_image: '',
   brand_name: 'RUBBER DOLL',
@@ -27,6 +35,27 @@ const defaultSettings = {
   hero_bg_image: '',
   hero_btn_primary_text: 'ดูแคตตาล็อกสินค้าทั้งหมด',
   hero_btn_secondary_text: 'ปรึกษาแอดมินทาง LINE',
+
+  // Spotlight Ready-to-Ship Showcase (New Feature)
+  spotlight_enabled: false,
+  spotlight_badge: '⚡ สินค้าไฮไลท์พร้อมส่งด่วนในไทย (1-2 วันรับของทันที)',
+  spotlight_title: 'MODEL SPOTLIGHT: SLC-108 น้องมิยู สไตล์ญี่ปุ่น อกคัพ C',
+  spotlight_subtitle: 'สัมผัสนุ่มละมุนเสมือนผิวจริง 100% Medical Silicone โครงสร้างข้อต่อปรับได้ 360 องศา พร้อมส่งทันทีไม่ต้องรอสั่งผลิต',
+  spotlight_price: 'ติดต่อสอบถามทาง LINE',
+  spotlight_original_price: '',
+  spotlight_image: '',
+  spotlight_video_url: '',
+  spotlight_cta_text: '💬 สั่งซื้อรุ่นนี้ทันทีทาง LINE',
+  spotlight_specs_height: '160 cm',
+  spotlight_specs_weight: '35 kg',
+  spotlight_specs_bust: 'คัพ C สรีระสมจริง',
+  spotlight_specs_skin: 'ผิวขาวอมชมพู สัมผัสนุ่มเสมือนคนจริง',
+
+  // Product Modal Headings
+  modal_specs_title: '📐 สเปกและรายละเอียดสรีระ (Model Specifications)',
+  modal_gifts_title: '🎁 กล่องของขวัญและของแถม (The Luxury Collector Gift Box)',
+  modal_gifts_default: 'ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล, วิกผมเกรดพรีเมียม สัมผัสนุ่มลื่น, แป้งฝุ่นบำรุงผิว Silky Smooth Powder, เซ็ตอุปกรณ์ทำความสะอาดและดูแลรักษาครบวงจร',
+  modal_delivery_title: '🔒 มาตรฐานการจัดส่งลับเฉพาะ 100% (100% Confidential Delivery)',
   
   // Trust Badges
   trust_discrete_title: 'ส่งลับเฉพาะ 100% (Discreet Shipping)',
@@ -84,7 +113,10 @@ const defaultSettings = {
   care_s3_title: '3. การลงแป้งบำรุง (Silicone Powder)',
   care_s3_desc: 'ทาแป้งเด็กหรือแป้งบำรุงผิวซิลิโคนบางๆ ทั่วผิวกาย เพื่อลดความเหนียวและคงสัมผัสนุ่มลื่นดุจแพรไหม',
   care_s4_title: '4. การจัดเก็บที่ถูกวิธี (Storage)',
-  care_s4_desc: 'จัดเก็บในห้องอุณหภูมิปกติ เลี่ยงแสงแดดจัด แนะนำให้นอนราบบนเบาะนุ่มหรือแขวนด้วยอุปกรณ์เฉพาะ'
+  care_s4_desc: 'จัดเก็บในห้องอุณหภูมิปกติ เลี่ยงแสงแดดจัด แนะนำให้นอนราบบนเบาะนุ่มหรือแขวนด้วยอุปกรณ์เฉพาะ',
+
+  // Footer & General
+  footer_copyright_text: '© 2026 RUBBER DOLL THAILAND. All rights reserved. ผู้นำเข้าตุ๊กตายางซิลิโคนแท้เกรดพรีเมียมอันดับ 1 ในไทย'
 };
 
 let globalSettingsPromise = null;

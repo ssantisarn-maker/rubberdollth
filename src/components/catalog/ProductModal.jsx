@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, MessageCircle, ShieldCheck, Sparkles, Box, Check, Star, Lock, HeartHandshake, ChevronLeft, ChevronRight, Flame, Layers, DollarSign, Gift, CheckCircle2, FileText } from 'lucide-react';
+﻿import React, { useState, useEffect } from 'react';
+import { X, MessageCircle, ShieldCheck, Sparkles, Box, Check, Star, Lock, HeartHandshake, ChevronLeft, ChevronRight, Flame, Layers, DollarSign, Gift, CheckCircle2, FileText, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
@@ -52,6 +52,8 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [showVideo, setShowVideo] = useState(false);
   const [videoError, setVideoError] = useState(false);
+  const [isZoomOpen, setIsZoomOpen] = useState(false);
+  const [zoomScale, setZoomScale] = useState(1);
   const { settings } = useSiteSettings();
   const t = translations[lang] || translations.th;
 
@@ -59,8 +61,16 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
     setActiveImageIdx(0);
     setShowVideo(false);
     setVideoError(false);
+    setIsZoomOpen(false);
+    setZoomScale(1);
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        if (isZoomOpen) {
+          setIsZoomOpen(false);
+        } else {
+          onClose();
+        }
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     document.body.style.overflow = 'hidden';
@@ -68,7 +78,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'auto';
     };
-  }, [product, onClose]);
+  }, [product, onClose, isZoomOpen]);
 
   if (!product) return null;
 
@@ -87,9 +97,12 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
   const skeleton = product.skeleton || 'EVO Stainless-Steel 360° Articulated Frame';
   const specialOption = product.specialOption || product.special_option || '';
   const originalPrice = product.originalPrice || product.original_price || '';
-  const gifts = product.gifts || 'ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล, วิกผมเกรดพรีเมียม สัมผัสนุ่มลื่น, แป้งฝุ่นบำรุงผิว Silky Smooth Powder, เซ็ตอุปกรณ์ทำความสะอาดและดูแลรักษาครบวงจร';
+  const gifts = product.gifts || settings.modal_gifts_default || 'ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล, วิกผมเกรดพรีเมียม สัมผัสนุ่มลื่น, แป้งฝุ่นบำรุงผิว Silky Smooth Powder, เซ็ตอุปกรณ์ทำความสะอาดและดูแลรักษาครบวงจร';
 
   const giftsList = gifts.split(',').map(g => g.trim()).filter(Boolean);
+
+  const specsTitle = settings.modal_specs_title || '📐 ข้อมูลสเปกความพรีเมียม (SPECIFICATIONS)';
+  const giftsTitle = settings.modal_gifts_title || '🎁 THE LUXURY COLLECTOR BOX (เซ็ตของขวัญระดับพรีเมียม)';
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto flex items-end sm:items-center justify-center p-0 sm:p-4 lg:p-6 bg-ink/70 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
@@ -106,7 +119,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-3 sm:top-4 right-3 sm:right-4 z-20 p-2 sm:p-2.5 rounded-full bg-white/90 backdrop-blur-md text-ink-muted hover:text-ink hover:bg-sand-100 transition-colors shadow-2xs border border-sand-200"
+          className="absolute top-3 sm:top-4 right-3 sm:right-4 z-20 p-2 sm:p-2.5 rounded-full bg-white/90 backdrop-blur-md text-ink-muted hover:text-ink hover:bg-sand-100 transition-colors shadow-2xs border border-sand-200 cursor-pointer"
           aria-label="ปิดหน้าต่าง / Close"
         >
           <X className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -118,7 +131,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
           <div className="md:col-span-6 space-y-3">
             
             {/* Main Featured Image or Video Player */}
-            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-sand-100 border border-sand-200 shadow-sm">
+            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-sand-100 border border-sand-200 shadow-sm group">
               {showVideo && (product.videoUrl || product.video_url) ? (
                 <div className="w-full h-full bg-black flex items-center justify-center relative">
                   {videoError ? (
@@ -183,19 +196,32 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                   })()}
                 </div>
               ) : (
-                <img
-                  src={currentImage}
-                  alt={seoImageAlt}
-                  title={seoImageAlt}
-                  width="600"
-                  height="800"
-                  className="w-full h-full object-cover object-top transition-all duration-300"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = product.image || '/favicon.png';
-                  }}
-                />
+                <div
+                  className="w-full h-full cursor-zoom-in relative"
+                  onClick={() => setIsZoomOpen(true)}
+                  title="คลิกเพื่อซูมดูรูปภาพขนาดใหญ่ความละเอียดสูง (HD Zoom)"
+                >
+                  <img
+                    src={currentImage}
+                    alt={seoImageAlt}
+                    title={seoImageAlt}
+                    width="600"
+                    height="800"
+                    className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = product.image || '/favicon.png';
+                    }}
+                  />
+                  
+                  {/* Floating Zoom Button */}
+                  <div className="absolute bottom-12 right-3 bg-black/70 hover:bg-black/90 backdrop-blur-md text-white px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-medium flex items-center gap-1 shadow-md transition-all group-hover:scale-105">
+                    <ZoomIn className="w-3.5 h-3.5 text-amber-300" />
+                    <span>กดเพื่อซูมภาพ HD</span>
+                  </div>
+                </div>
               )}
+
               <div className="absolute top-3 left-3 bg-white/95 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-sans font-extrabold text-ink shadow-2xs border border-sand-200">
                 {product.code}
               </div>
@@ -207,7 +233,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
               )}
 
               {/* Angle Switcher arrows */}
-              {galleryImages.length > 1 && (
+              {galleryImages.length > 1 && !showVideo && (
                 <div className="absolute inset-y-0 inset-x-2 flex items-center justify-between pointer-events-none">
                   <button
                     onClick={(e) => {
@@ -232,7 +258,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 </div>
               )}
 
-              <div className="absolute bottom-3 left-3 right-3 bg-ink/80 backdrop-blur-md text-white text-[10px] sm:text-[11px] p-1.5 sm:p-2 rounded-xl text-center">
+              <div className="absolute bottom-3 left-3 right-3 bg-ink/80 backdrop-blur-md text-white text-[10px] sm:text-[11px] p-1.5 sm:p-2 rounded-xl text-center pointer-events-none">
                 ภาพถ่ายสเปกจริงจากโรงงาน {activeImageIdx + 1} / {galleryImages.length}
               </div>
             </div>
@@ -251,25 +277,26 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 </button>
                 <button
                   type="button"
-                  onClick={() => setShowVideo(true)}
+                  onClick={() => { setShowVideo(true); setVideoError(false); }}
                   className={`flex-1 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
-                    showVideo ? 'bg-purple-800 text-white shadow-xs' : 'bg-purple-100 text-purple-900 hover:bg-purple-200'
+                    showVideo ? 'bg-purple-700 text-white shadow-xs' : 'bg-purple-50 text-purple-800 border border-purple-200 hover:bg-purple-100'
                   }`}
                 >
-                  <span>🎬 ดูวิดีโอตัวจริง HD</span>
+                  <span>▶ เล่นคลิปวิดีโอ</span>
                 </button>
               </div>
             )}
 
-            {/* Gallery Thumbnails */}
-            {!showVideo && galleryImages.length > 1 && (
-              <div className="flex items-center gap-2 pt-1 overflow-x-auto pb-1 scrollbar-none">
+            {/* Gallery Thumbnails Carousel */}
+            {galleryImages.length > 1 && (
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 no-scrollbar">
                 {galleryImages.map((img, idx) => (
                   <button
                     key={idx}
-                    onClick={() => setActiveImageIdx(idx)}
+                    type="button"
+                    onClick={() => { setActiveImageIdx(idx); setShowVideo(false); }}
                     className={`relative w-12 sm:w-14 h-14 sm:h-16 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${
-                      activeImageIdx === idx
+                      activeImageIdx === idx && !showVideo
                         ? 'border-bronze shadow-sm scale-105'
                         : 'border-sand-200 opacity-60 hover:opacity-100'
                     }`}
@@ -297,12 +324,12 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
               
               {/* Header: Series & Category */}
               <div>
-                <div className="flex items-center gap-2 text-[10px] sm:text-xs font-semibold text-bronze uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-[11px] sm:text-xs font-semibold text-bronze uppercase tracking-wider">
                   <span>{product.series || 'ตุ๊กตายางพรีเมียม'}</span>
                   <span>•</span>
                   <span>{product.category || 'ตุ๊กตาซิลิโคนแท้'}</span>
                 </div>
-                <h2 className="font-sans text-xl sm:text-2xl lg:text-3xl font-bold text-ink mt-0.5">
+                <h2 className="font-sans text-xl sm:text-2xl lg:text-3xl font-bold text-ink mt-0.5 leading-snug">
                   {product.code} {product.name}
                 </h2>
               </div>
@@ -312,7 +339,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 <div className="flex items-baseline justify-between gap-2 flex-wrap">
                   <div className="flex items-baseline gap-2">
                     <span className="text-xs text-ink-muted">ราคาพิเศษ:</span>
-                    <span className="text-xl sm:text-2xl font-bold text-emerald-800 font-sans">
+                    <span className="text-xl sm:text-2xl font-black text-emerald-800 font-sans">
                       {product.price || 'ติดต่อสอบถามทาง LINE'}
                     </span>
                   </div>
@@ -331,7 +358,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 )}
               </div>
 
-              {/* Beautiful Multiline Formatted Description */}
+              {/* Description */}
               {product.description && (
                 <div className="p-3.5 sm:p-4 bg-sand-50/80 rounded-2xl border border-sand-200 space-y-2">
                   <div className="flex items-center gap-1.5 text-xs font-bold text-ink border-b border-sand-200/80 pb-1.5">
@@ -344,32 +371,32 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 </div>
               )}
 
-              {/* Technical Specifications (3 Columns Top + Material & Skeleton Rows) */}
+              {/* Technical Specifications */}
               <div className="space-y-2">
-                <h3 className="text-xs font-bold text-ink flex items-center gap-1.5">
+                <h3 className="text-xs sm:text-sm font-bold text-ink flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-bronze" />
-                  <span>ข้อมูลสเปกความพรีเมียม (SPECIFICATIONS)</span>
+                  <span>{specsTitle}</span>
                 </h3>
 
                 <div className="grid grid-cols-3 gap-2">
                   <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200 flex flex-col justify-between">
-                    <span className="text-[10px] text-ink-muted block">ส่วนสูง (Height)</span>
+                    <span className="text-[10px] sm:text-[11px] text-ink-muted block">ส่วนสูง (Height)</span>
                     <span className="font-bold font-sans text-xs sm:text-sm text-ink pt-0.5">{product.height || '-'}</span>
                   </div>
 
                   <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200 flex flex-col justify-between">
-                    <span className="text-[10px] text-ink-muted block">น้ำหนัก (Weight)</span>
+                    <span className="text-[10px] sm:text-[11px] text-ink-muted block">น้ำหนัก (Weight)</span>
                     <span className="font-bold font-sans text-xs sm:text-sm text-ink pt-0.5">{product.weight || '-'}</span>
                   </div>
 
                   <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200 flex flex-col justify-between">
-                    <span className="text-[10px] text-ink-muted block">สีผิว (Skin Tone)</span>
+                    <span className="text-[10px] sm:text-[11px] text-ink-muted block">สีผิว (Skin Tone)</span>
                     <span className="font-bold text-xs sm:text-sm text-ink pt-0.5">{skinTone}</span>
                   </div>
                 </div>
 
                 <div className="p-2.5 sm:p-3 rounded-xl bg-sand-50/80 border border-sand-200 space-y-0.5">
-                  <span className="text-[10px] text-ink-muted block">วัสดุเนื้อผิวตุ๊กตา</span>
+                  <span className="text-[10px] sm:text-[11px] text-ink-muted block">วัสดุเนื้อผิวตุ๊กตา</span>
                   <span className="font-bold text-xs sm:text-sm text-ink">{material}</span>
                 </div>
               </div>
@@ -377,11 +404,11 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
               {/* Free Gifts & Collector Box */}
               {giftsList.length > 0 && (
                 <div className="p-3.5 rounded-2xl bg-sand-50 border border-sand-200 space-y-2">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-ink">
+                  <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-ink">
                     <Gift className="w-4 h-4 text-bronze" />
-                    <span>THE LUXURY COLLECTOR BOX (เซ็ตของขวัญระดับพรีเมียม)</span>
+                    <span>{giftsTitle}</span>
                   </div>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] text-ink-soft">
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs text-ink-soft">
                     {giftsList.map((gift, i) => (
                       <li key={i} className="flex items-start gap-1.5">
                         <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
@@ -400,13 +427,13 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 href={lineProductUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="w-full py-3 sm:py-3.5 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition-all active:scale-98"
+                className="w-full py-3 sm:py-3.5 px-6 rounded-2xl bg-[#06C755] hover:bg-[#05b34c] text-white font-bold text-sm sm:text-base shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition-all active:scale-98"
               >
                 <MessageCircle className="w-4 h-4 fill-white" />
                 <span>สั่งซื้อ / สอบถามรุ่นนี้แบบ Private LINE</span>
               </a>
 
-              <div className="flex items-center justify-center gap-4 text-[10px] text-ink-muted">
+              <div className="flex items-center justify-center gap-4 text-[11px] text-ink-muted">
                 <span className="flex items-center gap-1">
                   <Lock className="w-3 h-3 text-emerald-600" /> ส่งลับเฉพาะ 100%
                 </span>
@@ -424,6 +451,100 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
         </div>
 
       </div>
+
+      {/* FULLSCREEN HD ZOOM LIGHTBOX MODAL */}
+      {isZoomOpen && (
+        <div className="fixed inset-0 z-[100] bg-black/95 flex flex-col justify-between p-4 animate-in fade-in duration-200 select-none">
+          
+          {/* Top Bar Controls */}
+          <div className="flex items-center justify-between text-white px-2 py-2 border-b border-white/10 z-20">
+            <div className="flex items-center gap-2">
+              <span className="bg-amber-500 text-gray-950 text-xs font-black px-3 py-1 rounded-full">
+                HD ZOOM
+              </span>
+              <span className="text-xs sm:text-sm text-gray-300 font-bold">
+                {product.code} - {product.name} ({activeImageIdx + 1}/{galleryImages.length})
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setZoomScale(prev => Math.min(prev + 0.5, 3))}
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                title="ซูมเข้า / Zoom In"
+              >
+                <ZoomIn className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setZoomScale(prev => Math.max(prev - 0.5, 1))}
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                title="ซูมออก / Zoom Out"
+              >
+                <ZoomOut className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setZoomScale(1)}
+                className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs text-white font-bold"
+                title="รีเซ็ตขนาด / Reset"
+              >
+                100%
+              </button>
+              <button
+                onClick={() => setIsZoomOpen(false)}
+                className="p-2 rounded-full bg-rose-600 hover:bg-rose-700 text-white transition-colors ml-2"
+                title="ปิด / Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Main Zoomed Image Stage */}
+          <div className="flex-1 flex items-center justify-center relative overflow-hidden my-2">
+            <img
+              src={currentImage}
+              alt="Zoomed Product View"
+              style={{ transform: `scale(${zoomScale})` }}
+              className="max-h-[82vh] max-w-[92vw] object-contain transition-transform duration-200 cursor-grab active:cursor-grabbing"
+              onClick={() => setZoomScale(prev => prev > 1 ? 1 : 2)}
+            />
+
+            {/* Navigation Arrows */}
+            {galleryImages.length > 1 && (
+              <>
+                <button
+                  onClick={() => setActiveImageIdx(prev => (prev > 0 ? prev - 1 : galleryImages.length - 1))}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 p-3 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 transition-transform active:scale-95"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() => setActiveImageIdx(prev => (prev < galleryImages.length - 1 ? prev + 1 : 0))}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-3 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 transition-transform active:scale-95"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Bottom Thumbnails Strip */}
+          <div className="flex items-center justify-center gap-2 overflow-x-auto py-2 z-20">
+            {galleryImages.map((img, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveImageIdx(idx)}
+                className={`relative w-12 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                  activeImageIdx === idx ? 'border-amber-400 scale-110' : 'border-white/30 opacity-50 hover:opacity-100'
+                }`}
+              >
+                <img src={img} alt="" className="w-full h-full object-cover object-top" />
+              </button>
+            ))}
+          </div>
+
+        </div>
+      )}
 
     </div>
   );

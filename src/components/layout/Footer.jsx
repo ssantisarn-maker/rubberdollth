@@ -80,8 +80,11 @@ export default function Footer({ lang = 'th', onSetLang }) {
           {/* Contact Col */}
           <div className="md:col-span-4 space-y-3">
             <h4 className="font-sans text-sm font-bold text-white uppercase tracking-wider">{t.nav.contact}</h4>
-            <p className="text-xs text-sand-400 font-light">
+            <p className="text-xs text-sand-400 font-light leading-relaxed">
               LINE Official: <strong className="text-white font-mono">{lineId}</strong><br />
+              {settings.email && (
+                <>อีเมล: <strong className="text-white font-mono">{settings.email}</strong><br /></>
+              )}
               {settings.phone && (
                 <>โทรศัพท์: <strong className="text-white font-mono">{settings.phone}</strong><br /></>
               )}
@@ -92,7 +95,7 @@ export default function Footer({ lang = 'th', onSetLang }) {
                 href={lineUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-[#06C755] text-white px-4 py-2 rounded-xl text-xs font-bold shadow hover:bg-[#05b34c] transition-colors"
+                className="inline-flex items-center gap-2 bg-[#06C755] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow hover:bg-[#05b34c] transition-colors"
               >
                 <MessageCircle className="w-4 h-4 fill-white" />
                 <span>{t.nav.chatLine}</span>
@@ -103,8 +106,8 @@ export default function Footer({ lang = 'th', onSetLang }) {
         </div>
 
         {/* Bottom Rights */}
-        <div className="pt-8 border-t border-sand-800 text-center text-[11px] text-sand-500 font-light">
-          © 2019 - 2026 RUBBER DOLL THAILAND. {t.footer.rights}
+        <div className="pt-8 border-t border-sand-800 text-center text-xs text-sand-400 font-light">
+          {settings.footer_copyright_text || `© 2019 - 2026 RUBBER DOLL THAILAND. ${t.footer.rights}`}
         </div>
 
       </div>
