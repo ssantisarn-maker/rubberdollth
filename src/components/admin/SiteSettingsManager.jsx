@@ -1120,137 +1120,136 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
           </div>
         )}
 
-        {/* SECTION: Top Announcement & Contact */}
-        {(subTab === 'all' || subTab === 'contact') && (
-          <div id="section-contact" className="space-y-6">
-            {/* Top Announcement Bar */}
-            <div className="bg-white p-5 sm:p-6 rounded-3xl border border-sand-300 shadow-soft space-y-4">
-              <div className="flex items-center justify-between border-b border-sand-200 pb-3">
-                <div className="flex items-center gap-2">
-                  <Bell className="w-5 h-5 text-amber-500" />
-                  <div>
-                    <h3 className="font-bold text-ink text-sm sm:text-base">📢 แถบประกาศโปรโมชั่นบนสุด (Top Announcement Bar)</h3>
-                    <p className="text-xs text-ink-muted">แสดงป้ายประกาศแถบด้านบนสุดของทุกหน้าเว็บ สำหรับแจ้งโปรโมชั่นหรือส่งด่วน</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-ink-muted hidden sm:inline">
-                    {formData.announcement_enabled ? 'เปิดใช้งาน' : 'ปิดการแสดงผล'}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, announcement_enabled: !prev.announcement_enabled }))}
-                    className={`w-12 h-7 rounded-full p-1 transition-colors ${formData.announcement_enabled ? 'bg-emerald-600' : 'bg-sand-300'}`}
-                  >
-                    <div className={`w-5 h-5 rounded-full bg-white transition-transform ${formData.announcement_enabled ? 'translate-x-5' : 'translate-x-0'}`} />
-                  </button>
+        {/* SECTION: Top Promotion Banner */}
+        {(subTab === 'all' || subTab === 'promo') && (
+          <div id="section-promo" className="bg-white p-5 sm:p-6 rounded-3xl border border-sand-300 shadow-soft space-y-4">
+            <div className="flex items-center justify-between border-b border-sand-200 pb-3">
+              <div className="flex items-center gap-2">
+                <Bell className="w-5 h-5 text-amber-500" />
+                <div>
+                  <h3 className="font-bold text-ink text-sm sm:text-base">📢 แถบโปรโมชั่น & ประกาศบนสุด (Top Promotion Banner)</h3>
+                  <p className="text-xs text-ink-muted">แสดงป้ายโปรโมชั่นแถบด้านบนสุดของเว็บ สามารถเปิด-ปิด หรือปรับแต่งข้อความโปรโมชั่นได้อิสระ</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm">
-                <div className="space-y-1.5">
-                  <label className="font-semibold text-ink">ข้อความป้าย Badge</label>
-                  <input
-                    type="text"
-                    value={formData.announcement_badge}
-                    onChange={e => setFormData({ ...formData, announcement_badge: e.target.value })}
-                    placeholder="เช่น 🔥 โปรโมชั่นพิเศษ หรือ ⚡ FLASH SALE"
-                    className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
-                  />
-                </div>
-
-                <div className="space-y-1.5 sm:col-span-2">
-                  <label className="font-semibold text-ink">ข้อความประกาศหลัก</label>
-                  <input
-                    type="text"
-                    value={formData.announcement_text}
-                    onChange={e => setFormData({ ...formData, announcement_text: e.target.value })}
-                    placeholder="เช่น สต็อกพร้อมส่งในไทย! สั่งซื้อวันนี้รับฟรี The Luxury Collector Box + ส่งด่วนลับเฉพาะทั่วประเทศ"
-                    className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
-                  />
-                </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-ink-muted hidden sm:inline">
+                  {formData.announcement_enabled ? 'เปิดใช้งาน' : 'ปิดการแสดงผล'}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, announcement_enabled: !prev.announcement_enabled }))}
+                  className={`w-12 h-7 rounded-full p-1 transition-colors ${formData.announcement_enabled ? 'bg-emerald-600' : 'bg-sand-300'}`}
+                >
+                  <div className={`w-5 h-5 rounded-full bg-white transition-transform ${formData.announcement_enabled ? 'translate-x-5' : 'translate-x-0'}`} />
+                </button>
               </div>
             </div>
 
-            {/* Contact & Social Info */}
-            <div className="bg-white p-5 sm:p-6 rounded-3xl border border-sand-300 shadow-soft space-y-4">
-              <div className="border-b border-sand-200 pb-3 flex items-center gap-2">
-                <MessageCircle className="w-5 h-5 text-emerald-600" />
-                <div>
-                  <h3 className="font-bold text-ink text-sm sm:text-base">📞 ข้อมูลติดต่อร้านค้า (LINE Official & Phone)</h3>
-                  <p className="text-xs text-ink-muted">เมื่อแก้ไข ข้อมูลจะเปลี่ยนบนปุ่มสั่งซื้อ LINE, Navbar, และ Footer ทั้งหมดทันที</p>
-                </div>
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 text-xs sm:text-sm">
+              <div className="space-y-1.5 sm:col-span-4">
+                <label className="font-semibold text-ink">ข้อความป้าย Badge โปรโมชั่น</label>
+                <input
+                  type="text"
+                  value={formData.announcement_badge || ''}
+                  onChange={e => setFormData({ ...formData, announcement_badge: e.target.value })}
+                  placeholder="เช่น 🔥 โปรโมชั่นพิเศษ หรือ ⚡ FLASH SALE"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white font-bold"
+                />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
-                <div className="space-y-1.5">
-                  <label className="font-semibold text-ink">LINE Official ID *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.line_id}
-                    onChange={e => setFormData({ ...formData, line_id: e.target.value })}
-                    placeholder="เช่น @RUBBERDOLL.TH"
-                    className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl font-bold text-emerald-800 focus:outline-none focus:border-bronze focus:bg-white"
-                  />
-                </div>
+              <div className="space-y-1.5 sm:col-span-5">
+                <label className="font-semibold text-ink">ข้อความโปรโมชั่นหลัก</label>
+                <input
+                  type="text"
+                  value={formData.announcement_text || ''}
+                  onChange={e => setFormData({ ...formData, announcement_text: e.target.value })}
+                  placeholder="เช่น สต็อกพร้อมส่งในไทย! สั่งซื้อวันนี้รับฟรี The Luxury Collector Box"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
 
-                <div className="space-y-1.5">
-                  <label className="font-semibold text-ink">ลิงก์ LINE Official Account URL *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.line_url}
-                    onChange={e => setFormData({ ...formData, line_url: e.target.value })}
-                    placeholder="เช่น https://line.me/R/ti/p/@RUBBERDOLL.TH"
-                    className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
-                  />
-                </div>
+              <div className="space-y-1.5 sm:col-span-3">
+                <label className="font-semibold text-ink">ข้อความปุ่มกด LINE ขวามือ</label>
+                <input
+                  type="text"
+                  value={formData.announcement_cta || ''}
+                  onChange={e => setFormData({ ...formData, announcement_cta: e.target.value })}
+                  placeholder="เช่น สอบถามโปรโมชั่นทาง LINE"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white text-emerald-800 font-bold"
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
-                <div className="space-y-1.5">
-                  <label className="font-semibold text-ink">อีเมลสำหรับติดต่อ (Contact Email)</label>
-                  <input
-                    type="email"
-                    value={formData.email || ''}
-                    onChange={e => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="เช่น contact@rubberdollth.com"
-                    className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
-                  />
-                </div>
+        {/* SECTION: Contact & Social Info */}
+        {(subTab === 'all' || subTab === 'contact') && (
+          <div id="section-contact" className="bg-white p-5 sm:p-6 rounded-3xl border border-sand-300 shadow-soft space-y-4">
+            <div className="border-b border-sand-200 pb-3 flex items-center gap-2">
+              <MessageCircle className="w-5 h-5 text-emerald-600" />
+              <div>
+                <h3 className="font-bold text-ink text-sm sm:text-base">📞 ข้อมูลติดต่อร้านค้า (LINE Official & Phone & Email)</h3>
+                <p className="text-xs text-ink-muted">เมื่อแก้ไข ข้อมูลจะเปลี่ยนบนปุ่มสั่งซื้อ LINE, Contact Section, และ Footer ทั้งหมดทันที</p>
+              </div>
+            </div>
 
-                <div className="space-y-1.5">
-                  <label className="font-semibold text-ink">เบอร์โทรศัพท์ติดต่อ</label>
-                  <input
-                    type="text"
-                    value={formData.phone}
-                    onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="เช่น 086-004-3541"
-                    className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
-                  />
-                </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">LINE Official ID *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.line_id || ''}
+                  onChange={e => setFormData({ ...formData, line_id: e.target.value })}
+                  placeholder="เช่น RUBBERDOLL.TH"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl font-bold text-emerald-800 focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
 
-                <div className="space-y-1.5 sm:col-span-2">
-                  <label className="font-semibold text-ink">เวลาทำการและรอบจัดส่ง</label>
-                  <input
-                    type="text"
-                    value={formData.business_hours}
-                    onChange={e => setFormData({ ...formData, business_hours: e.target.value })}
-                    placeholder="เช่น เปิดบริการทุกวัน 24 ชม. (จัดส่งด่วนทุกวัน)"
-                    className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
-                  />
-                </div>
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">ลิงก์ LINE Official Account URL *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.line_url || ''}
+                  onChange={e => setFormData({ ...formData, line_url: e.target.value })}
+                  placeholder="เช่น https://line.me/R/ti/p/@RUBBERDOLL.TH"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
 
-                <div className="space-y-1.5 sm:col-span-2">
-                  <label className="font-semibold text-ink">ข้อความการันตีจัดส่งมิดชิดบนแถบประกาศบนสุด (Shipping Guarantee Text)</label>
-                  <input
-                    type="text"
-                    value={formData.shipping_announcement_text || ''}
-                    onChange={e => setFormData({ ...formData, shipping_announcement_text: e.target.value })}
-                    placeholder="เช่น การันตีจัดส่งมิดชิด 100% กล่องทึบ 2 ชั้น ไร้ชื่อร้าน/ชื่อสินค้าหน้ากล่องเด็ดขาด"
-                    className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
-                  />
-                </div>
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">อีเมลสำหรับติดต่อ (Contact Email)</label>
+                <input
+                  type="email"
+                  value={formData.email || ''}
+                  onChange={e => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="เช่น contact@rubberdollth.com"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">เบอร์โทรศัพท์ติดต่อ</label>
+                <input
+                  type="text"
+                  value={formData.phone || ''}
+                  onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                  placeholder="เช่น 086-004-3541"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
+
+              <div className="space-y-1.5 sm:col-span-2">
+                <label className="font-semibold text-ink">เวลาทำการและรอบจัดส่ง</label>
+                <input
+                  type="text"
+                  value={formData.business_hours || ''}
+                  onChange={e => setFormData({ ...formData, business_hours: e.target.value })}
+                  placeholder="เช่น เปิดบริการทุกวัน 24 ชม. (จัดส่งด่วนทุกวัน)"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                />
               </div>
             </div>
           </div>

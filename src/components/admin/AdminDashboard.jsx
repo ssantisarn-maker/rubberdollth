@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Package, Tag, Settings, LogOut, ExternalLink, RefreshCw, MessageSquareQuote, HelpCircle, Sparkles, Bell, Lock, Droplets, Menu, X, ChevronRight, LayoutDashboard, Sliders, Globe, Layers } from 'lucide-react';
+import { Package, Tag, Settings, LogOut, ExternalLink, RefreshCw, MessageSquareQuote, HelpCircle, Sparkles, Bell, Lock, Droplets, Menu, X, ChevronRight, LayoutDashboard, Sliders, Globe, Layers, Phone } from 'lucide-react';
 import ProductManager from './ProductManager';
 import CategoryManager from './CategoryManager';
 import ReviewManager from './ReviewManager';
@@ -39,14 +39,15 @@ export default function AdminDashboard({ onLogout }) {
       group: '🎨 ปรับแต่งเนื้อหาหน้าเว็บ (CMS)',
       items: [
         { id: 'typography', label: 'ขนาดตัวอักษร & ฟอนต์', icon: Sliders, desc: 'ปรับขนาดตัวอักษรทั้งเว็บ' },
+        { id: 'promo', label: 'แถบโปรโมชั่น & ประกาศบนสุด', icon: Bell, desc: 'ป้ายโปรโมชั่น, ส่วนลด, เปิด/ปิดแถบบนสุด' },
+        { id: 'discreet', label: 'มาตรฐานการจัดส่งลับเฉพาะ (100%)', icon: Lock, desc: 'การันตีจัดส่งมิดชิด 100%, 3 ขั้นตอน' },
         { id: 'spotlight', label: 'ไฮไลท์สินค้าพร้อมส่ง (Spotlight)', icon: Sparkles, desc: 'กล่องวิดีโอ/รูป/ราคาพร้อมส่ง' },
         { id: 'modal_content', label: 'หัวข้อสเปก & กล่องของขวัญ', icon: Layers, desc: 'ปรับแต่งหัวข้อหน้าต่างสินค้า' },
         { id: 'social_share', label: 'แชร์ลิงก์ & LINE Preview', icon: Globe, desc: 'ข้อความ/รูปตอนส่งลิงก์ให้ลูกค้า' },
         { id: 'hero', label: 'แบนเนอร์หลัก & สินค้า Hero', icon: Sparkles, desc: 'รูปโมเดลเด่น, หัวข้อ, สโลแกน' },
-        { id: 'contact', label: 'แถบประกาศ & ข้อมูลติดต่อ', icon: Bell, desc: 'ประกาศบนสุด, Email, LINE, โทร' },
+        { id: 'contact', label: 'ข้อมูลติดต่อร้านค้า & อีเมล', icon: Phone, desc: 'Email, LINE, โทรศัพท์, เวลาทำการ' },
         { id: 'reviews_header', label: 'หัวข้อหมวดรีวิวลูกค้า', icon: MessageSquareQuote, desc: 'ปรับแต่งหัวข้อรีวิว, ดาว 5.0' },
         { id: 'values', label: 'The Masterpiece Difference', icon: Sparkles, desc: '4 จุดเด่นและเอกลักษณ์' },
-        { id: 'discreet', label: '100% Confidential Delivery', icon: Lock, desc: 'มาตรฐานการส่งลับเฉพาะ 3 ชั้น' },
         { id: 'care', label: 'The Longevity Care Guide', icon: Droplets, desc: 'คู่มือการดูแลรักษา 4 ขั้นตอน' },
         { id: 'faqs', label: 'คำถามที่พบบ่อย (FAQs)', icon: HelpCircle, badge: faqs.length, desc: 'คำถาม-คำตอบยอดฮิต' },
       ]
@@ -309,6 +310,14 @@ export default function AdminDashboard({ onLogout }) {
             settings={settings}
             onUpdateSettings={setSettings}
             subTab="hero"
+          />
+        )}
+
+        {activeTab === 'promo' && (
+          <SiteSettingsManager
+            settings={settings}
+            onUpdateSettings={setSettings}
+            subTab="promo"
           />
         )}
 

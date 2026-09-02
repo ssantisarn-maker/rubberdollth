@@ -36,35 +36,7 @@ export default function Navbar({ onSearchClick, isAdultMode, onToggleAdultMode, 
 
   return (
     <header className="sticky top-0 z-40 w-full transition-all duration-300">
-      
-      {/* Top Announcement Bar (Live Controlled from Admin CMS) */}
-      {settings.announcement_enabled && (
-        <div className="bg-ink text-sand-100 px-4 py-2 text-xs border-b border-sand-800 flex items-center justify-between">
-          <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-3 text-center sm:text-left">
-            <div className="flex items-center gap-2 mx-auto sm:mx-0">
-              {settings.announcement_badge && (
-                <span className="bg-amber-500 text-gray-950 font-bold px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider shrink-0 shadow-xs">
-                  {settings.announcement_badge}
-                </span>
-              )}
-              <span className="text-[11px] sm:text-xs font-normal text-sand-200 line-clamp-1">
-                {settings.announcement_text}
-              </span>
-            </div>
-
-            <div className="hidden md:flex items-center gap-4 text-[11px] text-sand-400 shrink-0">
-              <a href={lineUrl} target="_blank" rel="noreferrer" className="hover:text-amber-400 flex items-center gap-1 transition-colors">
-                <MessageCircle className="w-3 h-3 text-[#06C755]" /> LINE: {lineId}
-              </a>
-              {settings.phone && (
-                <a href={`tel:${settings.phone}`} className="hover:text-amber-400 flex items-center gap-1 transition-colors">
-                  <Phone className="w-3 h-3 text-amber-400" /> {settings.phone}
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Main Navbar */}
 
       {/* Main Navbar */}
       <div className="bg-sand-50/95 backdrop-blur-md border-b border-sand-200/90 w-full">
