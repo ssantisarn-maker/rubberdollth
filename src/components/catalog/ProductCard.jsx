@@ -126,7 +126,7 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
             className="bg-white/95 backdrop-blur-md text-ink text-xs font-semibold px-4 py-2 rounded-full shadow-lg flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-all duration-200 pointer-events-auto hover:bg-sand-100"
           >
             <Eye className="w-3.5 h-3.5 text-bronze" />
-            <span>{t.catalog.card.quickView}</span>
+            <span>{settings.card_quickview_btn_text || t.catalog.card.quickView}</span>
           </button>
         </div>
 
@@ -171,7 +171,7 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
             onClick={() => onQuickView(product)}
             className="flex-1 py-2 px-2.5 sm:px-3 rounded-xl border border-sand-300 text-xs font-semibold text-ink-soft hover:bg-sand-100 hover:text-ink transition-colors text-center"
           >
-            {t.catalog.card.specsBtn}
+            {settings.card_specs_btn_text || t.catalog.card.specsBtn}
           </button>
 
           <a
@@ -182,7 +182,7 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
             title="สั่งซื้อผ่าน LINE / Order via LINE"
           >
             <MessageCircle className="w-3.5 h-3.5 fill-white" />
-            <span>{t.catalog.card.orderBtn}</span>
+            <span>{settings.card_order_btn_text || t.catalog.card.orderBtn}</span>
           </a>
         </div>
 

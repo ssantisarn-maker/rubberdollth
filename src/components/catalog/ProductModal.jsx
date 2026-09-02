@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, MessageCircle, ShieldCheck, Sparkles, Box, Check, Star, Lock, HeartHandshake, ChevronLeft, ChevronRight, Flame, Layers, DollarSign, Gift, CheckCircle2, FileText, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
@@ -430,7 +430,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 className="w-full py-3 sm:py-3.5 px-6 rounded-2xl bg-[#06C755] hover:bg-[#05b34c] text-white font-bold text-sm sm:text-base shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition-all active:scale-98"
               >
                 <MessageCircle className="w-4 h-4 fill-white" />
-                <span>สั่งซื้อ / สอบถามรุ่นนี้แบบ Private LINE</span>
+                <span>{settings.modal_cta_btn_text || 'สั่งซื้อ / สอบถามรุ่นนี้แบบ Private LINE'}</span>
               </a>
 
               <div className="flex items-center justify-center gap-4 text-[11px] text-ink-muted">

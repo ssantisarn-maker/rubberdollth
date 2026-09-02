@@ -51,11 +51,17 @@ const defaultSettings = {
   spotlight_specs_bust: 'คัพ C สรีระสมจริง',
   spotlight_specs_skin: 'ผิวขาวอมชมพู สัมผัสนุ่มเสมือนคนจริง',
 
-  // Product Modal Headings
+  // Product Modal Headings & Buttons
   modal_specs_title: '📐 สเปกและรายละเอียดสรีระ (Model Specifications)',
   modal_gifts_title: '🎁 กล่องของขวัญและของแถม (The Luxury Collector Gift Box)',
   modal_gifts_default: 'ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล, วิกผมเกรดพรีเมียม สัมผัสนุ่มลื่น, แป้งฝุ่นบำรุงผิว Silky Smooth Powder, เซ็ตอุปกรณ์ทำความสะอาดและดูแลรักษาครบวงจร',
   modal_delivery_title: '🔒 มาตรฐานการจัดส่งลับเฉพาะ 100% (100% Confidential Delivery)',
+  modal_cta_btn_text: '💬 สั่งซื้อ / สอบถามรุ่นนี้แบบ Private LINE',
+
+  // Product Card Button Texts (NEW: Editable in CMS)
+  card_specs_btn_text: 'สเปก & กล่องของขวัญ',
+  card_order_btn_text: 'สั่งซื้อ',
+  card_quickview_btn_text: 'ดูสเปก & แกลเลอรีเต็ม',
   
   // Trust Badges
   trust_discrete_title: 'ส่งลับเฉพาะ 100% (Discreet Shipping)',

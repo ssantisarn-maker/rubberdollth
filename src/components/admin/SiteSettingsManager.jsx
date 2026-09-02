@@ -640,6 +640,56 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
                   className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
                 />
               </div>
+
+              {/* Product Card Button Text Customization */}
+              <div className="sm:col-span-2 pt-3 border-t border-sand-200 space-y-3">
+                <span className="font-bold text-ink text-xs sm:text-sm block">🔘 ปรับแต่งคำพูดบนปุ่มกดที่การ์ดสินค้าและหน้าต่างป๊อปอัป</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-ink">คำพูดบนปุ่มเปิดดูสเปก (ที่การ์ดสินค้า) *</label>
+                    <input
+                      type="text"
+                      value={formData.card_specs_btn_text || ''}
+                      onChange={e => setFormData({ ...formData, card_specs_btn_text: e.target.value })}
+                      placeholder="เช่น สเปก & กล่องของขวัญ หรือ รายละเอียดสินค้า"
+                      className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl font-bold text-ink focus:outline-none focus:border-bronze focus:bg-white"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-ink">คำพูดบนปุ่มสั่งซื้อ LINE (ที่การ์ดสินค้า) *</label>
+                    <input
+                      type="text"
+                      value={formData.card_order_btn_text || ''}
+                      onChange={e => setFormData({ ...formData, card_order_btn_text: e.target.value })}
+                      placeholder="เช่น สั่งซื้อ หรือ สั่งด่วน LINE"
+                      className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl font-bold text-emerald-800 focus:outline-none focus:border-bronze focus:bg-white"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-ink">คำพูดบนปุ่มดูรูปด่วนเมื่อชี้เมาส์ (Quick View)</label>
+                    <input
+                      type="text"
+                      value={formData.card_quickview_btn_text || ''}
+                      onChange={e => setFormData({ ...formData, card_quickview_btn_text: e.target.value })}
+                      placeholder="เช่น ดูสเปก & แกลเลอรีเต็ม"
+                      className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-ink">คำพูดบนปุ่มสั่งซื้อใหญ่ในหน้าต่างสินค้า (Modal CTA)</label>
+                    <input
+                      type="text"
+                      value={formData.modal_cta_btn_text || ''}
+                      onChange={e => setFormData({ ...formData, modal_cta_btn_text: e.target.value })}
+                      placeholder="เช่น 💬 สั่งซื้อ / สอบถามรุ่นนี้แบบ Private LINE"
+                      className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl font-bold text-emerald-800 focus:outline-none focus:border-bronze focus:bg-white"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
