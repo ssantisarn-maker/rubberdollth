@@ -150,7 +150,7 @@ export const translations = {
       tag: '24/7 PRIVATE ADVISOR',
       title: 'พร้อมให้คำปรึกษาและบริการส่วนตัวตลอด 24 ชั่วโมง',
       desc: 'ปรึกษารายละเอียด ขอภาพถ่ายเพิ่มเติม หรือสั่งซื้อแบบเป็นความลับผ่าน LINE Official ได้ทันที',
-      lineCta: 'แอด LINE สั่งซื้อแบบส่วนตัว (@RUBBERDOLL.TH)',
+      lineCta: 'แอด LINE สั่งซื้อแบบส่วนตัว',
       phoneTitle: 'ทีมงาน Private Advisor',
       emailTitle: 'อีเมลสอบถาม',
       addressTitle: 'การรับประกันสินค้า'
@@ -311,7 +311,7 @@ export const translations = {
       tag: '24/7 PRIVATE ADVISOR',
       title: 'Private Advisory & Consultation 24 Hours a Day',
       desc: 'Contact us for sizing advice, additional photos, or direct order via LINE Official.',
-      lineCta: 'Add LINE for Private Order (@RUBBERDOLL.TH)',
+      lineCta: 'Add LINE for Private Order',
       phoneTitle: 'Private Advisor Team',
       emailTitle: 'Email Inquiries',
       addressTitle: 'Product Warranty'

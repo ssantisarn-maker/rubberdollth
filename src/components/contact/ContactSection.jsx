@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { MessageCircle, Mail, Clock, Phone, ShieldCheck, Heart } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
@@ -47,7 +47,7 @@ export default function ContactSection({ lang = 'th' }) {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center w-full py-3.5 rounded-xl bg-[#06C755] hover:bg-[#05b34c] text-white text-xs sm:text-sm font-bold shadow-md transition-colors"
             >
-              {t.contact.lineCta}
+              {lineId ? `${t.contact.lineCta} (${lineId})` : t.contact.lineCta}
             </a>
           </div>
 
