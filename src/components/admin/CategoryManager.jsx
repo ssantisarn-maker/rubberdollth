@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Plus, Trash2, Edit2, Tag, Check, Sparkles, FolderPlus, Layers, AlertCircle } from 'lucide-react';
 import { useLiveProducts } from '../../hooks/useLiveProducts';
 
@@ -37,19 +37,28 @@ export default function CategoryManager({ categories = [], onUpdateCategories, p
 
     try {
       const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
-      await fetch('/api/categories.php', {
+      const res = await fetch('/api/categories.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(newCat)
       });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.categories)) {
+        if (onUpdateCategories) onUpdateCategories(data.categories);
+        localStorage.setItem('rbd_categories_cache', JSON.stringify(data.categories));
+      } else {
+        const fallback = [...categories, newCat];
+        if (onUpdateCategories) onUpdateCategories(fallback);
+        localStorage.setItem('rbd_categories_cache', JSON.stringify(fallback));
+      }
       showToast(`✓ เพิ่มหมวดหมู่ "${newLabelTh}" สำเร็จ!`);
     } catch (err) {
+      const fallback = [...categories, newCat];
+      if (onUpdateCategories) onUpdateCategories(fallback);
+      localStorage.setItem('rbd_categories_cache', JSON.stringify(fallback));
       showToast(`✓ เพิ่มหมวดหมู่ "${newLabelTh}" สำเร็จ!`);
     }
 
-    if (onUpdateCategories) {
-      onUpdateCategories([...categories, newCat]);
-    }
     setNewId('');
     setNewLabelTh('');
     setNewLabelEn('');
@@ -58,21 +67,30 @@ export default function CategoryManager({ categories = [], onUpdateCategories, p
 
   const handleSaveEdit = async (catId) => {
     if (!editTh) return;
-    const updated = categories.map(c => c.id === catId ? { ...c, label_th: editTh, label_en: editEn || editTh } : c);
+    const localUpdated = categories.map(c => c.id === catId ? { ...c, label_th: editTh, label_en: editEn || editTh } : c);
     
     try {
       const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
-      await fetch('/api/categories.php', {
+      const res = await fetch('/api/categories.php', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ id: catId, label_th: editTh, label_en: editEn || editTh })
       });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.categories)) {
+        if (onUpdateCategories) onUpdateCategories(data.categories);
+        localStorage.setItem('rbd_categories_cache', JSON.stringify(data.categories));
+      } else {
+        if (onUpdateCategories) onUpdateCategories(localUpdated);
+        localStorage.setItem('rbd_categories_cache', JSON.stringify(localUpdated));
+      }
       showToast('✓ บันทึกการแก้ไขหมวดหมู่แล้ว');
     } catch (e) {
+      if (onUpdateCategories) onUpdateCategories(localUpdated);
+      localStorage.setItem('rbd_categories_cache', JSON.stringify(localUpdated));
       showToast('✓ บันทึกการแก้ไขหมวดหมู่แล้ว');
     }
 
-    if (onUpdateCategories) onUpdateCategories(updated);
     setEditingCat(null);
   };
 
@@ -86,17 +104,25 @@ export default function CategoryManager({ categories = [], onUpdateCategories, p
 
     try {
       const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
-      await fetch(`/api/categories.php?id=${catId}`, {
+      const res = await fetch(`/api/categories.php?id=${catId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.categories)) {
+        if (onUpdateCategories) onUpdateCategories(data.categories);
+        localStorage.setItem('rbd_categories_cache', JSON.stringify(data.categories));
+      } else {
+        const fallback = categories.filter(c => c.id !== catId);
+        if (onUpdateCategories) onUpdateCategories(fallback);
+        localStorage.setItem('rbd_categories_cache', JSON.stringify(fallback));
+      }
       showToast(`✓ ลบหมวดหมู่ ${catId} เรียบร้อยแล้ว`);
     } catch (err) {
+      const fallback = categories.filter(c => c.id !== catId);
+      if (onUpdateCategories) onUpdateCategories(fallback);
+      localStorage.setItem('rbd_categories_cache', JSON.stringify(fallback));
       showToast(`✓ ลบหมวดหมู่ ${catId} เรียบร้อยแล้ว`);
-    }
-
-    if (onUpdateCategories) {
-      onUpdateCategories(categories.filter(c => c.id !== catId));
     }
   };
 
@@ -148,132 +174,140 @@ export default function CategoryManager({ categories = [], onUpdateCategories, p
 
           <div className="space-y-1">
             <label className="text-[11px] font-bold text-ink">ชื่อหมวดหมู่ (English Subtitle)</label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={newLabelEn}
-                onChange={e => setNewLabelEn(e.target.value)}
-                placeholder="เช่น Limited Edition Series"
-                className="flex-1 px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs text-ink focus:outline-none focus:border-bronze focus:bg-white"
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1 shrink-0 shadow-md transition-all active:scale-98"
-              >
-                <Plus className="w-4 h-4" />
-                <span>{loading ? '...' : 'เพิ่มหมวด'}</span>
-              </button>
-            </div>
+            <input
+              type="text"
+              value={newLabelEn}
+              onChange={e => setNewLabelEn(e.target.value)}
+              placeholder="เช่น Limited Edition Series"
+              className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs text-ink focus:outline-none focus:border-bronze focus:bg-white"
+            />
+          </div>
+
+          <div className="sm:col-span-3 flex justify-end">
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs sm:text-sm font-semibold shadow-md flex items-center gap-2 transition-all active:scale-98"
+            >
+              <Plus className="w-4 h-4" />
+              <span>{loading ? 'กำลังบันทึก...' : 'บันทึกหมวดหมู่ใหม่'}</span>
+            </button>
           </div>
         </form>
       </div>
 
       {/* Category List */}
       <div className="bg-white rounded-3xl border border-sand-300 shadow-soft overflow-hidden">
-        <div className="p-4 sm:p-6 border-b border-sand-200 flex items-center justify-between">
-          <div>
-            <h4 className="font-bold text-ink text-sm sm:text-base">📋 รายการหมวดหมู่สินค้าทั้งหมด ({categories?.length || 0} หมวด)</h4>
-            <p className="text-xs text-ink-muted">คุณสามารถแก้ไขชื่อหรือลบหมวดหมู่ที่ไม่ต้องการได้</p>
+        <div className="p-4 sm:p-5 border-b border-sand-200 bg-sand-50 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Tag className="w-5 h-5 text-bronze" />
+            <h3 className="font-bold text-ink text-sm sm:text-base">หมวดหมู่ทั้งหมดในระบบ ({categories.length})</h3>
           </div>
+          <span className="text-xs text-ink-muted hidden sm:inline">คลิกไอคอนดินสอ ✏️ เพื่อแก้ไขชื่อ</span>
         </div>
 
         <div className="divide-y divide-sand-200">
-          {(categories || []).map((c, index) => {
-            const count = (products || []).filter(p => {
-              if (c.id === 'all') return true;
-              if (c.id === 'ready') return p.isReadyToShip || p.is_ready_to_ship || (p.categories && p.categories.includes('ready'));
-              return p.categories && p.categories.includes(c.id);
-            }).length;
-
-            const isProtected = ['all', 'ready', 'reviews'].includes(c.id);
-            const isEditing = editingCat === c.id;
+          {categories.map((cat, idx) => {
+            const isEditing = editingCat === cat.id;
+            const isSystem = ['all', 'ready', 'reviews'].includes(cat.id);
+            
+            // Count products in this category
+            const count = cat.id === 'all' 
+              ? products.length 
+              : cat.id === 'ready'
+                ? products.filter(p => p.isReadyToShip || p.is_ready_to_ship || (Array.isArray(p.categories) && p.categories.includes('ready'))).length
+                : products.filter(p => {
+                    const pCats = Array.isArray(p.categories) ? p.categories : [];
+                    const pCatStr = String(p.category || '');
+                    const labelTh = String(cat.label_th || '');
+                    return pCats.includes(cat.id) || (labelTh && pCats.includes(labelTh)) || (pCatStr && pCatStr.includes(cat.id)) || (labelTh && pCatStr.includes(labelTh));
+                  }).length;
 
             return (
-              <div key={c.id} className="p-4 sm:px-6 hover:bg-sand-50/60 transition-colors text-xs sm:text-sm">
+              <div key={cat.id} className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-sand-50/50 transition-colors">
+                
+                {/* Left info or Edit inputs */}
                 {isEditing ? (
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-amber-50/60 p-3 rounded-2xl border border-amber-300">
-                    <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      <input
-                        type="text"
-                        value={editTh}
-                        onChange={e => setEditTh(e.target.value)}
-                        placeholder="ชื่อภาษาไทย"
-                        className="px-3 py-1.5 bg-white border border-amber-400 rounded-xl text-xs font-bold"
-                      />
-                      <input
-                        type="text"
-                        value={editEn}
-                        onChange={e => setEditEn(e.target.value)}
-                        placeholder="ชื่อภาษาอังกฤษ"
-                        className="px-3 py-1.5 bg-white border border-amber-400 rounded-xl text-xs"
-                      />
+                  <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      value={editTh}
+                      onChange={e => setEditTh(e.target.value)}
+                      placeholder="ชื่อภาษาไทย"
+                      className="px-3 py-2 bg-white border border-sand-300 rounded-xl text-xs font-semibold text-ink focus:outline-none focus:border-bronze"
+                    />
+                    <input
+                      type="text"
+                      value={editEn}
+                      onChange={e => setEditEn(e.target.value)}
+                      placeholder="English Label"
+                      className="px-3 py-2 bg-white border border-sand-300 rounded-xl text-xs text-ink focus:outline-none focus:border-bronze"
+                    />
+                  </div>
+                ) : (
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono font-bold text-ink-muted">{idx + 1}.</span>
+                      <h4 className="font-bold text-ink text-sm sm:text-base">{cat.label_th}</h4>
+                      {isSystem && (
+                        <span className="text-[10px] bg-sand-200 text-ink-muted px-2 py-0.5 rounded-full font-semibold">
+                          หมวดหมู่ระบบ
+                        </span>
+                      )}
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
+                    <p className="text-xs text-ink-muted">
+                      ID: <span className="font-mono text-bronze">{cat.id}</span> • {cat.label_en || '-'}
+                    </p>
+                  </div>
+                )}
+
+                {/* Right controls & Count */}
+                <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                  <span className="text-xs font-semibold bg-sand-100 text-ink px-2.5 py-1 rounded-full border border-sand-200">
+                    {count} สินค้า
+                  </span>
+
+                  {isEditing ? (
+                    <div className="flex items-center gap-1.5">
                       <button
-                        type="button"
-                        onClick={() => handleSaveEdit(c.id)}
-                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-sm"
+                        onClick={() => handleSaveEdit(cat.id)}
+                        className="px-3 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-semibold hover:bg-emerald-700 transition-colors flex items-center gap-1 shadow-2xs"
                       >
-                        บันทึก
+                        <Check className="w-3.5 h-3.5" /> บันทึก
                       </button>
                       <button
-                        type="button"
                         onClick={() => setEditingCat(null)}
-                        className="px-3 py-1.5 bg-sand-200 hover:bg-sand-300 text-ink rounded-xl text-xs"
+                        className="px-3 py-1.5 bg-sand-200 text-ink rounded-xl text-xs font-semibold hover:bg-sand-300 transition-colors"
                       >
                         ยกเลิก
                       </button>
                     </div>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="w-6 text-ink-muted text-xs font-mono font-bold">{index + 1}.</span>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-ink text-xs sm:text-sm">{c.label_th || c.label}</span>
-                          {isProtected && (
-                            <span className="text-[10px] bg-sand-200 text-ink-muted font-bold px-2 py-0.5 rounded-full">
-                              หมวดหลัก
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-[11px] text-ink-muted font-mono">
-                          ID: <strong className="text-bronze">{c.id}</strong> {c.label_en ? `• ${c.label_en}` : ''}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-bold text-ink bg-sand-100 px-3 py-1 rounded-full border border-sand-200 shadow-2xs">
-                        {count} สินค้า
-                      </span>
-
+                  ) : (
+                    <div className="flex items-center gap-1">
                       <button
                         onClick={() => {
-                          setEditingCat(c.id);
-                          setEditTh(c.label_th || c.label || '');
-                          setEditEn(c.label_en || '');
+                          setEditingCat(cat.id);
+                          setEditTh(cat.label_th);
+                          setEditEn(cat.label_en || '');
                         }}
-                        className="p-1.5 rounded-xl text-ink-muted hover:text-bronze hover:bg-sand-100 transition-colors"
+                        className="p-2 rounded-xl text-ink-muted hover:text-ink hover:bg-sand-200 transition-colors"
                         title="แก้ไขชื่อหมวดหมู่"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
-
-                      {!isProtected && (
+                      {!isSystem && (
                         <button
-                          onClick={() => handleDeleteCategory(c.id)}
-                          className="p-1.5 rounded-xl text-ink-muted hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                          onClick={() => handleDeleteCategory(cat.id)}
+                          className="p-2 rounded-xl text-ink-muted hover:text-rose-600 hover:bg-rose-50 transition-colors"
                           title="ลบหมวดหมู่"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
                       )}
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
+
               </div>
             );
           })}
