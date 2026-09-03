@@ -1,8 +1,16 @@
 ﻿<?php
+/**
+ * RUBBER DOLL THAILAND - Category Management API
+ * High Reliability: MySQL + Disk JSON Cache Dual-Persistence
+ */
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+
 require_once __DIR__ . '/config.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $pdo = getDbConnection();
+$jsonCacheFile = __DIR__ . '/categories_cache.json';
 
 $defaultCategories = [
     ['id' => 'all', 'label_th' => 'สินค้าทั้งหมด', 'label_en' => 'All Masterpieces', 'order_index' => 1],
@@ -15,7 +23,9 @@ $defaultCategories = [
     ['id' => 'reviews', 'label_th' => 'รีวิวตุ๊กตายางจากลูกค้า', 'label_en' => 'Customer Reviews', 'order_index' => 8],
 ];
 
-if ($pdo) {
+// Helper: Ensure MySQL Table & Seed
+function ensureCategoriesTable($pdo, $defaultCategories, $jsonCacheFile) {
+    if (!$pdo) return false;
     try {
         $pdo->exec("CREATE TABLE IF NOT EXISTS categories (
             id VARCHAR(50) PRIMARY KEY,
@@ -25,55 +35,120 @@ if ($pdo) {
             is_active TINYINT(1) DEFAULT 1
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
-        // Auto-seed defaults if table is completely empty
         $count = (int)$pdo->query("SELECT COUNT(*) FROM categories")->fetchColumn();
         if ($count === 0) {
-            $seedStmt = $pdo->prepare("INSERT INTO categories (id, label_th, label_en, order_index, is_active) VALUES (:id, :label_th, :label_en, :order_index, 1)");
-            foreach ($defaultCategories as $c) {
-                $seedStmt->execute([
+            $source = $defaultCategories;
+            if (file_exists($jsonCacheFile)) {
+                $cached = json_decode(file_get_contents($jsonCacheFile), true);
+                if (is_array($cached) && count($cached) > 0) {
+                    $source = $cached;
+                }
+            }
+            $stmt = $pdo->prepare("INSERT INTO categories (id, label_th, label_en, order_index, is_active) VALUES (:id, :label_th, :label_en, :order_index, 1)");
+            foreach ($source as $c) {
+                $stmt->execute([
                     'id' => $c['id'],
-                    'label_th' => $c['label_th'],
-                    'label_en' => $c['label_en'],
-                    'order_index' => $c['order_index']
+                    'label_th' => $c['label_th'] ?? $c['label'] ?? $c['id'],
+                    'label_en' => $c['label_en'] ?? $c['label_th'] ?? $c['id'],
+                    'order_index' => (int)($c['order_index'] ?? 99)
                 ]);
             }
         }
+        return true;
     } catch (Exception $e) {
-        // Continue gracefully
+        return false;
     }
 }
 
+// Helper: Sync Cache File from MySQL
+function syncCategoriesCache($pdo, $jsonCacheFile) {
+    if (!$pdo) return null;
+    try {
+        $stmt = $pdo->query("SELECT * FROM categories WHERE is_active = 1 ORDER BY order_index ASC, id ASC");
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (!empty($rows)) {
+            file_put_contents($jsonCacheFile, json_encode($rows, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+            return $rows;
+        }
+    } catch (Exception $e) {}
+    return null;
+}
+
+// Helper: Read Cache File
+function readCategoriesCache($jsonCacheFile, $defaultCategories) {
+    if (file_exists($jsonCacheFile)) {
+        $cached = json_decode(file_get_contents($jsonCacheFile), true);
+        if (is_array($cached) && count($cached) > 0) {
+            return $cached;
+        }
+    }
+    return $defaultCategories;
+}
+
+// Helper: Write Cache File Directly
+function writeCategoriesCache($jsonCacheFile, $data) {
+    file_put_contents($jsonCacheFile, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+}
+
+// Ensure table on start
+ensureCategoriesTable($pdo, $defaultCategories, $jsonCacheFile);
+
+// ==========================================
+// 1. GET: List All Categories
+// ==========================================
 if ($method === 'GET') {
     if ($pdo) {
         try {
-            $stmt = $pdo->query("SELECT * FROM categories WHERE is_active = 1 ORDER BY order_index ASC");
+            $stmt = $pdo->query("SELECT * FROM categories WHERE is_active = 1 ORDER BY order_index ASC, id ASC");
             $cats = $stmt->fetchAll(PDO::FETCH_ASSOC);
             if (!empty($cats)) {
-                sendResponse(['success' => true, 'categories' => $cats]);
+                writeCategoriesCache($jsonCacheFile, $cats);
+                sendResponse(['success' => true, 'categories' => $cats, 'source' => 'mysql']);
             }
-        } catch (Exception $e) {
-            // fallback
-        }
+        } catch (Exception $e) {}
     }
 
-    sendResponse(['success' => true, 'categories' => $defaultCategories]);
+    $cached = readCategoriesCache($jsonCacheFile, $defaultCategories);
+    sendResponse(['success' => true, 'categories' => $cached, 'source' => 'cache']);
 }
 
+// ==========================================
+// 2. POST or PUT: Add or Update Category
+// ==========================================
 if ($method === 'POST' || $method === 'PUT') {
     checkAdminAuth();
-    $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+    $rawInput = file_get_contents('php://input');
+    $data = json_decode($rawInput, true) ?: $_POST;
 
     $id = trim($data['id'] ?? '');
     $label_th = trim($data['label_th'] ?? '');
     $label_en = trim($data['label_en'] ?? $label_th);
-    $order_index = (int)($data['order_index'] ?? 99);
+    $order_index = isset($data['order_index']) ? (int)$data['order_index'] : null;
 
     if (empty($id) || empty($label_th)) {
         sendError('กรุณากรอกรหัสหมวดหมู่ (id) และชื่อภาษาไทย (label_th)');
     }
 
+    // Sanitize ID
+    $id = strtolower(preg_replace('/[^a-zA-Z0-9_-]/', '-', $id));
+
+    $allCats = [];
+
     if ($pdo) {
         try {
+            // If order_index was not provided, preserve current or calculate next
+            if ($order_index === null) {
+                $checkStmt = $pdo->prepare("SELECT order_index FROM categories WHERE id = :id");
+                $checkStmt->execute(['id' => $id]);
+                $existingOrder = $checkStmt->fetchColumn();
+                if ($existingOrder !== false) {
+                    $order_index = (int)$existingOrder;
+                } else {
+                    $maxOrder = (int)$pdo->query("SELECT MAX(order_index) FROM categories")->fetchColumn();
+                    $order_index = $maxOrder + 1;
+                }
+            }
+
             $stmt = $pdo->prepare("INSERT INTO categories (id, label_th, label_en, order_index, is_active) 
                                    VALUES (:id, :label_th, :label_en, :order_index, 1) 
                                    ON DUPLICATE KEY UPDATE label_th = :label_th, label_en = :label_en, order_index = :order_index, is_active = 1");
@@ -84,35 +159,83 @@ if ($method === 'POST' || $method === 'PUT') {
                 'order_index' => $order_index
             ]);
 
-            // Fetch and return full updated categories list
-            $allCats = $pdo->query("SELECT * FROM categories WHERE is_active = 1 ORDER BY order_index ASC")->fetchAll(PDO::FETCH_ASSOC);
-            sendResponse([
-                'success' => true, 
-                'message' => 'บันทึกหมวดหมู่สำเร็จ', 
-                'categories' => $allCats,
-                'category' => ['id' => $id, 'label_th' => $label_th, 'label_en' => $label_en, 'order_index' => $order_index]
-            ]);
-        } catch (PDOException $e) {
-            sendError('Database error: ' . $e->getMessage(), 500);
+            $synced = syncCategoriesCache($pdo, $jsonCacheFile);
+            if ($synced) $allCats = $synced;
+        } catch (Exception $e) {
+            // DB error, fallback to JSON cache
         }
-    } else {
-        sendError('Database connection unavailable');
     }
+
+    // If MySQL did not return, update JSON cache directly
+    if (empty($allCats)) {
+        $current = readCategoriesCache($jsonCacheFile, $defaultCategories);
+        $found = false;
+        foreach ($current as &$item) {
+            if ($item['id'] === $id) {
+                $item['label_th'] = $label_th;
+                $item['label_en'] = $label_en;
+                if ($order_index !== null) $item['order_index'] = $order_index;
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            $current[] = [
+                'id' => $id,
+                'label_th' => $label_th,
+                'label_en' => $label_en,
+                'order_index' => $order_index ?? (count($current) + 1)
+            ];
+        }
+        writeCategoriesCache($jsonCacheFile, $current);
+        $allCats = $current;
+    }
+
+    sendResponse([
+        'success' => true,
+        'message' => 'บันทึกหมวดหมู่เรียบร้อยแล้ว',
+        'categories' => $allCats,
+        'category' => ['id' => $id, 'label_th' => $label_th, 'label_en' => $label_en, 'order_index' => $order_index]
+    ]);
 }
 
+// ==========================================
+// 3. DELETE: Remove Category
+// ==========================================
 if ($method === 'DELETE') {
     checkAdminAuth();
-    $id = $_GET['id'] ?? null;
-    if (!$id || in_array($id, ['all', 'ready', 'reviews'])) {
-        sendError('ไม่สามารถลบหมวดหมู่หลักนี้ได้');
+    $id = trim($_GET['id'] ?? '');
+    if (!$id) {
+        sendError('กรุณาระบุรหัสหมวดหมู่ที่ต้องการลบ');
     }
 
-    if ($pdo) {
-        $stmt = $pdo->prepare("DELETE FROM categories WHERE id = :id");
-        $stmt->execute(['id' => $id]);
-        $allCats = $pdo->query("SELECT * FROM categories WHERE is_active = 1 ORDER BY order_index ASC")->fetchAll(PDO::FETCH_ASSOC);
-        sendResponse(['success' => true, 'message' => 'ลบหมวดหมู่เรียบร้อย', 'categories' => $allCats]);
-    } else {
-        sendError('Database connection unavailable');
+    if ($id === 'all') {
+        sendError('ไม่สามารถลบหมวดหมู่หลัก "สินค้าทั้งหมด" ได้');
     }
+
+    $allCats = [];
+
+    if ($pdo) {
+        try {
+            $stmt = $pdo->prepare("DELETE FROM categories WHERE id = :id");
+            $stmt->execute(['id' => $id]);
+            $synced = syncCategoriesCache($pdo, $jsonCacheFile);
+            if ($synced) $allCats = $synced;
+        } catch (Exception $e) {}
+    }
+
+    if (empty($allCats)) {
+        $current = readCategoriesCache($jsonCacheFile, $defaultCategories);
+        $filtered = array_values(array_filter($current, function($c) use ($id) {
+            return $c['id'] !== $id;
+        }));
+        writeCategoriesCache($jsonCacheFile, $filtered);
+        $allCats = $filtered;
+    }
+
+    sendResponse([
+        'success' => true,
+        'message' => "ลบหมวดหมู่ {$id} สำเร็จแล้ว",
+        'categories' => $allCats
+    ]);
 }

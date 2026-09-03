@@ -28,7 +28,10 @@ export function useLiveCategories() {
   const fetchCategories = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/categories.php?t=${Date.now()}`);
+      const res = await fetch(`/api/categories.php?_t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' }
+      });
       if (!res.ok) throw new Error('Categories API offline');
       const data = await res.json();
       if (data.success && Array.isArray(data.categories) && data.categories.length > 0) {
@@ -46,12 +49,24 @@ export function useLiveCategories() {
 
   useEffect(() => {
     fetchCategories();
+
+    // Listen for custom category update events across components
+    const handleCategoryUpdate = (e) => {
+      if (e.detail && Array.isArray(e.detail)) {
+        setCategories(e.detail);
+      }
+    };
+    window.addEventListener('rbd_categories_updated', handleCategoryUpdate);
+    return () => {
+      window.removeEventListener('rbd_categories_updated', handleCategoryUpdate);
+    };
   }, [fetchCategories]);
 
   const updateCategoriesState = (newCats) => {
     setCategories(newCats);
     try {
       localStorage.setItem('rbd_categories_cache', JSON.stringify(newCats));
+      window.dispatchEvent(new CustomEvent('rbd_categories_updated', { detail: newCats }));
     } catch (e) {}
   };
 
