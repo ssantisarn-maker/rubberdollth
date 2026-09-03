@@ -3,13 +3,21 @@ import { Sparkles, MessageCircle, Mail, Globe, Phone } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
+import { useLiveProducts } from '../../hooks/useLiveProducts';
 
 export default function Footer({ lang = 'th', onSetLang }) {
   const { settings } = useSiteSettings();
+  const { products } = useLiveProducts();
   const t = translations[lang] || translations.th;
 
+  const productCount = products && products.length > 0 ? products.length : 72;
   const lineUrl = settings.line_url || siteConfig.lineUrl;
   const lineId = settings.line_id || siteConfig.lineId;
+
+  // Dynamic Catalog Label with live MySQL product count
+  const catalogMenuLabel = settings.nav_menu_catalog
+    ? settings.nav_menu_catalog.replace('{count}', productCount).replace('70', productCount)
+    : (lang === 'th' ? `คอลเลกชัน ${productCount} รุ่น` : `${productCount} Masterpiece Models`);
 
   return (
     <footer className="bg-sand-900 text-sand-200 pt-16 pb-12 border-t border-sand-800">
@@ -64,16 +72,16 @@ export default function Footer({ lang = 'th', onSetLang }) {
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Quick Links (เมนูลัด เชื่อมโยงตัวเลขจำนวนสินค้าสดจาก MySQL) */}
           <div className="md:col-span-3 space-y-3">
             <h4 className="font-sans text-sm font-bold text-white uppercase tracking-wider">{t.footer.quickLinks}</h4>
             <ul className="space-y-2 text-xs text-sand-400 font-light">
-              <li><a href="#catalog" className="hover:text-bronze transition-colors">{settings.nav_menu_catalog || t.nav.catalog}</a></li>
-              <li><a href="#catalog" className="hover:text-bronze transition-colors">{settings.nav_menu_ready || t.nav.ready}</a></li>
-              <li><a href="#discreet" className="hover:text-bronze transition-colors">{settings.nav_menu_discreet || t.nav.discreet}</a></li>
-              <li><a href="#care" className="hover:text-bronze transition-colors">{settings.nav_menu_care || t.nav.care}</a></li>
-              <li><a href="#reviews" className="hover:text-bronze transition-colors">{settings.nav_menu_reviews || t.nav.reviews}</a></li>
-              <li><a href="#faq" className="hover:text-bronze transition-colors">{settings.nav_menu_faq || t.nav.faq}</a></li>
+              <li><a href="#catalog" className="hover:text-bronze transition-colors">{catalogMenuLabel}</a></li>
+              <li><a href="#catalog" className="hover:text-bronze transition-colors">{settings.nav_menu_ready || (lang === 'th' ? 'พร้อมส่งทันที (ไทย)' : 'Ready Stock (TH)')}</a></li>
+              <li><a href="#discreet" className="hover:text-bronze transition-colors">{settings.nav_menu_discreet || (lang === 'th' ? 'จัดส่งลับเฉพาะ 100%' : '100% Discreet Shipping')}</a></li>
+              <li><a href="#care" className="hover:text-bronze transition-colors">{settings.nav_menu_care || (lang === 'th' ? 'คู่มือการดูแล' : 'Care Guide')}</a></li>
+              <li><a href="#reviews" className="hover:text-bronze transition-colors">{settings.nav_menu_reviews || (lang === 'th' ? 'รีวิวความประทับใจ' : 'Customer Reviews')}</a></li>
+              <li><a href="#faq" className="hover:text-bronze transition-colors">{settings.nav_menu_faq || (lang === 'th' ? 'คำถามพบบ่อย' : 'FAQ')}</a></li>
             </ul>
           </div>
 
