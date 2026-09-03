@@ -2,7 +2,7 @@
 import { 
   Package, Tag, MessageSquareQuote, Sliders, Bell, Phone, 
   Sparkles, HelpCircle, Layers, Globe, Lock, Droplets, 
-  LogOut, RefreshCw, ChevronRight, Menu, X, Compass, CheckCircle2
+  LogOut, RefreshCw, ChevronRight, Menu, X, Compass, ExternalLink
 } from 'lucide-react';
 import ProductManager from './ProductManager';
 import ReviewManager from './ReviewManager';
@@ -31,7 +31,7 @@ export default function AdminDashboard({ onLogout }) {
   };
 
   // Grouped Sidebar Navigation Menu
-  const menuGroups = [
+  const navMenuItems = [
     {
       group: '🛍️ คลังสินค้าและรีวิว',
       items: [
@@ -41,7 +41,7 @@ export default function AdminDashboard({ onLogout }) {
       ]
     },
     {
-      group: '🎨 ปรับแต่งเนื้อหาหน้าเว็บ (Master CMS)',
+      group: '🎨 ปรับแต่งเนื้อหาหน้าเว็บ (MASTER CMS)',
       items: [
         { id: 'catalog_ui', label: 'หน้าแคตตาล็อก & ป้ายสินค้า', icon: Package, desc: 'หัวข้อแคตตาล็อก, ป้ายพร้อมส่ง, ปุ่มการ์ด' },
         { id: 'nav_footer', label: 'เมนูนำทาง (Navbar) & Footer', icon: Compass, desc: 'ชื่อเมนู, ข้อความค้นหา, ลิขสิทธิ์' },
@@ -65,7 +65,7 @@ export default function AdminDashboard({ onLogout }) {
     <div className="min-h-screen bg-sand-100/60 font-sans text-ink flex flex-col lg:flex-row">
       
       {/* Mobile Top Header */}
-      <header className="lg:hidden bg-ink text-white p-4 flex items-center justify-between shadow-md sticky top-0 z-40">
+      <header className="lg:hidden bg-neutral-900 text-white p-4 flex items-center justify-between shadow-md sticky top-0 z-40">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -85,63 +85,51 @@ export default function AdminDashboard({ onLogout }) {
           rel="noopener noreferrer"
           className="text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-xl font-medium flex items-center gap-1.5"
         >
+          <ExternalLink className="w-3.5 h-3.5" />
           <span>ดูหน้าเว็บ</span>
-          <span>↗</span>
         </a>
       </header>
 
-      {/* Left Sidebar Menu */}
-      <aside className={`
-        fixed inset-y-0 left-0 z-50 w-72 bg-sand-950 text-white flex flex-col justify-between transition-transform duration-300 ease-in-out border-r border-sand-800
-        lg:static lg:translate-x-0
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
-        
-        {/* Top Brand Identity */}
-        <div className="p-5 border-b border-sand-800 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-ink font-bold font-serif text-base shadow-md">
-                R
-              </div>
-              <div>
-                <h2 className="font-serif font-black text-sm tracking-wider text-white">RUBBER DOLL</h2>
-                <p className="text-[10px] text-amber-400/90 tracking-widest font-mono font-semibold">ADMIN CONTROL PANEL</p>
-              </div>
+      {/* LEFT SIDEBAR NAVIGATION (Original Dark Luxury Styling) */}
+      <aside
+        className={`fixed lg:sticky top-0 left-0 z-50 lg:z-30 w-72 sm:w-80 h-screen bg-[#141416] text-white flex flex-col justify-between border-r border-white/10 shadow-2xl transition-transform duration-300 ease-in-out ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        }`}
+      >
+        {/* Sidebar Top: Branding */}
+        <div className="p-6 border-b border-white/10 flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-serif font-black tracking-widest text-amber-400 text-base sm:text-lg">
+                RUBBER DOLL
+              </span>
+              <span className="text-[10px] bg-amber-500/20 text-amber-300 font-bold px-2 py-0.5 rounded-full border border-amber-500/30">
+                MASTER CMS
+              </span>
             </div>
-
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-1.5 text-sand-400 hover:text-white rounded-lg"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <p className="text-[11px] text-neutral-400 font-light mt-0.5">ระบบควบคุมและปรับแต่งเว็บไซต์</p>
           </div>
 
-          <a
-            href="/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-sand-300 hover:text-amber-300 border border-white/10 transition-colors"
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden p-1.5 text-neutral-400 hover:text-white cursor-pointer"
           >
-            <span>🔗 เปิดดูหน้าเว็บร้านค้าจริง</span>
-            <span>↗</span>
-          </a>
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
-        {/* Navigation Menu List */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-5 scrollbar-thin scrollbar-thumb-sand-800">
-          {menuGroups.map((group, gIdx) => (
-            <div key={gIdx} className="space-y-1">
-              <span className="text-[11px] font-bold text-sand-400 uppercase tracking-wider px-3">
-                {group.group}
+        {/* Sidebar Middle: Scrollable Menu Groups */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-thin scrollbar-thumb-neutral-800">
+          {navMenuItems.map((grp, gIdx) => (
+            <div key={gIdx} className="space-y-1.5">
+              <span className="px-3 text-[10px] font-extrabold uppercase tracking-wider text-neutral-400 block">
+                {grp.group}
               </span>
 
-              <div className="space-y-0.5 pt-1">
-                {group.items.map((item) => {
+              <div className="space-y-1">
+                {grp.items.map(item => {
                   const Icon = item.icon;
                   const isActive = activeTab === item.id;
-
                   return (
                     <button
                       key={item.id}
@@ -149,21 +137,29 @@ export default function AdminDashboard({ onLogout }) {
                         setActiveTab(item.id);
                         setSidebarOpen(false);
                       }}
-                      className={`
-                        w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-bold transition-all text-left cursor-pointer
-                        ${isActive 
-                          ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-ink shadow-md font-extrabold' 
-                          : 'text-sand-300 hover:bg-white/5 hover:text-white'}
-                      `}
+                      className={`w-full text-left p-3 rounded-2xl transition-all flex items-center justify-between group cursor-pointer ${
+                        isActive
+                          ? 'bg-amber-500 text-neutral-950 font-bold shadow-lg shadow-amber-500/20 scale-[1.02]'
+                          : 'text-neutral-300 hover:bg-white/5 hover:text-white font-medium'
+                      }`}
                     >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-ink' : 'text-amber-400/80'}`} />
-                        <span className="truncate">{item.label}</span>
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                          isActive ? 'bg-black/20 text-neutral-950' : 'bg-white/5 text-neutral-400 group-hover:text-amber-400 group-hover:bg-white/10'
+                        }`}>
+                          <Icon className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-xs sm:text-sm block truncate leading-snug">{item.label}</span>
+                          <span className={`text-[10px] block truncate font-normal ${isActive ? 'text-neutral-900/80' : 'text-neutral-500'}`}>
+                            {item.desc}
+                          </span>
+                        </div>
                       </div>
 
                       {item.badge !== undefined && (
                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
-                          isActive ? 'bg-black/20 text-ink' : 'bg-sand-800 text-sand-300'
+                          isActive ? 'bg-black/20 text-neutral-950' : 'bg-neutral-800 text-neutral-300'
                         }`}>
                           {item.badge}
                         </span>
@@ -176,31 +172,50 @@ export default function AdminDashboard({ onLogout }) {
           ))}
         </div>
 
-        {/* Bottom Actions & Logout */}
-        <div className="p-4 border-t border-sand-800 space-y-2 bg-sand-900/50">
-          <button
-            onClick={handleRefreshAll}
-            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-bold text-sand-300 transition-colors cursor-pointer"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-            <span>รีเฟรชข้อมูลล่าสุด</span>
-          </button>
+        {/* Sidebar Bottom: Status & Actions */}
+        <div className="p-4 border-t border-white/10 space-y-2 bg-black/40">
+          <div className="flex items-center gap-2">
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 py-2 px-3 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>เปิดหน้าเว็บจริง</span>
+            </a>
+
+            <button
+              onClick={handleRefreshAll}
+              className="p-2 bg-white/10 hover:bg-white/20 text-amber-400 rounded-xl transition-colors cursor-pointer"
+              title="รีเฟรชข้อมูลล่าสุด"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </button>
+          </div>
 
           {onLogout && (
             <button
               onClick={onLogout}
-              className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-xs font-bold text-rose-300 transition-colors cursor-pointer"
+              className="w-full py-2 px-3 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>ออกจากระบบ</span>
             </button>
           )}
         </div>
-
       </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto w-full">
+      {/* Backdrop overlay on mobile */}
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 lg:hidden"
+        />
+      )}
+
+      {/* MAIN CONTENT AREA */}
+      <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 space-y-6">
         
         {/* Top Breadcrumb Bar */}
         <div className="bg-white p-4 sm:p-5 rounded-3xl border border-sand-300 shadow-soft flex flex-col sm:flex-row sm:items-center justify-between gap-3">
