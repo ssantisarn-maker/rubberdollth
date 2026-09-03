@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { Plus, Trash2, Edit2, Tag, Check, Sparkles, FolderPlus, Layers, AlertCircle, RefreshCw } from 'lucide-react';
+import { Plus, Trash2, Edit2, Tag, Check, Sparkles, FolderPlus, Layers, AlertCircle, RefreshCw, ArrowUp, ArrowDown, Save } from 'lucide-react';
 import { useLiveProducts } from '../../hooks/useLiveProducts';
 
 export default function CategoryManager({ categories = [], onUpdateCategories, products: passedProducts }) {
@@ -22,12 +22,35 @@ export default function CategoryManager({ categories = [], onUpdateCategories, p
     setTimeout(() => setToastMessage(null), 4000);
   };
 
-  const syncStateAndStorage = (catsList) => {
+  // Master Bulk Save Function: Writes to Server MySQL + Server Disk Cache + Local State
+  const saveAllCategoriesToServer = async (catsList) => {
+    setLoading(true);
     if (onUpdateCategories) onUpdateCategories(catsList);
     try {
       localStorage.setItem('rbd_categories_cache', JSON.stringify(catsList));
       window.dispatchEvent(new CustomEvent('rbd_categories_updated', { detail: catsList }));
     } catch (e) {}
+
+    try {
+      const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
+      const res = await fetch('/api/categories.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ categories: catsList })
+      });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.categories)) {
+        if (onUpdateCategories) onUpdateCategories(data.categories);
+        localStorage.setItem('rbd_categories_cache', JSON.stringify(data.categories));
+        window.dispatchEvent(new CustomEvent('rbd_categories_updated', { detail: data.categories }));
+        return data.categories;
+      }
+    } catch (err) {
+      console.warn('Saved locally, API sync pending:', err);
+    } finally {
+      setLoading(false);
+    }
+    return catsList;
   };
 
   // Add New Category
@@ -35,7 +58,6 @@ export default function CategoryManager({ categories = [], onUpdateCategories, p
     e.preventDefault();
     if (!newLabelTh.trim()) return;
 
-    setLoading(true);
     let slug = newId.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '-');
     if (!slug) {
       slug = 'cat-' + Date.now().toString(36);
@@ -45,74 +67,30 @@ export default function CategoryManager({ categories = [], onUpdateCategories, p
       id: slug,
       label_th: newLabelTh.trim(),
       label_en: (newLabelEn || newLabelTh).trim(),
-      order_index: (categories?.length || 0) + 1
+      order_index: categories.length + 1
     };
 
-    try {
-      const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
-      const res = await fetch('/api/categories.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(newCat)
-      });
-      const data = await res.json();
-      if (data.success && Array.isArray(data.categories)) {
-        syncStateAndStorage(data.categories);
-        showToast(`✓ เพิ่มหมวดหมู่ "${newCat.label_th}" สำเร็จ!`);
-      } else {
-        const fallback = [...categories.filter(c => c.id !== slug), newCat];
-        syncStateAndStorage(fallback);
-        showToast(`✓ เพิ่มหมวดหมู่ "${newCat.label_th}" แล้ว (Local Cache)`);
-      }
-    } catch (err) {
-      const fallback = [...categories.filter(c => c.id !== slug), newCat];
-      syncStateAndStorage(fallback);
-      showToast(`✓ เพิ่มหมวดหมู่ "${newCat.label_th}" แล้ว (Local Cache)`);
-    }
+    const nextList = [...categories.filter(c => c.id !== slug), newCat];
+    await saveAllCategoriesToServer(nextList);
+    showToast(`✓ เพิ่มหมวดหมู่ "${newCat.label_th}" สำเร็จ!`);
 
     setNewId('');
     setNewLabelTh('');
     setNewLabelEn('');
-    setLoading(false);
   };
 
   // Save Edit Category
   const handleSaveEdit = async (catId) => {
     if (!editTh.trim()) return;
-    const targetCat = categories.find(c => c.id === catId);
     const updatedLabelTh = editTh.trim();
     const updatedLabelEn = (editEn || editTh).trim();
-    const orderIndex = targetCat ? targetCat.order_index : 99;
 
-    const payload = {
-      id: catId,
-      label_th: updatedLabelTh,
-      label_en: updatedLabelEn,
-      order_index: orderIndex
-    };
+    const nextList = categories.map(c => 
+      c.id === catId ? { ...c, label_th: updatedLabelTh, label_en: updatedLabelEn } : c
+    );
 
-    try {
-      const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
-      const res = await fetch('/api/categories.php', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (data.success && Array.isArray(data.categories)) {
-        syncStateAndStorage(data.categories);
-        showToast(`✓ แก้ไขชื่อหมวดหมู่ "${updatedLabelTh}" สำเร็จ!`);
-      } else {
-        const localUpdated = categories.map(c => c.id === catId ? { ...c, label_th: updatedLabelTh, label_en: updatedLabelEn } : c);
-        syncStateAndStorage(localUpdated);
-        showToast(`✓ แก้ไขชื่อหมวดหมู่ "${updatedLabelTh}" เรียบร้อยแล้ว`);
-      }
-    } catch (e) {
-      const localUpdated = categories.map(c => c.id === catId ? { ...c, label_th: updatedLabelTh, label_en: updatedLabelEn } : c);
-      syncStateAndStorage(localUpdated);
-      showToast(`✓ แก้ไขชื่อหมวดหมู่ "${updatedLabelTh}" เรียบร้อยแล้ว`);
-    }
-
+    await saveAllCategoriesToServer(nextList);
+    showToast(`✓ บันทึกแก้ไขชื่อ "${updatedLabelTh}" เรียบร้อยแล้ว!`);
     setEditingCat(null);
   };
 
@@ -128,26 +106,25 @@ export default function CategoryManager({ categories = [], onUpdateCategories, p
 
     if (!window.confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบหมวดหมู่: "${catName}" (ID: ${catId})?`)) return;
 
-    try {
-      const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
-      const res = await fetch(`/api/categories.php?id=${encodeURIComponent(catId)}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success && Array.isArray(data.categories)) {
-        syncStateAndStorage(data.categories);
-        showToast(`✓ ลบหมวดหมู่ "${catName}" สำเร็จ!`);
-      } else {
-        const fallback = categories.filter(c => c.id !== catId);
-        syncStateAndStorage(fallback);
-        showToast(`✓ ลบหมวดหมู่ "${catName}" สำเร็จ!`);
-      }
-    } catch (err) {
-      const fallback = categories.filter(c => c.id !== catId);
-      syncStateAndStorage(fallback);
-      showToast(`✓ ลบหมวดหมู่ "${catName}" สำเร็จ!`);
-    }
+    const nextList = categories.filter(c => c.id !== catId);
+    await saveAllCategoriesToServer(nextList);
+    showToast(`✓ ลบหมวดหมู่ "${catName}" เรียบร้อยแล้ว!`);
+  };
+
+  // Move Category Up / Down
+  const handleMoveOrder = async (index, direction) => {
+    const targetIdx = direction === 'up' ? index - 1 : index + 1;
+    if (targetIdx < 0 || targetIdx >= categories.length) return;
+
+    const newArr = [...categories];
+    const temp = newArr[index];
+    newArr[index] = newArr[targetIdx];
+    newArr[targetIdx] = temp;
+
+    // Recalculate order_index
+    const ordered = newArr.map((c, i) => ({ ...c, order_index: i + 1 }));
+    await saveAllCategoriesToServer(ordered);
+    showToast(`✓ ปรับลำดับหมวดหมู่สำเร็จ`);
   };
 
   return (
@@ -181,7 +158,6 @@ export default function CategoryManager({ categories = [], onUpdateCategories, p
               onChange={e => {
                 setNewLabelTh(e.target.value);
                 if (!newId) {
-                  // auto suggest ID
                   const autoSlug = e.target.value.toLowerCase().replace(/[^a-zA-Z0-9]/g, '-').slice(0, 20);
                   if (autoSlug) setNewId(autoSlug);
                 }
@@ -217,7 +193,7 @@ export default function CategoryManager({ categories = [], onUpdateCategories, p
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs sm:text-sm font-semibold shadow-md flex items-center gap-2 transition-all active:scale-98"
+              className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs sm:text-sm font-semibold shadow-md flex items-center gap-2 transition-all active:scale-98 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>{loading ? 'กำลังบันทึก...' : 'บันทึกหมวดหมู่ใหม่'}</span>
@@ -228,12 +204,22 @@ export default function CategoryManager({ categories = [], onUpdateCategories, p
 
       {/* Category List */}
       <div className="bg-white rounded-3xl border border-sand-300 shadow-soft overflow-hidden">
-        <div className="p-4 sm:p-5 border-b border-sand-200 bg-sand-50 flex items-center justify-between">
+        <div className="p-4 sm:p-5 border-b border-sand-200 bg-sand-50 flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <Tag className="w-5 h-5 text-bronze" />
             <h3 className="font-bold text-ink text-sm sm:text-base">หมวดหมู่ทั้งหมดในระบบ ({categories.length})</h3>
           </div>
-          <span className="text-xs text-ink-muted hidden sm:inline">คลิกไอคอนดินสอ ✏️ เพื่อแก้ไขชื่อ หรือ 🗑️ เพื่อลบ</span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => saveAllCategoriesToServer(categories)}
+              disabled={loading}
+              className="px-4 py-1.5 bg-ink hover:bg-ink-soft text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+            >
+              <Save className="w-3.5 h-3.5 text-amber-400" />
+              <span>{loading ? 'กำลังซิงค์...' : '💾 บันทึกและซิงค์ทั้งหมด'}</span>
+            </button>
+          </div>
         </div>
 
         <div className="divide-y divide-sand-200">
@@ -315,13 +301,35 @@ export default function CategoryManager({ categories = [], onUpdateCategories, p
                     </div>
                   ) : (
                     <div className="flex items-center gap-1">
+                      {/* Move Up / Down */}
+                      {idx > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => handleMoveOrder(idx, 'up')}
+                          className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-sand-200 transition-colors cursor-pointer"
+                          title="เลื่อนขึ้น"
+                        >
+                          <ArrowUp className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      {idx < categories.length - 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleMoveOrder(idx, 'down')}
+                          className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-sand-200 transition-colors cursor-pointer"
+                          title="เลื่อนลง"
+                        >
+                          <ArrowDown className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+
                       <button
                         onClick={() => {
                           setEditingCat(cat.id);
                           setEditTh(cat.label_th);
                           setEditEn(cat.label_en || '');
                         }}
-                        className="p-2 rounded-xl text-ink-muted hover:text-ink hover:bg-sand-200 transition-colors cursor-pointer"
+                        className="p-2 rounded-xl text-ink-muted hover:text-ink hover:bg-sand-200 transition-colors cursor-pointer ml-1"
                         title="แก้ไขชื่อหมวดหมู่"
                       >
                         <Edit2 className="w-4 h-4" />

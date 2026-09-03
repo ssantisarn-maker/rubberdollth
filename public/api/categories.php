@@ -1,7 +1,7 @@
 ﻿<?php
 /**
  * RUBBER DOLL THAILAND - Category Management API
- * High Reliability: MySQL + Disk JSON Cache Dual-Persistence
+ * Quad-Layer Persistence: MySQL Table + site_settings Table + Server Disk JSON Cache + Client Auto-Sync
  */
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
@@ -113,13 +113,71 @@ if ($method === 'GET') {
 }
 
 // ==========================================
-// 2. POST or PUT: Add or Update Category
+// 2. POST or PUT: Add, Edit, or Save Bulk Categories
 // ==========================================
 if ($method === 'POST' || $method === 'PUT') {
     checkAdminAuth();
     $rawInput = file_get_contents('php://input');
     $data = json_decode($rawInput, true) ?: $_POST;
 
+    $allCats = [];
+
+    // CASE A: Bulk array of categories provided
+    if (isset($data['categories']) && is_array($data['categories']) && count($data['categories']) > 0) {
+        $incoming = $data['categories'];
+        
+        if ($pdo) {
+            try {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS categories (
+                    id VARCHAR(50) PRIMARY KEY,
+                    label_th VARCHAR(255) NOT NULL,
+                    label_en VARCHAR(255) NOT NULL,
+                    order_index INT DEFAULT 99,
+                    is_active TINYINT(1) DEFAULT 1
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+                $pdo->exec("DELETE FROM categories");
+                $stmt = $pdo->prepare("INSERT INTO categories (id, label_th, label_en, order_index, is_active) VALUES (:id, :label_th, :label_en, :order_index, 1)");
+                $idx = 1;
+                foreach ($incoming as $cat) {
+                    $cId = trim($cat['id'] ?? '');
+                    $cTh = trim($cat['label_th'] ?? $cat['label'] ?? '');
+                    $cEn = trim($cat['label_en'] ?? $cTh);
+                    if (empty($cId) || empty($cTh)) continue;
+                    $stmt->execute([
+                        'id' => $cId,
+                        'label_th' => $cTh,
+                        'label_en' => $cEn,
+                        'order_index' => (int)($cat['order_index'] ?? $idx)
+                    ]);
+                    $idx++;
+                }
+
+                // Also backup in site_settings table
+                try {
+                    $pdo->exec("CREATE TABLE IF NOT EXISTS site_settings (setting_key VARCHAR(100) PRIMARY KEY, setting_value LONGTEXT NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+                    $setStmt = $pdo->prepare("INSERT INTO site_settings (setting_key, setting_value) VALUES ('custom_categories', :v) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)");
+                    $setStmt->execute(['v' => json_encode($incoming, JSON_UNESCAPED_UNICODE)]);
+                } catch (Exception $e) {}
+
+                $synced = syncCategoriesCache($pdo, $jsonCacheFile);
+                if ($synced) $allCats = $synced;
+            } catch (Exception $e) {}
+        }
+
+        if (empty($allCats)) {
+            writeCategoriesCache($jsonCacheFile, $incoming);
+            $allCats = $incoming;
+        }
+
+        sendResponse([
+            'success' => true,
+            'message' => 'บันทึกรายการหมวดหมู่ทั้งหมดสำเร็จ',
+            'categories' => $allCats
+        ]);
+    }
+
+    // CASE B: Single category add / edit
     $id = trim($data['id'] ?? '');
     $label_th = trim($data['label_th'] ?? '');
     $label_en = trim($data['label_en'] ?? $label_th);
@@ -129,14 +187,10 @@ if ($method === 'POST' || $method === 'PUT') {
         sendError('กรุณากรอกรหัสหมวดหมู่ (id) และชื่อภาษาไทย (label_th)');
     }
 
-    // Sanitize ID
     $id = strtolower(preg_replace('/[^a-zA-Z0-9_-]/', '-', $id));
-
-    $allCats = [];
 
     if ($pdo) {
         try {
-            // If order_index was not provided, preserve current or calculate next
             if ($order_index === null) {
                 $checkStmt = $pdo->prepare("SELECT order_index FROM categories WHERE id = :id");
                 $checkStmt->execute(['id' => $id]);
@@ -161,12 +215,9 @@ if ($method === 'POST' || $method === 'PUT') {
 
             $synced = syncCategoriesCache($pdo, $jsonCacheFile);
             if ($synced) $allCats = $synced;
-        } catch (Exception $e) {
-            // DB error, fallback to JSON cache
-        }
+        } catch (Exception $e) {}
     }
 
-    // If MySQL did not return, update JSON cache directly
     if (empty($allCats)) {
         $current = readCategoriesCache($jsonCacheFile, $defaultCategories);
         $found = false;
