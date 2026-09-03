@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Eye, MessageCircle, Layers, Flame, Tag } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
@@ -69,8 +69,8 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
           <img
             key={displayHoverImg}
             src={displayHoverImg}
-            alt={`${seoImageAlt} (${t.catalog.card.anglesUnit})`}
-            title={`${seoImageAlt} (${t.catalog.card.anglesUnit})`}
+            alt={`${seoImageAlt} (${settings.card_angles_unit || t.catalog.card.anglesUnit})`}
+            title={`${seoImageAlt} (${settings.card_angles_unit || t.catalog.card.anglesUnit})`}
             loading="lazy"
             decoding="async"
             width="400"
@@ -90,8 +90,8 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
             {product.code}
           </span>
           {product.isReadyToShip && (
-            <span className="bg-emerald-600 text-white px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium shadow-2xs">
-              {lang === 'th' ? 'พร้อมส่ง' : 'Ready'}
+            <span className="bg-emerald-600 text-white px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold shadow-2xs">
+              {settings.card_ready_badge || (lang === 'th' ? 'พร้อมส่ง (ไทย)' : 'Ready')}
             </span>
           )}
         </div>
@@ -105,83 +105,72 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
           )}
           {isAdultMode ? (
             <span className="bg-rose-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full shadow-2xs flex items-center gap-0.5">
-              <Flame className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-white" /> 18+
+              <Flame className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-white" /> {settings.card_adult_badge || '18+'}
             </span>
           ) : (
-            hasHover && (
-              <span className="bg-white/90 backdrop-blur-md text-ink text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-full shadow-2xs hidden sm:flex items-center gap-1 opacity-90 group-hover:opacity-0 transition-opacity">
-                <Layers className="w-2.5 h-2.5 text-bronze" /> {gallery.length}
-              </span>
-            )
+            <span className="bg-black/60 backdrop-blur-md text-white px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium flex items-center gap-1">
+              <Layers className="w-2.5 h-2.5" />
+              <span>{gallery.length} {settings.card_angles_unit || t.catalog.card.anglesUnit}</span>
+            </span>
           )}
-          <span className="bg-ink/80 backdrop-blur-md text-white px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-sans font-semibold">
-            {product.height}
-          </span>
         </div>
 
-        {/* Desktop Quick View Overlay */}
-        <div className="absolute inset-0 bg-ink/20 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:flex items-center justify-center gap-2 p-4 pointer-events-none z-10">
-          <button
-            type="button"
-            className="bg-white/95 backdrop-blur-md text-ink text-xs font-semibold px-4 py-2 rounded-full shadow-lg flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-all duration-200 pointer-events-auto hover:bg-sand-100"
-          >
-            <Eye className="w-3.5 h-3.5 text-bronze" />
+        {/* Quick View Button Hover Overlay (Desktop) */}
+        <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:flex items-end justify-center">
+          <span className="text-white text-xs font-semibold px-4 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/30 flex items-center gap-1.5 shadow-md">
+            <Eye className="w-3.5 h-3.5" />
             <span>{settings.card_quickview_btn_text || t.catalog.card.quickView}</span>
-          </button>
+          </span>
         </div>
 
       </div>
 
-      {/* Card Info */}
-      <div className="p-3.5 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
+      {/* Product Content Details */}
+      <div className="p-3 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
         
-        <div className="space-y-1.5">
-          {/* Series & Category */}
-          <div className="text-[11px] sm:text-xs text-ink-muted leading-tight">
-            <span className="block font-medium text-amber-900/80">{product.category}</span>
+        <div>
+          <div className="flex items-center justify-between text-xs text-ink-muted mb-1">
+            <span className="text-bronze font-semibold uppercase tracking-wider text-[10px] sm:text-[11px] truncate">
+              {product.series}
+            </span>
+            <span className="text-[10px] sm:text-xs font-medium font-sans shrink-0 ml-1">
+              {product.height} cm
+            </span>
           </div>
 
-          {/* Model Name - Full Multi-Line & Larger Text */}
-          <h3
-            onClick={() => onQuickView(product)}
-            className="font-sans text-sm sm:text-base font-bold text-ink group-hover:text-bronze transition-colors line-clamp-2 cursor-pointer leading-snug"
-            title={product.name}
-          >
+          <h3 className="font-sans font-bold text-xs sm:text-sm text-ink group-hover:text-bronze transition-colors line-clamp-1">
             {product.name}
           </h3>
 
-          {/* Price Display Directly on Product Card */}
-          <div className="flex items-baseline justify-between gap-1 pt-1">
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-xs sm:text-sm font-extrabold text-emerald-800 font-sans">
-                {product.price || 'ติดต่อทาง LINE'}
-              </span>
-            </div>
+          <div className="mt-1.5 flex items-baseline gap-2">
+            <span className="text-xs sm:text-sm font-bold text-ink tracking-tight">
+              {product.price || settings.card_ask_price_text || t.catalog.card.priceInquire}
+            </span>
             {originalPrice && (
-              <span className="text-[11px] text-ink-muted line-through font-sans">
+              <span className="text-[10px] sm:text-xs text-ink-muted line-through font-normal">
                 {originalPrice}
               </span>
             )}
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="pt-2.5 border-t border-sand-100 flex items-center gap-1.5 sm:gap-2">
+        {/* Action Buttons: Specs & Order */}
+        <div className="pt-2 border-t border-sand-100 flex items-center gap-1.5 sm:gap-2">
           <button
             onClick={() => onQuickView(product)}
-            className="flex-1 py-2 px-2.5 sm:px-3 rounded-xl border border-sand-300 text-xs font-semibold text-ink-soft hover:bg-sand-100 hover:text-ink transition-colors text-center"
+            className="flex-1 py-2 sm:py-2.5 px-3 bg-sand-100 hover:bg-sand-200 text-ink rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-1 sm:gap-1.5 transition-colors active:scale-98 cursor-pointer"
           >
-            {settings.card_specs_btn_text || t.catalog.card.specsBtn}
+            <Eye className="w-3.5 h-3.5 text-ink-muted" />
+            <span>{settings.card_specs_btn_text || t.catalog.card.specsBtn}</span>
           </button>
 
           <a
             href={lineProductUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="py-2 px-3 sm:px-4 rounded-xl bg-[#05963c] hover:bg-[#047830] text-white text-xs font-bold flex items-center gap-1 shadow-2xs transition-colors shrink-0"
-            title="สั่งซื้อผ่าน LINE / Order via LINE"
+            className="py-2 sm:py-2.5 px-3.5 sm:px-4 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-1 sm:gap-1.5 transition-colors shadow-2xs active:scale-98 cursor-pointer"
           >
-            <MessageCircle className="w-3.5 h-3.5 fill-white" />
+            <MessageCircle className="w-3.5 h-3.5" />
             <span>{settings.card_order_btn_text || t.catalog.card.orderBtn}</span>
           </a>
         </div>

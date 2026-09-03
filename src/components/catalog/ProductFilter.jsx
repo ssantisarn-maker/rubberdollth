@@ -1,6 +1,7 @@
-﻿import React from 'react';
+import React from 'react';
 import { Search, X, Flame, CheckCircle2, Sparkles } from 'lucide-react';
 import { translations } from '../../data/translations';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
 
 export default function ProductFilter({
   categories,
@@ -13,6 +14,7 @@ export default function ProductFilter({
   onToggleAdultMode,
   lang = 'th'
 }) {
+  const { settings } = useSiteSettings();
   const t = translations[lang] || translations.th;
 
   return (
@@ -28,7 +30,7 @@ export default function ProductFilter({
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder={t.catalog.searchPlaceholder}
+            placeholder={settings.catalog_search_placeholder || t.catalog.searchPlaceholder}
             className="w-full pl-10 sm:pl-11 pr-10 py-2.5 sm:py-3 bg-sand-50 border border-sand-200 rounded-xl sm:rounded-2xl text-xs sm:text-sm text-ink placeholder:text-ink-muted/70 focus:outline-none focus:border-bronze focus:bg-white transition-colors"
           />
           {searchQuery && (
@@ -52,11 +54,15 @@ export default function ProductFilter({
             }`}
           >
             <Flame className={`w-3.5 h-3.5 ${isAdultMode ? 'fill-white' : 'text-rose-500'}`} />
-            <span>{isAdultMode ? t.catalog.adultModeActiveBtn : t.catalog.adultModeBtn}</span>
+            <span>
+              {isAdultMode 
+                ? (settings.nav_adult_mode_active_btn || t.catalog.adultModeActiveBtn) 
+                : (settings.nav_adult_mode_btn || t.catalog.adultModeBtn)}
+            </span>
           </button>
 
           <span className="text-[11px] sm:text-xs text-ink-muted whitespace-nowrap">
-            {t.catalog.foundCount} <strong className="text-ink font-bold font-sans">{totalResults}</strong> {t.catalog.itemsUnit}
+            {settings.catalog_found_text || t.catalog.foundCount} <strong className="text-ink font-bold font-sans">{totalResults}</strong> {settings.catalog_items_unit || t.catalog.itemsUnit}
           </span>
         </div>
 
@@ -69,7 +75,7 @@ export default function ProductFilter({
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-bronze" />
             <h3 className="font-sans text-sm sm:text-base font-bold text-ink tracking-tight">
-              {t.catalog.searchTitle}
+              {settings.catalog_filter_title || t.catalog.searchTitle}
             </h3>
           </div>
           <span className="text-[11px] text-bronze font-medium sm:hidden">เลื่อนดูหมวดหมู่ ➔</span>

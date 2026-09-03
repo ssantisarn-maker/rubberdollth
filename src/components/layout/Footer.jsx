@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Sparkles, MessageCircle, Mail, Globe, Phone } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
@@ -37,7 +37,7 @@ export default function Footer({ lang = 'th', onSetLang }) {
 
             </div>
             <p className="text-xs text-sand-400 leading-relaxed font-light max-w-sm">
-              {settings.site_subtitle || t.footer.desc}
+              {settings.footer_tagline || settings.site_subtitle || t.footer.desc}
             </p>
             
             {/* Language Switcher */}
@@ -68,18 +68,18 @@ export default function Footer({ lang = 'th', onSetLang }) {
           <div className="md:col-span-3 space-y-3">
             <h4 className="font-sans text-sm font-bold text-white uppercase tracking-wider">{t.footer.quickLinks}</h4>
             <ul className="space-y-2 text-xs text-sand-400 font-light">
-              <li><a href="#catalog" className="hover:text-bronze transition-colors">{t.nav.catalog}</a></li>
-              <li><a href="#catalog" className="hover:text-bronze transition-colors">{t.nav.ready}</a></li>
-              <li><a href="#discreet" className="hover:text-bronze transition-colors">{t.nav.discreet}</a></li>
-              <li><a href="#care" className="hover:text-bronze transition-colors">{t.nav.care}</a></li>
-              <li><a href="#reviews" className="hover:text-bronze transition-colors">{t.nav.reviews}</a></li>
-              <li><a href="#faq" className="hover:text-bronze transition-colors">{t.nav.faq}</a></li>
+              <li><a href="#catalog" className="hover:text-bronze transition-colors">{settings.nav_menu_catalog || t.nav.catalog}</a></li>
+              <li><a href="#catalog" className="hover:text-bronze transition-colors">{settings.nav_menu_ready || t.nav.ready}</a></li>
+              <li><a href="#discreet" className="hover:text-bronze transition-colors">{settings.nav_menu_discreet || t.nav.discreet}</a></li>
+              <li><a href="#care" className="hover:text-bronze transition-colors">{settings.nav_menu_care || t.nav.care}</a></li>
+              <li><a href="#reviews" className="hover:text-bronze transition-colors">{settings.nav_menu_reviews || t.nav.reviews}</a></li>
+              <li><a href="#faq" className="hover:text-bronze transition-colors">{settings.nav_menu_faq || t.nav.faq}</a></li>
             </ul>
           </div>
 
           {/* Contact Col */}
           <div className="md:col-span-4 space-y-3">
-            <h4 className="font-sans text-sm font-bold text-white uppercase tracking-wider">{t.nav.contact}</h4>
+            <h4 className="font-sans text-sm font-bold text-white uppercase tracking-wider">{settings.nav_menu_contact || t.nav.contact}</h4>
             <p className="text-xs text-sand-400 font-light leading-relaxed">
               LINE Official: <strong className="text-white font-mono">{lineId}</strong><br />
               {settings.email && (
@@ -98,16 +98,21 @@ export default function Footer({ lang = 'th', onSetLang }) {
                 className="inline-flex items-center gap-2 bg-[#06C755] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow hover:bg-[#05b34c] transition-colors"
               >
                 <MessageCircle className="w-4 h-4 fill-white" />
-                <span>{t.nav.chatLine}</span>
+                <span>{settings.nav_cta_btn || t.nav.lineContact}</span>
               </a>
             </div>
           </div>
 
         </div>
 
-        {/* Bottom Rights */}
-        <div className="pt-8 border-t border-sand-800 text-center text-xs text-sand-400 font-light">
-          {settings.footer_copyright_text || `© 2019 - 2026 RUBBER DOLL THAILAND. ${t.footer.rights}`}
+        {/* Bottom copyright & 18+ warning */}
+        <div className="pt-8 border-t border-sand-800 text-center space-y-2">
+          <p className="text-xs text-sand-500">
+            {settings.footer_copyright_text || '© 2019-2026 RUBBER DOLL THAILAND. All rights reserved. ผู้นำเข้าตุ๊กตายางซิลิโคนแท้เกรดพรีเมียมอันดับ 1 ในไทย'}
+          </p>
+          <p className="text-[11px] text-sand-500">
+            {settings.footer_disclaimer || 'เว็บไซต์นี้สำหรับผู้ที่มีอายุ 18 ปีขึ้นไปเท่านั้น การสั่งซื้อทุกรายการจัดส่งมิดชิดเป็นความลับสูงสุด'}
+          </p>
         </div>
 
       </div>

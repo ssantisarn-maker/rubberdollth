@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 
 const defaultSettings = {
   site_title: 'RUBBER DOLL THAILAND - ซิลิโคนแท้ระดับ Hi-End อันดับ 1 ในไทย',
@@ -36,7 +36,7 @@ const defaultSettings = {
   hero_btn_primary_text: 'ดูแคตตาล็อกสินค้าทั้งหมด',
   hero_btn_secondary_text: 'ปรึกษาแอดมินทาง LINE',
 
-  // Spotlight Ready-to-Ship Showcase (New Feature)
+  // Spotlight Ready-to-Ship Showcase
   spotlight_enabled: false,
   spotlight_badge: '⚡ สินค้าไฮไลท์พร้อมส่งด่วนในไทย (1-2 วันรับของทันที)',
   spotlight_title: 'MODEL SPOTLIGHT: SLC-108 น้องมิยู สไตล์ญี่ปุ่น อกคัพ C',
@@ -51,18 +51,51 @@ const defaultSettings = {
   spotlight_specs_bust: 'คัพ C สรีระสมจริง',
   spotlight_specs_skin: 'ผิวขาวอมชมพู สัมผัสนุ่มเสมือนคนจริง',
 
-  // Product Modal Headings & Buttons
-  modal_specs_title: '📐 สเปกและรายละเอียดสรีระ (Model Specifications)',
-  modal_gifts_title: '🎁 กล่องของขวัญและของแถม (The Luxury Collector Gift Box)',
-  modal_gifts_default: 'ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล, วิกผมเกรดพรีเมียม สัมผัสนุ่มลื่น, แป้งฝุ่นบำรุงผิว Silky Smooth Powder, เซ็ตอุปกรณ์ทำความสะอาดและดูแลรักษาครบวงจร',
-  modal_delivery_title: '🔒 มาตรฐานการจัดส่งลับเฉพาะ 100% (100% Confidential Delivery)',
-  modal_cta_btn_text: '💬 สั่งซื้อ / สอบถามรุ่นนี้แบบ Private LINE',
+  // Product Catalog Section Headers & Filters
+  catalog_tag: 'EXCLUSIVE SILICONE COLLECTION',
+  catalog_title: 'คลังสินค้าตุ๊กตายางซิลิโคนแท้ระดับ Hi-End',
+  catalog_subtitle: 'ตุ๊กตายางซิลิโคนแท้ระดับ Hi-End 100% สัมผัสเสมือนจริง เลื่อนเมาส์ชี้บนรูปภาพเพื่อดูมุมมองสรีระจริง',
+  catalog_filter_title: 'เลือกชมตามหมวดหมู่',
+  catalog_search_placeholder: 'ค้นหารหัสโมเดล เช่น HALF-01, SLC-108, หรือสเปก...',
+  catalog_found_text: 'ค้นพบทั้งหมด',
+  catalog_items_unit: 'รายการ',
+  catalog_load_more_btn: 'ดูสินค้าเพิ่มเติม',
+  catalog_all_loaded_text: 'แสดงสินค้าครบทั้งหมดแล้ว',
 
-  // Product Card Button Texts (NEW: Editable in CMS)
+  // Product Card Badges & Buttons
+  card_ready_badge: 'พร้อมส่ง (ไทย)',
+  card_adult_badge: '18+ Uncensored',
+  card_angles_unit: 'มุมมอง',
   card_specs_btn_text: 'สเปก & กล่องของขวัญ',
   card_order_btn_text: 'สั่งซื้อ',
   card_quickview_btn_text: 'ดูสเปก & แกลเลอรีเต็ม',
-  
+  card_ask_price_text: 'ติดต่อสอบถามทาง LINE',
+
+  // Product Modal Headings & Buttons
+  modal_adult_badge: '18+ Uncensored Mode',
+  modal_zoom_btn_text: '🔍 กดเพื่อซูมภาพ HD',
+  modal_specs_title: '📐 ข้อมูลสเปกความพรีเมียม (SPECIFICATIONS)',
+  modal_gifts_title: '🎁 THE LUXURY COLLECTOR BOX (เซ็ตของขวัญระดับพรีเมียม)',
+  modal_gifts_default: 'ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล, วิกผมเกรดพรีเมียม สัมผัสนุ่มลื่น, แป้งฝุ่นบำรุงผิว Silky Smooth Powder, เซ็ตอุปกรณ์ทำความสะอาดและดูแลรักษาครบวงจร',
+  modal_delivery_title: '🔒 มาตรฐานการจัดส่งลับเฉพาะ 100% (100% Confidential Delivery)',
+  modal_cta_btn_text: '💬 สั่งซื้อ / สอบถามรุ่นนี้แบบ Private LINE',
+  modal_trust_1: '🔒 กล่องทึบ 2 ชั้น ไม่ระบุชื่อสินค้า',
+  modal_trust_2: '🚚 ส่งด่วน 1-2 วันรับของทั่วประเทศ',
+  modal_trust_3: '🤝 ดูแลส่วนตัว 24 ชม.',
+
+  // Navbar & Menu Navigation Links
+  nav_search_placeholder: 'ค้นหารหัสโมเดล เช่น HALF-01, SLC-108...',
+  nav_adult_mode_btn: 'โหมด 18+ (ไม่มีเซนเซอร์)',
+  nav_adult_mode_active_btn: 'โหมดปกติ (มีเซนเซอร์)',
+  nav_menu_catalog: 'แคตตาล็อกสินค้า',
+  nav_menu_ready: 'พร้อมส่งทันที (ไทย)',
+  nav_menu_discreet: 'จัดส่งลับเฉพาะ',
+  nav_menu_care: 'ดูแลรักษา',
+  nav_menu_reviews: 'รีวิวลูกค้า',
+  nav_menu_faq: 'คำถามพบบ่อย',
+  nav_menu_contact: 'ติดต่อเรา',
+  nav_cta_btn: '💬 สั่งซื้อทาง LINE',
+
   // Trust Badges
   trust_discrete_title: 'ส่งลับเฉพาะ 100% (Discreet Shipping)',
   trust_discrete_desc: 'แพ็กเกจกล่องทึบ 2 ชั้น ไม่ระบุชื่อร้านหรือชื่อสินค้าหน้ากล่อง รักษาความเป็นส่วนตัวสูงสุด',
@@ -121,8 +154,17 @@ const defaultSettings = {
   care_s4_title: '4. การจัดเก็บที่ถูกวิธี (Storage)',
   care_s4_desc: 'จัดเก็บในห้องอุณหภูมิปกติ เลี่ยงแสงแดดจัด แนะนำให้นอนราบบนเบาะนุ่มหรือแขวนด้วยอุปกรณ์เฉพาะ',
 
+  // Contact Section
+  contact_tag: 'PRIVATE & DISCREET INQUIRY',
+  contact_title: 'ปรึกษาผู้เชี่ยวชาญแบบส่วนตัว (Private LINE)',
+  contact_subtitle: 'ทีมงานคนไทยพร้อมดูแลและให้คำแนะนำตลอด 24 ชั่วโมง ข้อมูลทุกอย่างเป็นความลับ 100%',
+  contact_line_btn: '💬 แชตปรึกษา / สั่งซื้อทาง LINE',
+  contact_call_btn: '📞 โทรติดต่อด่วน',
+
   // Footer & General
-  footer_copyright_text: '© 2026 RUBBER DOLL THAILAND. All rights reserved. ผู้นำเข้าตุ๊กตายางซิลิโคนแท้เกรดพรีเมียมอันดับ 1 ในไทย'
+  footer_tagline: 'สัมผัสนิยามใหม่แห่งความสมจริงเหนือระดับ ตุ๊กตายางซิลิโคนแท้เกรดการแพทย์ 100% อันดับ 1 ในไทย',
+  footer_copyright_text: '© 2019-2026 RUBBER DOLL THAILAND. All rights reserved. ผู้นำเข้าตุ๊กตายางซิลิโคนแท้เกรดพรีเมียมอันดับ 1 ในไทย',
+  footer_disclaimer: 'เว็บไซต์นี้สำหรับผู้ที่มีอายุ 18 ปีขึ้นไปเท่านั้น การสั่งซื้อทุกรายการจัดส่งมิดชิดเป็นความลับสูงสุด'
 };
 
 let globalSettingsPromise = null;
@@ -131,19 +173,24 @@ let lastFetchTime = 0;
 const fetchGlobalSettings = async (force = false) => {
   const now = Date.now();
   if (!force && globalSettingsPromise) return globalSettingsPromise;
-  if (!force && now - lastFetchTime < 10000) return null;
+  if (!force && now - lastFetchTime < 5000) return null;
 
   globalSettingsPromise = (async () => {
     try {
-      const res = await fetch('/api/settings.php');
+      const res = await fetch(`/api/settings.php?_t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' }
+      });
       if (!res.ok) throw new Error('Settings API offline');
       const data = await res.json();
       if (data.success && data.settings) {
         lastFetchTime = Date.now();
-        return data.settings;
+        const merged = { ...defaultSettings, ...data.settings };
+        localStorage.setItem('rbd_site_settings', JSON.stringify(merged));
+        return merged;
       }
     } catch (err) {
-      console.warn('Using local site settings:', err.message);
+      console.warn('Using local settings cache:', err.message);
     } finally {
       globalSettingsPromise = null;
     }
@@ -156,9 +203,9 @@ const fetchGlobalSettings = async (force = false) => {
 export function useSiteSettings() {
   const [settings, setSettings] = useState(() => {
     try {
-      const local = localStorage.getItem('rbd_site_settings');
-      if (local) {
-        return { ...defaultSettings, ...JSON.parse(local) };
+      const saved = localStorage.getItem('rbd_site_settings');
+      if (saved) {
+        return { ...defaultSettings, ...JSON.parse(saved) };
       }
     } catch (e) {}
     return defaultSettings;
@@ -166,61 +213,63 @@ export function useSiteSettings() {
 
   const [loading, setLoading] = useState(false);
 
-  const fetchSettings = async (force = false) => {
-    try {
-      setLoading(true);
-      const newSettings = await fetchGlobalSettings(force);
-      if (newSettings) {
-        const merged = { ...defaultSettings, ...newSettings };
-        setSettings(merged);
-        try {
-          localStorage.setItem('rbd_site_settings', JSON.stringify(merged));
-        } catch (e) {}
-      }
-    } catch (err) {
-      console.warn('Settings load:', err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchSettings();
+    let isMounted = true;
+    fetchGlobalSettings().then(fetched => {
+      if (isMounted && fetched) {
+        setSettings(fetched);
+      }
+    });
 
-
-    const handleStorageChange = () => {
-      try {
-        const local = localStorage.getItem('rbd_site_settings');
-        if (local) setSettings(JSON.parse(local));
-      } catch (e) {}
+    const handleSettingsUpdate = (e) => {
+      if (e.detail) {
+        setSettings(prev => ({ ...prev, ...e.detail }));
+      }
     };
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('rbd_settings_updated', handleStorageChange);
+    window.addEventListener('rbd_settings_updated', handleSettingsUpdate);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('rbd_settings_updated', handleStorageChange);
+      isMounted = false;
+      window.removeEventListener('rbd_settings_updated', handleSettingsUpdate);
     };
   }, []);
 
   const updateSettings = async (newSettings) => {
-    const merged = { ...settings, ...newSettings };
-    setSettings(merged);
+    setLoading(true);
+    const updated = { ...settings, ...newSettings };
+    setSettings(updated);
     try {
-      localStorage.setItem('rbd_site_settings', JSON.stringify(merged));
-      window.dispatchEvent(new Event('rbd_settings_updated'));
+      localStorage.setItem('rbd_site_settings', JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent('rbd_settings_updated', { detail: updated }));
     } catch (e) {}
 
     try {
       const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
-      await fetch('/api/settings.php', {
+      const res = await fetch('/api/settings.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(merged)
+        body: JSON.stringify(updated)
       });
-    } catch (e) {}
+      const data = await res.json();
+      if (data.success && data.settings) {
+        const merged = { ...defaultSettings, ...data.settings };
+        setSettings(merged);
+        localStorage.setItem('rbd_site_settings', JSON.stringify(merged));
+        window.dispatchEvent(new CustomEvent('rbd_settings_updated', { detail: merged }));
+        return { success: true };
+      }
+    } catch (err) {
+      console.warn('Saved locally, API sync failed:', err.message);
+    } finally {
+      setLoading(false);
+    }
+    return { success: true };
   };
 
-  return { settings, setSettings: updateSettings, reload: fetchSettings, loading };
+  return {
+    settings,
+    setSettings: updateSettings,
+    reload: () => fetchGlobalSettings(true).then(res => { if (res) setSettings(res); }),
+    loading
+  };
 }

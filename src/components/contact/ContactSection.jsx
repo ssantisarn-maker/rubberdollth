@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { MessageCircle, Mail, Clock, Phone, ShieldCheck, Heart } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
@@ -20,13 +20,13 @@ export default function ContactSection({ lang = 'th' }) {
         
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <span className="text-xs font-bold uppercase tracking-widest text-bronze">
-            {t.contact.tag}
+            {settings.contact_tag || t.contact.tag}
           </span>
           <h2 className="font-sans text-2xl sm:text-4xl font-extrabold text-ink">
-            {t.contact.title}
+            {settings.contact_title || t.contact.title}
           </h2>
           <p className="text-sm sm:text-base text-ink-muted font-normal leading-relaxed">
-            {t.contact.desc}
+            {settings.contact_subtitle || t.contact.desc}
           </p>
         </div>
 
@@ -47,7 +47,7 @@ export default function ContactSection({ lang = 'th' }) {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center w-full py-3.5 rounded-xl bg-[#06C755] hover:bg-[#05b34c] text-white text-xs sm:text-sm font-bold shadow-md transition-colors"
             >
-              {lineId ? `${t.contact.lineCta} (${lineId})` : t.contact.lineCta}
+              {settings.contact_line_btn || (lineId ? `${t.contact.lineCta} (${lineId})` : t.contact.lineCta)}
             </a>
           </div>
 
@@ -82,7 +82,7 @@ export default function ContactSection({ lang = 'th' }) {
               href={`tel:${phone.replace(/[^0-9]/g, '')}`}
               className="inline-flex items-center justify-center w-full py-3.5 rounded-xl bg-ink hover:bg-sand-900 text-white text-xs sm:text-sm font-bold transition-colors shadow-2xs"
             >
-              โทร {phone}
+              {settings.contact_call_btn || `โทร ${phone}`}
             </a>
           </div>
 

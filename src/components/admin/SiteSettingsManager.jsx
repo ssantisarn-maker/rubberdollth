@@ -1776,6 +1776,286 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
           </div>
         )}
 
+        {/* SECTION: Catalog UI & Product Card Badges */}
+        {(subTab === 'all' || subTab === 'catalog_ui') && (
+          <div id="section-catalog-ui" className="bg-white p-5 sm:p-6 rounded-3xl border border-sand-300 shadow-soft space-y-6">
+            <div className="border-b border-sand-200 pb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">📦</span>
+                <div>
+                  <h3 className="font-bold text-ink text-sm sm:text-base">ปรับแต่งหน้าแคตตาล็อก & ป้ายการ์ดสินค้า (Catalog & Cards UI)</h3>
+                  <p className="text-xs text-ink-muted">แก้ไขหัวข้อ, คำอธิบาย, ป้ายกำกับบนรูป, และปุ่มกดบนการ์ดสินค้าทั้งหมด</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">1. ป้ายหมวดหมู่แคตตาล็อก (Catalog Tag)</label>
+                <input
+                  type="text"
+                  value={formData.catalog_tag || ''}
+                  onChange={e => setFormData({ ...formData, catalog_tag: e.target.value })}
+                  placeholder="เช่น EXCLUSIVE SILICONE COLLECTION"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">2. หัวข้อกล่องกรองหมวดหมู่ (Filter Title)</label>
+                <input
+                  type="text"
+                  value={formData.catalog_filter_title || ''}
+                  onChange={e => setFormData({ ...formData, catalog_filter_title: e.target.value })}
+                  placeholder="เช่น เลือกชมตามหมวดหมู่"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
+
+              <div className="space-y-1.5 sm:col-span-2">
+                <label className="font-semibold text-ink">3. คำอธิบายใต้หัวข้อแคตตาล็อก (Subtitle)</label>
+                <textarea
+                  rows={2}
+                  value={formData.catalog_subtitle || ''}
+                  onChange={e => setFormData({ ...formData, catalog_subtitle: e.target.value })}
+                  placeholder="ตุ๊กตายางซิลิโคนแท้ระดับ Hi-End 100% สัมผัสเสมือนจริง เลื่อนเมาส์ชี้บนรูปภาพเพื่อดูมุมมองสรีระจริง"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">4. ข้อความในช่องค้นหาสินค้า (Search Placeholder)</label>
+                <input
+                  type="text"
+                  value={formData.catalog_search_placeholder || ''}
+                  onChange={e => setFormData({ ...formData, catalog_search_placeholder: e.target.value })}
+                  placeholder="เช่น ค้นหารหัสโมเดล เช่น HALF-01, SLC-108, หรือสเปก..."
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">5. คำนำหน้าตัวเลขนับสินค้า</label>
+                <input
+                  type="text"
+                  value={formData.catalog_found_text || ''}
+                  onChange={e => setFormData({ ...formData, catalog_found_text: e.target.value })}
+                  placeholder="เช่น ค้นพบทั้งหมด"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">6. หน่วยนับสินค้า</label>
+                <input
+                  type="text"
+                  value={formData.catalog_items_unit || ''}
+                  onChange={e => setFormData({ ...formData, catalog_items_unit: e.target.value })}
+                  placeholder="เช่น รายการ หรือ รุ่น"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-ink">7. ข้อความปุ่มดูสินค้าเพิ่มเติม (Load More)</label>
+                <input
+                  type="text"
+                  value={formData.catalog_load_more_btn || ''}
+                  onChange={e => setFormData({ ...formData, catalog_load_more_btn: e.target.value })}
+                  placeholder="เช่น ดูสินค้าเพิ่มเติม"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
+                />
+              </div>
+
+              <div className="sm:col-span-2 pt-3 border-t border-sand-200">
+                <span className="font-bold text-ink text-xs sm:text-sm block mb-3">🏷️ ป้ายกำกับบนรูปภาพการ์ดสินค้า</span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-ink">ป้ายสินค้าพร้อมส่ง</label>
+                    <input
+                      type="text"
+                      value={formData.card_ready_badge || ''}
+                      onChange={e => setFormData({ ...formData, card_ready_badge: e.target.value })}
+                      placeholder="เช่น พร้อมส่ง (ไทย)"
+                      className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs font-bold text-emerald-700"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-ink">ป้ายโหมด 18+</label>
+                    <input
+                      type="text"
+                      value={formData.card_adult_badge || ''}
+                      onChange={e => setFormData({ ...formData, card_adult_badge: e.target.value })}
+                      placeholder="เช่น 18+ Uncensored"
+                      className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs font-bold text-rose-700"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-ink">หน่วยนับมุมมองรูป</label>
+                    <input
+                      type="text"
+                      value={formData.card_angles_unit || ''}
+                      onChange={e => setFormData({ ...formData, card_angles_unit: e.target.value })}
+                      placeholder="เช่น มุมมอง หรือ รูป"
+                      className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* SECTION: Navigation Navbar & Footer */}
+        {(subTab === 'all' || subTab === 'nav_footer') && (
+          <div id="section-nav-footer" className="bg-white p-5 sm:p-6 rounded-3xl border border-sand-300 shadow-soft space-y-6">
+            <div className="border-b border-sand-200 pb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🧭</span>
+                <div>
+                  <h3 className="font-bold text-ink text-sm sm:text-base">ปรับแต่งเมนูนำทาง (Navbar) & ส่วนท้ายเว็บ (Footer)</h3>
+                  <p className="text-xs text-ink-muted">แก้ไขข้อความปุ่มเมนูบนแถบนำทางด้านบน และข้อความสโลแกน/ลิขสิทธิ์ด้านล่างสุด</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4 text-xs sm:text-sm">
+              <div>
+                <span className="font-bold text-ink text-xs sm:text-sm block mb-2">📌 ข้อความปุ่มเมนูนำทาง (Navbar Links)</span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-xs text-ink-muted">เมนูที่ 1 (แคตตาล็อก)</label>
+                    <input
+                      type="text"
+                      value={formData.nav_menu_catalog || ''}
+                      onChange={e => setFormData({ ...formData, nav_menu_catalog: e.target.value })}
+                      placeholder="เช่น แคตตาล็อกสินค้า"
+                      className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs font-bold"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs text-ink-muted">เมนูที่ 2 (พร้อมส่ง)</label>
+                    <input
+                      type="text"
+                      value={formData.nav_menu_ready || ''}
+                      onChange={e => setFormData({ ...formData, nav_menu_ready: e.target.value })}
+                      placeholder="เช่น พร้อมส่งทันที (ไทย)"
+                      className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs font-bold"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs text-ink-muted">เมนูที่ 3 (จัดส่งลับเฉพาะ)</label>
+                    <input
+                      type="text"
+                      value={formData.nav_menu_discreet || ''}
+                      onChange={e => setFormData({ ...formData, nav_menu_discreet: e.target.value })}
+                      placeholder="เช่น จัดส่งลับเฉพาะ"
+                      className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs font-bold"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs text-ink-muted">เมนูที่ 4 (ดูแลรักษา)</label>
+                    <input
+                      type="text"
+                      value={formData.nav_menu_care || ''}
+                      onChange={e => setFormData({ ...formData, nav_menu_care: e.target.value })}
+                      placeholder="เช่น ดูแลรักษา"
+                      className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs font-bold"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs text-ink-muted">เมนูที่ 5 (รีวิวลูกค้า)</label>
+                    <input
+                      type="text"
+                      value={formData.nav_menu_reviews || ''}
+                      onChange={e => setFormData({ ...formData, nav_menu_reviews: e.target.value })}
+                      placeholder="เช่น รีวิวลูกค้า"
+                      className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs font-bold"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs text-ink-muted">เมนูที่ 6 (คำถามพบบ่อย)</label>
+                    <input
+                      type="text"
+                      value={formData.nav_menu_faq || ''}
+                      onChange={e => setFormData({ ...formData, nav_menu_faq: e.target.value })}
+                      placeholder="เช่น คำถามพบบ่อย"
+                      className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs font-bold"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs text-ink-muted">เมนูที่ 7 (ติดต่อเรา)</label>
+                    <input
+                      type="text"
+                      value={formData.nav_menu_contact || ''}
+                      onChange={e => setFormData({ ...formData, nav_menu_contact: e.target.value })}
+                      placeholder="เช่น ติดต่อเรา"
+                      className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs font-bold"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs text-ink-muted">ปุ่มสั่งซื้อ LINE ด้านบนขวา</label>
+                    <input
+                      type="text"
+                      value={formData.nav_cta_btn || ''}
+                      onChange={e => setFormData({ ...formData, nav_cta_btn: e.target.value })}
+                      placeholder="เช่น 💬 สั่งซื้อทาง LINE"
+                      className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs font-bold text-emerald-800"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-sand-200">
+                <span className="font-bold text-ink text-xs sm:text-sm block mb-2">📄 ข้อความส่วนท้ายเว็บ (Footer & Copyright)</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1 sm:col-span-2">
+                    <label className="text-xs text-ink-muted">สโลแกนคำบรรยายร้านใน Footer</label>
+                    <input
+                      type="text"
+                      value={formData.footer_tagline || ''}
+                      onChange={e => setFormData({ ...formData, footer_tagline: e.target.value })}
+                      placeholder="เช่น สัมผัสนิยามใหม่แห่งความสมจริงเหนือระดับ ตุ๊กตายางซิลิโคนแท้เกรดการแพทย์ 100% อันดับ 1 ในไทย"
+                      className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs text-ink-muted">ข้อความลิขสิทธิ์ (Copyright)</label>
+                    <input
+                      type="text"
+                      value={formData.footer_copyright_text || ''}
+                      onChange={e => setFormData({ ...formData, footer_copyright_text: e.target.value })}
+                      placeholder="เช่น © 2019-2026 RUBBER DOLL THAILAND. All rights reserved."
+                      className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs text-ink-muted">คำเตือนอายุ 18+ (Disclaimer)</label>
+                    <input
+                      type="text"
+                      value={formData.footer_disclaimer || ''}
+                      onChange={e => setFormData({ ...formData, footer_disclaimer: e.target.value })}
+                      placeholder="เช่น เว็บไซต์นี้สำหรับผู้ที่มีอายุ 18 ปีขึ้นไปเท่านั้น การสั่งซื้อทุกรายการจัดส่งมิดชิดเป็นความลับสูงสุด"
+                      className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Sticky Save Button Bar */}
         <div className="sticky bottom-4 z-30 bg-ink/95 backdrop-blur-md p-4 rounded-3xl border border-sand-300 shadow-2xl flex items-center justify-between">
           <div className="text-white text-xs sm:text-sm pl-2">

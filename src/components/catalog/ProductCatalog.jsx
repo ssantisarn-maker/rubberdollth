@@ -307,14 +307,16 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
 
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <span className="text-xs font-semibold uppercase tracking-widest text-bronze">{t.catalog.sectionTag}</span>
+          <span className="text-xs font-semibold uppercase tracking-widest text-bronze">
+            {settings.catalog_tag || t.catalog.sectionTag}
+          </span>
           <h2 className="font-serif text-2xl sm:text-4xl font-bold text-ink">
-            {activeCategoryLabel} ({filteredProducts.length} {t.catalog.itemsUnit})
+            {activeCategoryLabel} ({filteredProducts.length} {settings.catalog_items_unit || t.catalog.itemsUnit})
           </h2>
-          <p className="text-sm text-ink-muted font-light">
-            {lang === 'th' 
+          <p className="text-sm text-ink-muted font-medium">
+            {settings.catalog_subtitle || (lang === 'th' 
               ? 'ตุ๊กตายางซิลิโคนแท้ระดับ Hi-End 100% สัมผัสเสมือนจริง เลื่อนเมาส์ชี้บนรูปภาพเพื่อดูมุมมองสรีระจริง' 
-              : '100% Hi-End hyper-realistic authentic silicone dolls. Hover over photos to view alternate factory spec angles.'}
+              : '100% Hi-End hyper-realistic authentic silicone dolls. Hover over photos to view alternate factory spec angles.')}
           </p>
         </div>
 

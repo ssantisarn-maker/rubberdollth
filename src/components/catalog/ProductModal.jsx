@@ -454,15 +454,15 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 <span>{settings.modal_cta_btn_text || 'สั่งซื้อ / สอบถามรุ่นนี้แบบ Private LINE'}</span>
               </a>
 
-              <div className="flex items-center justify-center gap-4 text-[11px] text-ink-muted">
+              <div className="flex items-center justify-center gap-4 text-[11px] text-ink-muted flex-wrap">
                 <span className="flex items-center gap-1">
-                  <Lock className="w-3 h-3 text-emerald-600" /> ส่งลับเฉพาะ 100%
+                  <Lock className="w-3 h-3 text-emerald-600" /> {settings.modal_trust_1 || 'ส่งลับเฉพาะ 100%'}
                 </span>
                 <span className="flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3 text-emerald-600" /> ประกันคืนเงิน 100%
+                  <ShieldCheck className="w-3 h-3 text-emerald-600" /> {settings.modal_trust_2 || 'ส่งด่วน 1-2 วันรับของทั่วประเทศ'}
                 </span>
                 <span className="flex items-center gap-1">
-                  <HeartHandshake className="w-3 h-3 text-emerald-600" /> ดูแลส่วนตัว 24 ชม.
+                  <HeartHandshake className="w-3 h-3 text-emerald-600" /> {settings.modal_trust_3 || 'ดูแลส่วนตัว 24 ชม.'}
                 </span>
               </div>
             </div>
