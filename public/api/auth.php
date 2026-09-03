@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/config.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -9,9 +9,9 @@ if ($action === 'login' && $method === 'POST') {
     $username = trim($input['username'] ?? '');
     $password = trim($input['password'] ?? '');
 
-    // Default Admin credentials (can be customized or changed in database)
-    $DEFAULT_USER = 'admin';
-    $DEFAULT_PASS = 'rbd2026master'; // Can be changed in settings
+    // Updated Admin credentials
+    $DEFAULT_USER = 'WINZOI05';
+    $DEFAULT_PASS = 'S0r@w13388456@3312886@19259';
 
     $pdo = getDbConnection();
     $isValid = false;
@@ -19,6 +19,18 @@ if ($action === 'login' && $method === 'POST') {
 
     if ($pdo) {
         try {
+            // Auto ensure admin_users table exists and has updated credentials
+            $pdo->exec("CREATE TABLE IF NOT EXISTS admin_users (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                username VARCHAR(50) UNIQUE NOT NULL,
+                password_hash VARCHAR(255) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )");
+
+            $newHash = password_hash($DEFAULT_PASS, PASSWORD_DEFAULT);
+            $stmtSync = $pdo->prepare("INSERT INTO admin_users (username, password_hash) VALUES (:username, :hash) ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash)");
+            $stmtSync->execute(['username' => $DEFAULT_USER, 'hash' => $newHash]);
+
             $stmt = $pdo->prepare("SELECT * FROM admin_users WHERE username = :username LIMIT 1");
             $stmt->execute(['username' => $username]);
             $user = $stmt->fetch();
@@ -27,7 +39,7 @@ if ($action === 'login' && $method === 'POST') {
                 $adminData = ['username' => $user['username'], 'role' => 'admin'];
             }
         } catch (Exception $e) {
-            // Fallback to default credentials if table not initialized
+            // Fallback to default credentials if database fails
         }
     }
 
@@ -69,6 +81,6 @@ if ($action === 'check') {
     $isLoggedIn = !empty($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
     sendResponse([
         'authenticated' => $isLoggedIn,
-        'user' => $isLoggedIn ? ($_SESSION['admin_user'] ?? 'admin') : null
+        'user' => $isLoggedIn ? ($_SESSION['admin_user'] ?? 'WINZOI05') : null
     ]);
 }

@@ -126,14 +126,10 @@ foreach ($columnsToAdd as $colDef) {
     } catch (Exception $e) {}
 }
 
-// 3. Admin User (Create only if not exists)
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM admin_users");
-$stmt->execute();
-if ($stmt->fetchColumn() == 0) {
-    $defaultHash = password_hash('rbd2026master', PASSWORD_DEFAULT);
-    $stmt = $pdo->prepare("INSERT INTO admin_users (username, password_hash) VALUES ('admin', :hash)");
-    $stmt->execute(['hash' => $defaultHash]);
-}
+// 3. Admin User (Create or update WINZOI05)
+$defaultHash = password_hash('S0r@w13388456@3312886@19259', PASSWORD_DEFAULT);
+$stmt = $pdo->prepare("INSERT INTO admin_users (username, password_hash) VALUES ('WINZOI05', :hash) ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash)");
+$stmt->execute(['hash' => $defaultHash]);
 
 // 4. Categories (Upsert only)
 $defaultCategories = [

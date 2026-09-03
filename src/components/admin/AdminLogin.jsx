@@ -29,12 +29,12 @@ export default function AdminLogin({ onLoginSuccess, onBackToShop }) {
       }
     } catch (err) {
       // Local fallback auth for preview mode
-      if (username === 'admin' && (password === 'rbd2026master' || password === 'admin')) {
+      if (username === 'WINZOI05' && password === 'S0r@w13388456@3312886@19259') {
         localStorage.setItem('rbd_admin_token', 'RBD_ADMIN_SECRET_KEY_2026');
         localStorage.setItem('rbd_admin_user', username);
         onLoginSuccess({ username });
       } else {
-        setError('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง (กรุณากรอก admin / rbd2026master)');
+        setError('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
       }
     } finally {
       setLoading(false);
@@ -83,7 +83,7 @@ export default function AdminLogin({ onLoginSuccess, onBackToShop }) {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="admin"
+                placeholder="กรอกชื่อผู้ใช้"
                 className="w-full pl-10 pr-4 py-3 bg-sand-50 border border-sand-300 rounded-2xl text-xs sm:text-sm text-ink focus:outline-none focus:border-bronze focus:bg-white transition-colors"
               />
             </div>
