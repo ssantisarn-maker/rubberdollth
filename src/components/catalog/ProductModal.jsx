@@ -51,16 +51,33 @@ function getVideoEmbedInfo(rawUrl) {
 export default function ProductModal({ product, onClose, isAdultMode, lang = 'th' }) {
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [showVideo, setShowVideo] = useState(false);
+  const [activeVideoIdx, setActiveVideoIdx] = useState(0);
   const [videoError, setVideoError] = useState(false);
   const [isZoomOpen, setIsZoomOpen] = useState(false);
   const [zoomScale, setZoomScale] = useState(1);
   const { settings } = useSiteSettings();
   const t = translations[lang] || translations.th;
 
+  // Extract list of all videos
+  const videoList = useMemo(() => {
+    let list = [];
+    if (Array.isArray(product?.videoUrls) && product.videoUrls.length > 0) {
+      list = product.videoUrls;
+    } else if (Array.isArray(product?.video_urls) && product.video_urls.length > 0) {
+      list = product.video_urls;
+    } else if (product?.videoUrl || product?.video_url) {
+      list = [{ url: product.videoUrl || product.video_url, title: 'วิดีโอตัวอย่างสินค้า' }];
+    }
+    return list.map((v, i) => typeof v === 'string' ? { url: v, title: `วิดีโอที่ ${i + 1}` } : v);
+  }, [product]);
+
+  const currentVideo = videoList[activeVideoIdx] || videoList[0];
+
   // Reset states ONLY when a different product is opened
   useEffect(() => {
     setActiveImageIdx(0);
     setShowVideo(false);
+    setActiveVideoIdx(0);
     setVideoError(false);
     setIsZoomOpen(false);
     setZoomScale(1);
@@ -153,7 +170,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
             
             {/* Main Featured Image or Video Player */}
             <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-sand-100 border border-sand-200 shadow-sm group">
-              {showVideo && (product.videoUrl || product.video_url) ? (
+              {showVideo && currentVideo?.url ? (
                 <div className="w-full h-full bg-black flex items-center justify-center relative">
                   {videoError ? (
                     <div className="w-full h-full bg-sand-950 text-white flex flex-col items-center justify-center p-6 text-center space-y-3">
@@ -168,7 +185,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                       </div>
                       <div className="flex items-center gap-2 pt-1">
                         <a
-                          href={product.videoUrl || product.video_url}
+                          href={currentVideo.url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="px-4 py-2 bg-purple-700 hover:bg-purple-800 text-white text-xs font-semibold rounded-xl transition-colors shadow-sm"
@@ -185,14 +202,14 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                       </div>
                     </div>
                   ) : (() => {
-                    const embedInfo = getVideoEmbedInfo(product.videoUrl || product.video_url);
+                    const embedInfo = getVideoEmbedInfo(currentVideo.url);
                     if (!embedInfo) return null;
 
                     if (embedInfo.type === 'iframe') {
                       return (
                         <iframe
                           src={embedInfo.src}
-                          title="วิดีโอตัวอย่างสินค้า"
+                          title={currentVideo.title || "วิดีโอตัวอย่างสินค้า"}
                           className="w-full h-full border-0"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                           allowFullScreen
@@ -202,6 +219,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
 
                     return (
                       <video
+                        key={currentVideo.url}
                         src={embedInfo.src}
                         controls
                         autoPlay
@@ -285,26 +303,51 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
             </div>
 
             {/* Photo / Video Mode Switcher */}
-            {(product.videoUrl || product.video_url) && (
-              <div className="flex items-center gap-2 pt-1">
-                <button
-                  type="button"
-                  onClick={() => setShowVideo(false)}
-                  className={`flex-1 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
-                    !showVideo ? 'bg-ink text-white shadow-xs' : 'bg-sand-100 text-ink hover:bg-sand-200'
-                  }`}
-                >
-                  <span>📸 ดูรูปภาพ ({galleryImages.length})</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setShowVideo(true); setVideoError(false); }}
-                  className={`flex-1 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
-                    showVideo ? 'bg-purple-700 text-white shadow-xs' : 'bg-purple-50 text-purple-800 border border-purple-200 hover:bg-purple-100'
-                  }`}
-                >
-                  <span>▶ เล่นคลิปวิดีโอ</span>
-                </button>
+            {videoList.length > 0 && (
+              <div className="space-y-2 pt-1">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowVideo(false)}
+                    className={`flex-1 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                      !showVideo ? 'bg-ink text-white shadow-xs' : 'bg-sand-100 text-ink hover:bg-sand-200'
+                    }`}
+                  >
+                    <span>📸 ดูรูปภาพ ({galleryImages.length})</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setShowVideo(true); setVideoError(false); }}
+                    className={`flex-1 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                      showVideo ? 'bg-purple-700 text-white shadow-xs' : 'bg-purple-50 text-purple-800 border border-purple-200 hover:bg-purple-100'
+                    }`}
+                  >
+                    <span>▶ เล่นวิดีโอ {videoList.length > 1 ? `(${videoList.length} คลิป)` : ''}</span>
+                  </button>
+                </div>
+
+                {/* Multiple Videos Playlist Tabs */}
+                {videoList.length > 1 && showVideo && (
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-0.5 no-scrollbar">
+                    {videoList.map((vid, vIdx) => (
+                      <button
+                        key={vIdx}
+                        type="button"
+                        onClick={() => { setActiveVideoIdx(vIdx); setVideoError(false); }}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition-all flex items-center gap-1.5 ${
+                          activeVideoIdx === vIdx
+                            ? 'bg-purple-800 text-white shadow-xs scale-[1.02]'
+                            : 'bg-sand-100 text-ink-muted hover:bg-sand-200 hover:text-ink border border-sand-300'
+                        }`}
+                      >
+                        <span className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-bold">
+                          {vIdx + 1}
+                        </span>
+                        <span>{vid.title || `คลิปที่ ${vIdx + 1}`}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
@@ -454,15 +497,18 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 <span>{settings.modal_cta_btn_text || 'สั่งซื้อ / สอบถามรุ่นนี้แบบ Private LINE'}</span>
               </a>
 
-              <div className="flex items-center justify-center gap-4 text-[11px] text-ink-muted flex-wrap">
-                <span className="flex items-center gap-1">
-                  <Lock className="w-3 h-3 text-emerald-600" /> {settings.modal_trust_1 || 'ส่งลับเฉพาะ 100%'}
+              <div className="flex items-center justify-center gap-3 sm:gap-4 text-[11px] text-ink-muted flex-wrap pt-1">
+                <span className="flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span>{(settings.modal_trust_1 || 'กล่องทึบ 2 ชั้น ไม่ระบุชื่อสินค้า').replace(/^[🔒\s]+/, '')}</span>
                 </span>
-                <span className="flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3 text-emerald-600" /> {settings.modal_trust_2 || 'ส่งด่วน 1-2 วันรับของทั่วประเทศ'}
+                <span className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span>{(settings.modal_trust_2 || 'ส่งด่วน 1-2 วันรับของทั่วประเทศ').replace(/^[🚚\s]+/, '')}</span>
                 </span>
-                <span className="flex items-center gap-1">
-                  <HeartHandshake className="w-3 h-3 text-emerald-600" /> {settings.modal_trust_3 || 'ดูแลส่วนตัว 24 ชม.'}
+                <span className="flex items-center gap-1.5">
+                  <HeartHandshake className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span>{(settings.modal_trust_3 || 'ดูแลส่วนตัว 24 ชม.').replace(/^[🤝\s]+/, '')}</span>
                 </span>
               </div>
             </div>

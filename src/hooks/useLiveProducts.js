@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect, useCallback } from 'react';
 import { products as fallbackProducts } from '../data/products';
 
 export function useLiveProducts() {
@@ -6,10 +6,16 @@ export function useLiveProducts() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchLiveProducts = async () => {
+  const fetchLiveProducts = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/products.php');
+      const res = await fetch(`/api/products.php?_t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      });
       if (!res.ok) throw new Error('API offline');
       const data = await res.json();
       if (data.success && Array.isArray(data.products) && data.products.length > 0) {
@@ -17,17 +23,25 @@ export function useLiveProducts() {
       }
     } catch (err) {
       console.warn('Using local fallback products:', err.message);
-      // Fallback to local products array
       setProducts(fallbackProducts);
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchLiveProducts();
-  }, []);
+
+    const handleSync = () => {
+      fetchLiveProducts();
+    };
+
+    window.addEventListener('rbd_products_updated', handleSync);
+    return () => {
+      window.removeEventListener('rbd_products_updated', handleSync);
+    };
+  }, [fetchLiveProducts]);
 
   return { products, setProducts, reload: fetchLiveProducts, loading, error };
 }

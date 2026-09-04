@@ -24,6 +24,7 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
     isReadyToShip: false,
     orderIndex: 999,
     videoUrl: '',
+    videoUrls: [],
     image: '',
     secondaryImage: '',
     gallery: []
@@ -32,22 +33,20 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
   const [uploading, setUploading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [newImageUrl, setNewImageUrl] = useState('');
-  const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [uploadingVideoIndex, setUploadingVideoIndex] = useState(null);
 
-  const handleVideoUpload = async (e) => {
-    const file = e.target.files?.[0];
+  const handleVideoUpload = async (file, targetIndex = 0) => {
     if (!file) return;
 
     // Safety guardrail: Check video size (Max 25MB for direct hosting)
     const sizeInMB = file.size / (1024 * 1024);
     if (sizeInMB > 25) {
       if (!window.confirm(`⚠️ ไฟล์วิดีโอนี้มีขนาด ${sizeInMB.toFixed(1)} MB ซึ่งอาจทำให้เปลืองพื้นที่โฮสติ้งและทำให้เว็บโหลดช้าลง\n\n💡 แนะนำ: ให้อัปโหลดขึ้น YouTube แบบ Unlisted แล้วนำลิงก์มาวาง จะโหลดเร็วกว่าและไม่เปลืองพื้นที่โฮสติ้งเลย\n\nคุณยังต้องการอัปโหลดไฟล์นี้ลงโฮสติ้งต่อไปหรือไม่?`)) {
-        e.target.value = '';
         return;
       }
     }
 
-    setUploadingVideo(true);
+    setUploadingVideoIndex(targetIndex);
     const form = new FormData();
     form.append('video', file);
     form.append('code', formData.code || 'PROD');
@@ -61,16 +60,58 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
       });
       const data = await res.json();
       if (data.success && data.url) {
-        setFormData(prev => ({ ...prev, videoUrl: data.url }));
+        setFormData(prev => {
+          const list = [...(prev.videoUrls || [])];
+          if (targetIndex >= list.length) {
+            list.push({ url: data.url, title: `วิดีโอที่ ${list.length + 1}` });
+          } else {
+            list[targetIndex] = { ...list[targetIndex], url: data.url };
+          }
+          return {
+            ...prev,
+            videoUrls: list,
+            videoUrl: list[0]?.url || data.url
+          };
+        });
         alert('อัปโหลดวิดีโอตัวอย่างสินค้าสำเร็จ!');
       }
     } catch (err) {
       alert('เกิดข้อผิดพลาดในการอัปโหลดวิดีโอ');
     } finally {
-      setUploadingVideo(false);
+      setUploadingVideoIndex(null);
     }
   };
 
+  const handleAddVideo = () => {
+    setFormData(prev => {
+      const list = [...(prev.videoUrls || [])];
+      list.push({ url: '', title: `วิดีโอคลิปที่ ${list.length + 1}` });
+      return { ...prev, videoUrls: list };
+    });
+  };
+
+  const handleUpdateVideo = (idx, field, value) => {
+    setFormData(prev => {
+      const list = [...(prev.videoUrls || [])];
+      list[idx] = { ...list[idx], [field]: value };
+      return {
+        ...prev,
+        videoUrls: list,
+        videoUrl: list[0]?.url || ''
+      };
+    });
+  };
+
+  const handleRemoveVideo = (idx) => {
+    setFormData(prev => {
+      const list = (prev.videoUrls || []).filter((_, i) => i !== idx);
+      return {
+        ...prev,
+        videoUrls: list,
+        videoUrl: list[0]?.url || ''
+      };
+    });
+  };
 
   useEffect(() => {
     if (product) {
@@ -82,6 +123,15 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
         if (product.secondaryImage && product.secondaryImage !== product.image) {
           initialGallery.push(product.secondaryImage);
         }
+      }
+
+      let initialVideoUrls = [];
+      if (Array.isArray(product.videoUrls) && product.videoUrls.length > 0) {
+        initialVideoUrls = product.videoUrls.map((v, i) => typeof v === 'string' ? { url: v, title: `วิดีโอที่ ${i + 1}` } : v);
+      } else if (Array.isArray(product.video_urls) && product.video_urls.length > 0) {
+        initialVideoUrls = product.video_urls.map((v, i) => typeof v === 'string' ? { url: v, title: `วิดีโอที่ ${i + 1}` } : v);
+      } else if (product.videoUrl || product.video_url) {
+        initialVideoUrls = [{ url: product.videoUrl || product.video_url, title: 'วิดีโอตัวอย่างสินค้า' }];
       }
 
       setFormData({
@@ -96,6 +146,7 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
         specialOption: product.specialOption || product.special_option || '',
         orderIndex: product.orderIndex ?? product.order_index ?? 999,
         videoUrl: product.videoUrl || product.video_url || '',
+        videoUrls: initialVideoUrls,
         gifts: product.gifts || 'ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล, วิกผมเกรดพรีเมียม สัมผัสนุ่มลื่น, แป้งฝุ่นบำรุงผิว Silky Smooth Powder, เซ็ตอุปกรณ์ทำความสะอาดและดูแลรักษาครบวงจร'
       });
     }
@@ -204,12 +255,15 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
       finalCategories = finalCategories.filter(c => c !== 'ready');
     }
 
+    const cleanedVideoUrls = (formData.videoUrls || []).filter(v => v && v.url && v.url.trim() !== '');
     const finalData = {
       ...formData,
       categories: finalCategories,
       image: formData.image || formData.gallery[0] || '',
       secondaryImage: formData.gallery[1] || formData.image || '',
-      totalAngles: formData.gallery.length
+      totalAngles: formData.gallery.length,
+      videoUrls: cleanedVideoUrls,
+      videoUrl: cleanedVideoUrls[0]?.url || formData.videoUrl || ''
     };
     await onSave(finalData);
     setSaveLoading(false);
@@ -338,61 +392,113 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
             </div>
           </div>
 
-                    {/* Section: Product Video (วิดีโอคลิปตัวอย่างสินค้า) */}
-          <div className="p-4 bg-purple-50/60 border border-purple-200/70 rounded-3xl space-y-3">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          {/* Section: Product Video (จัดการวิดีโอสินค้า - รองรับมากกว่า 1 รายการ) */}
+          <div className="p-4 bg-purple-50/60 border border-purple-200/70 rounded-3xl space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-purple-200/60 pb-3">
               <div>
                 <label className="font-bold text-purple-950 text-xs sm:text-sm flex items-center gap-1.5">
-                  <span>🎬 วิดีโอตัวอย่างสินค้าจริง (Product Video Clip / YouTube)</span>
+                  <span>🎬 จัดการวิดีโอตัวอย่างสินค้าจริง ({formData.videoUrls?.length || 0} คลิป)</span>
                 </label>
                 <p className="text-[11px] text-purple-800">
-                  อัปโหลดไฟล์วิดีโอ (MP4/WebM) หรือวางลิงก์ YouTube เพื่อให้ลูกค้ากดดูวิดีโอเคลื่อนไหว 360° บนหน้าเว็บ
+                  คุณสามารถเพิ่มวิดีโอได้มากกว่า 1 รายการ (เช่น คลิปหมุน 360°, คลิปสัมผัสผิวซิลิโคน, คลิปรีวิวชุด)
                 </p>
               </div>
 
-              <label className="px-4 py-2 bg-purple-800 text-white rounded-2xl text-xs font-semibold cursor-pointer hover:bg-purple-900 transition-colors flex items-center justify-center gap-2 shadow-sm shrink-0">
-                <Upload className="w-3.5 h-3.5" />
-                <span>{uploadingVideo ? 'กำลังอัปโหลดวิดีโอ...' : '+ อัปโหลดไฟล์วิดีโอ (MP4)'}</span>
-                <input
-                  type="file"
-                  accept="video/mp4,video/webm,video/quicktime"
-                  onChange={handleVideoUpload}
-                  disabled={uploadingVideo}
-                  className="hidden"
-                />
-              </label>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleAddVideo}
+                  className="px-3.5 py-1.5 bg-purple-800 hover:bg-purple-900 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-xs"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>+ เพิ่มวิดีโออีกคลิป</span>
+                </button>
+              </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-ink-muted">หรือวางลิงก์ URL วิดีโอ (แนะนำ: ลิงก์ YouTube / TikTok / MP4):</label>
-              <input
-                type="text"
-                value={formData.videoUrl}
-                onChange={e => setFormData({ ...formData, videoUrl: e.target.value })}
-                placeholder="เช่น https://www.youtube.com/watch?v=... หรือ https://youtu.be/..."
-                className="w-full px-3.5 py-2 bg-white border border-purple-300 rounded-xl text-xs focus:outline-none focus:border-purple-600 font-mono"
-              />
+            {/* List of Videos */}
+            <div className="space-y-3">
+              {(formData.videoUrls && formData.videoUrls.length > 0) ? (
+                formData.videoUrls.map((vid, vIdx) => (
+                  <div key={vIdx} className="p-3 bg-white rounded-2xl border border-purple-200 shadow-2xs space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-bold text-purple-950 flex items-center gap-1.5">
+                        <span className="w-5 h-5 rounded-full bg-purple-100 text-purple-800 flex items-center justify-center text-[10px] font-mono">
+                          {vIdx + 1}
+                        </span>
+                        <span>คลิปวิดีโอที่ {vIdx + 1}</span>
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveVideo(vIdx)}
+                        className="text-xs text-rose-600 hover:text-rose-800 hover:bg-rose-50 px-2 py-1 rounded-lg flex items-center gap-1 transition-colors"
+                        title="ลบคลิปนี้ออก"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>ลบ</span>
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+                      <div className="sm:col-span-4 space-y-1">
+                        <label className="text-[10px] font-semibold text-ink-muted">ชื่อกำกับคลิป (จะแสดงบนปุ่มเลือกดู):</label>
+                        <input
+                          type="text"
+                          value={vid.title || ''}
+                          onChange={e => handleUpdateVideo(vIdx, 'title', e.target.value)}
+                          placeholder={`เช่น วิดีโอ 360° หรือ สัมผัสความนุ่ม`}
+                          className="w-full px-3 py-1.5 bg-sand-50 border border-sand-300 rounded-xl text-xs font-medium focus:outline-none focus:border-purple-600 focus:bg-white"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-8 space-y-1">
+                        <label className="text-[10px] font-semibold text-ink-muted">ลิงก์ URL วิดีโอ (YouTube / TikTok / MP4) หรืออัปโหลด:</label>
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="text"
+                            value={vid.url || ''}
+                            onChange={e => handleUpdateVideo(vIdx, 'url', e.target.value)}
+                            placeholder="เช่น https://www.youtube.com/watch?v=... หรือ https://youtu.be/..."
+                            className="flex-1 px-3 py-1.5 bg-sand-50 border border-sand-300 rounded-xl text-xs font-mono focus:outline-none focus:border-purple-600 focus:bg-white"
+                          />
+                          <label className="px-2.5 py-1.5 bg-purple-100 hover:bg-purple-200 text-purple-900 rounded-xl text-xs font-semibold cursor-pointer shrink-0 transition-colors flex items-center gap-1">
+                            <Upload className="w-3 h-3" />
+                            <span>{uploadingVideoIndex === vIdx ? '...' : 'อัปโหลดไฟล์'}</span>
+                            <input
+                              type="file"
+                              accept="video/mp4,video/webm,video/quicktime"
+                              onChange={e => handleVideoUpload(e.target.files?.[0], vIdx)}
+                              disabled={uploadingVideoIndex !== null}
+                              className="hidden"
+                            />
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-4 bg-white/60 rounded-2xl border border-dashed border-purple-300 space-y-2">
+                  <p className="text-xs text-purple-900">ยังไม่มีวิดีโอสำหรับสินค้านี้</p>
+                  <button
+                    type="button"
+                    onClick={handleAddVideo}
+                    className="px-4 py-2 bg-purple-800 hover:bg-purple-900 text-white rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 transition-colors shadow-xs"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>+ เพิ่มวิดีโอคลิปแรก</span>
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900 space-y-1">
               <p className="font-bold flex items-center gap-1">💡 แนะนำวิธีประหยัดพื้นที่โฮสติ้ง 100%:</p>
               <p>
-                อัปโหลดคลิปขึ้น <strong>YouTube</strong> ของคุณ โดยตั้งค่าเป็น <strong>"ไม่เป็นสาธารณะ (Unlisted)"</strong> แล้วก๊อปลิงก์มาวางในช่องนี้ จะช่วยให้วิดีโอเล่นลื่นระดับ 4K โหลดไวมาก และ <strong>ไม่กินพื้นที่โฮสต์เลยแม้แต่ 1 MB ครับ!</strong>
+                อัปโหลดคลิปขึ้น <strong>YouTube</strong> ของคุณ โดยตั้งค่าเป็น <strong>"ไม่เป็นสาธารณะ (Unlisted)"</strong> แล้วก๊อปลิงก์มาวาง จะช่วยให้วิดีโอเล่นลื่นระดับ 4K โหลดไวมาก และ <strong>ไม่กินพื้นที่โฮสต์เลยแม้แต่ 1 MB ครับ!</strong>
               </p>
             </div>
-
-            {formData.videoUrl && (
-              <div className="p-2 bg-white rounded-xl border border-purple-200 flex items-center justify-between text-xs">
-                <span className="text-purple-900 font-semibold truncate max-w-md">▶ มีวิดีโอ: {formData.videoUrl}</span>
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, videoUrl: '' })}
-                  className="text-rose-600 hover:text-rose-800 font-semibold px-2 py-0.5"
-                >
-                  ลบวิดีโอออก
-                </button>
-              </div>
-            )}
           </div>
 
           {/* Section 2: Basic Info (Code, Name, Series) */}

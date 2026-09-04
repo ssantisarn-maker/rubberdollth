@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Eye, MessageCircle, Layers, Flame, Tag } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
@@ -98,9 +98,9 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
 
         {/* Top Right: Video Badge, 18+ Mode or Height */}
         <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex items-center gap-1 pointer-events-none z-10">
-          {(product.videoUrl || product.video_url) && (
+          {((product.videoUrls && product.videoUrls.length > 0) || (product.video_urls && product.video_urls.length > 0) || product.videoUrl || product.video_url) && (
             <span className="bg-purple-700 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full shadow-2xs flex items-center gap-1 animate-pulse">
-              ▶ วิดีโอ
+              ▶ วิดีโอ {((product.videoUrls?.length || product.video_urls?.length || 0) > 1) ? `(${product.videoUrls?.length || product.video_urls?.length})` : ''}
             </span>
           )}
           {isAdultMode ? (

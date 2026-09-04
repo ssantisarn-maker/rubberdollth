@@ -678,15 +678,55 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
                     />
                   </div>
 
-                  <div className="space-y-1.5">
+                  <div className="space-y-1.5 sm:col-span-2">
                     <label className="font-semibold text-ink">คำพูดบนปุ่มสั่งซื้อใหญ่ในหน้าต่างสินค้า (Modal CTA)</label>
                     <input
                       type="text"
                       value={formData.modal_cta_btn_text || ''}
                       onChange={e => setFormData({ ...formData, modal_cta_btn_text: e.target.value })}
-                      placeholder="เช่น 💬 สั่งซื้อ / สอบถามรุ่นนี้แบบ Private LINE"
+                      placeholder="เช่น 💬 สั่งซื้อ / สอบถามข้อมูล LINE"
                       className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl font-bold text-emerald-800 focus:outline-none focus:border-bronze focus:bg-white"
                     />
+                  </div>
+
+                  {/* 3 Trust Points Under LINE CTA Button */}
+                  <div className="sm:col-span-2 pt-3 border-t border-sand-200 space-y-3">
+                    <span className="font-bold text-ink text-xs sm:text-sm block">🛡️ ปรับแต่ง 3 ข้อความรับประกันใต้ปุ่มสั่งซื้อ LINE (ตามที่แสดงในหน้าต่างสินค้า)</span>
+                    <p className="text-xs text-ink-muted">แก้ไขข้อความ 3 หัวข้อการันตีที่แสดงใต้ปุ่มสีเขียว สามารถพิมพ์ข้อความใหม่ได้ตามต้องการ</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-ink">ข้อความที่ 1 (จัดส่งลับเฉพาะ)</label>
+                        <input
+                          type="text"
+                          value={formData.modal_trust_1 || ''}
+                          onChange={e => setFormData({ ...formData, modal_trust_1: e.target.value })}
+                          placeholder="กล่องทึบ 2 ชั้น ไม่ระบุชื่อสินค้า"
+                          className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs font-medium focus:outline-none focus:border-bronze focus:bg-white"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-ink">ข้อความที่ 2 (ส่งด่วน)</label>
+                        <input
+                          type="text"
+                          value={formData.modal_trust_2 || ''}
+                          onChange={e => setFormData({ ...formData, modal_trust_2: e.target.value })}
+                          placeholder="ส่งด่วน 1-2 วันรับของทั่วประเทศ"
+                          className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs font-medium focus:outline-none focus:border-bronze focus:bg-white"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-ink">ข้อความที่ 3 (การดูแล)</label>
+                        <input
+                          type="text"
+                          value={formData.modal_trust_3 || ''}
+                          onChange={e => setFormData({ ...formData, modal_trust_3: e.target.value })}
+                          placeholder="ดูแลส่วนตัว 24 ชม."
+                          className="w-full px-3 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs font-medium focus:outline-none focus:border-bronze focus:bg-white"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

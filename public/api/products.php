@@ -1,11 +1,15 @@
-<?php
+﻿<?php
 /**
- * RUBBER DOLL THAILAND - Products API (Full Specs + Dual Persistence)
+ * RUBBER DOLL THAILAND - Products API (Full Specs + Multi-Video + Clean Update Persistence)
  */
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 
 require_once __DIR__ . '/config.php';
+
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 $method = $_SERVER['REQUEST_METHOD'];
 $pdo = getDbConnection();
@@ -15,7 +19,7 @@ function formatProductRow($r) {
     $gallery = json_decode($r['gallery_json'] ?? '[]', true) ?: [$r['image']];
     $baseDir = dirname(__DIR__); // public_html
 
-    // Filter gallery images: must exist on disk if local, or valid external URL
+    // Filter gallery images
     $validGallery = [];
     foreach ($gallery as $img) {
         if (!is_string($img) || empty($img)) continue;
@@ -23,11 +27,13 @@ function formatProductRow($r) {
             $fullPath = $baseDir . $img;
             if (file_exists($fullPath)) {
                 $validGallery[] = $img;
+            } else {
+                $validGallery[] = $img; // Preserve path even if disk check is delayed
             }
         } elseif (strpos($img, 'http://') === 0 || strpos($img, 'https://') === 0) {
-            if (strpos($img, 'https://cdn.zyrosite.com/') !== 0) {
-                $validGallery[] = $img;
-            }
+            $validGallery[] = $img;
+        } else {
+            $validGallery[] = $img;
         }
     }
 
@@ -40,16 +46,34 @@ function formatProductRow($r) {
     $r['secondary_image'] = $validGallery[1] ?? ($r['secondary_image'] ?? $r['image']);
     $r['secondaryImage'] = $r['secondary_image'];
 
-    // Check video_url: if local file, ensure it exists on disk
+    // Check primary video_url
     $videoUrl = trim($r['video_url'] ?? '');
-    if (strpos($videoUrl, '/images/videos/') === 0) {
-        $videoFullPath = $baseDir . $videoUrl;
-        if (!file_exists($videoFullPath)) {
-            $videoUrl = '';
-        }
-    }
     $r['video_url'] = $videoUrl;
     $r['videoUrl'] = $videoUrl;
+
+    // Multi-video support: parse video_urls_json
+    $videoUrls = json_decode($r['video_urls_json'] ?? '[]', true) ?: [];
+    if (empty($videoUrls) && !empty($videoUrl)) {
+        $videoUrls = [
+            ['url' => $videoUrl, 'title' => 'วิดีโอตัวอย่างสินค้า']
+        ];
+    }
+    $normalizedVideoUrls = [];
+    foreach ($videoUrls as $idx => $v) {
+        if (is_string($v)) {
+            $normalizedVideoUrls[] = [
+                'url' => trim($v),
+                'title' => 'วิดีโอที่ ' . ($idx + 1)
+            ];
+        } elseif (is_array($v) && !empty($v['url'])) {
+            $normalizedVideoUrls[] = [
+                'url' => trim($v['url']),
+                'title' => trim($v['title'] ?? ('วิดีโอที่ ' . ($idx + 1)))
+            ];
+        }
+    }
+    $r['video_urls'] = $normalizedVideoUrls;
+    $r['videoUrls'] = $normalizedVideoUrls;
 
     $r['categories'] = json_decode($r['categories_json'] ?? '[]', true) ?: ['all'];
     $r['isReadyToShip'] = (bool)($r['is_ready_to_ship'] ?? 0);
@@ -139,7 +163,36 @@ if ($method === 'POST' || $method === 'PUT') {
     $originalPrice = $data['originalPrice'] ?? ($data['original_price'] ?? '');
     $specialOption = $data['specialOption'] ?? ($data['special_option'] ?? '');
     $orderIndex = (int)($data['orderIndex'] ?? ($data['order_index'] ?? 999));
+    
+    // Multi-video handling
+    $videoUrls = is_array($data['videoUrls'] ?? ($data['video_urls'] ?? null)) ? ($data['videoUrls'] ?? $data['video_urls']) : [];
     $videoUrl = trim($data['videoUrl'] ?? ($data['video_url'] ?? ''));
+
+    // Normalize videoUrls
+    $normalizedVideoUrls = [];
+    foreach ($videoUrls as $idx => $v) {
+        if (is_string($v) && trim($v) !== '') {
+            $normalizedVideoUrls[] = [
+                'url' => trim($v),
+                'title' => 'วิดีโอที่ ' . ($idx + 1)
+            ];
+        } elseif (is_array($v) && !empty($v['url'])) {
+            $normalizedVideoUrls[] = [
+                'url' => trim($v['url']),
+                'title' => trim($v['title'] ?? ('วิดีโอที่ ' . ($idx + 1)))
+            ];
+        }
+    }
+
+    if (empty($normalizedVideoUrls) && !empty($videoUrl)) {
+        $normalizedVideoUrls[] = [
+            'url' => $videoUrl,
+            'title' => 'วิดีโอตัวอย่างสินค้า'
+        ];
+    } elseif (!empty($normalizedVideoUrls)) {
+        $videoUrl = $normalizedVideoUrls[0]['url'] ?? $videoUrl;
+    }
+
     $gifts = $data['gifts'] ?? 'ชุดแฟชั่นสั่งตัด, วิกผมพรีเมียม, แป้งฝุ่นบำรุงผิว Silky Smooth, เซ็ตอุปกรณ์ทำความสะอาด';
     $isReadyToShip = !empty($data['isReadyToShip']) ? 1 : 0;
 
@@ -161,7 +214,8 @@ if ($method === 'POST' || $method === 'PUT') {
                 "special_option VARCHAR(255) DEFAULT ''",
                 "gifts TEXT DEFAULT NULL",
                 "order_index INT DEFAULT 999",
-                "video_url VARCHAR(500) DEFAULT ''"
+                "video_url VARCHAR(500) DEFAULT ''",
+                "video_urls_json LONGTEXT DEFAULT NULL"
             ];
             foreach ($columnsToAdd as $colDef) {
                 try {
@@ -169,48 +223,16 @@ if ($method === 'POST' || $method === 'PUT') {
                 } catch (Exception $e) {}
             }
 
-            // If renaming code from an existing product
-            if (!empty($originalCode) && $originalCode !== $code) {
-                $checkStmt = $pdo->prepare("SELECT id FROM products WHERE code = :origCode OR id = :origCode LIMIT 1");
-                $checkStmt->execute(['origCode' => $originalCode]);
-                $existing = $checkStmt->fetch();
-                if ($existing) {
-                    $id = $existing['id'];
-                }
-            }
-
-            $sql = "INSERT INTO products (id, code, name, series, description, image, secondary_image, gallery_json, total_angles, category, categories_json, height, weight, bust, skin_tone, material, skeleton, price, original_price, special_option, gifts, order_index, video_url, is_ready_to_ship, is_active) 
-                    VALUES (:id, :code, :name, :series, :description, :image, :secondary_image, :gallery_json, :total_angles, :category, :categories_json, :height, :weight, :bust, :skin_tone, :material, :skeleton, :price, :original_price, :special_option, :gifts, :order_index, :video_url, :is_ready_to_ship, 1)
-                    ON DUPLICATE KEY UPDATE 
-                        code = VALUES(code),
-                        name = VALUES(name),
-                        series = VALUES(series),
-                        description = VALUES(description),
-                        image = VALUES(image),
-                        secondary_image = VALUES(secondary_image),
-                        gallery_json = VALUES(gallery_json),
-                        total_angles = VALUES(total_angles),
-                        category = VALUES(category),
-                        categories_json = VALUES(categories_json),
-                        height = VALUES(height),
-                        weight = VALUES(weight),
-                        bust = VALUES(bust),
-                        skin_tone = VALUES(skin_tone),
-                        material = VALUES(material),
-                        skeleton = VALUES(skeleton),
-                        price = VALUES(price),
-                        original_price = VALUES(original_price),
-                        special_option = VALUES(special_option),
-                        order_index = VALUES(order_index),
-                        video_url = VALUES(video_url),
-                        gifts = VALUES(gifts),
-                        is_ready_to_ship = VALUES(is_ready_to_ship),
-                        is_active = 1,
-                        updated_at = NOW()";
-            
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([
+            // Check if product exists in database
+            $checkStmt = $pdo->prepare("SELECT id, code FROM products WHERE code = :code OR id = :id OR code = :origCode OR id = :origCode LIMIT 1");
+            $checkStmt->execute([
+                'code' => $code,
                 'id' => $id,
+                'origCode' => $originalCode ?: $code
+            ]);
+            $existing = $checkStmt->fetch();
+
+            $params = [
                 'code' => $code,
                 'name' => $name,
                 'series' => $series,
@@ -232,9 +254,52 @@ if ($method === 'POST' || $method === 'PUT') {
                 'special_option' => $specialOption,
                 'order_index' => $orderIndex,
                 'video_url' => $videoUrl,
+                'video_urls_json' => json_encode($normalizedVideoUrls, JSON_UNESCAPED_UNICODE),
                 'gifts' => $gifts,
                 'is_ready_to_ship' => $isReadyToShip
-            ]);
+            ];
+
+            if ($existing) {
+                // Direct UPDATE query - rock solid and avoids key conflicts
+                $sql = "UPDATE products SET 
+                            code = :code,
+                            name = :name,
+                            series = :series,
+                            description = :description,
+                            image = :image,
+                            secondary_image = :secondary_image,
+                            gallery_json = :gallery_json,
+                            total_angles = :total_angles,
+                            category = :category,
+                            categories_json = :categories_json,
+                            height = :height,
+                            weight = :weight,
+                            bust = :bust,
+                            skin_tone = :skin_tone,
+                            material = :material,
+                            skeleton = :skeleton,
+                            price = :price,
+                            original_price = :original_price,
+                            special_option = :special_option,
+                            order_index = :order_index,
+                            video_url = :video_url,
+                            video_urls_json = :video_urls_json,
+                            gifts = :gifts,
+                            is_ready_to_ship = :is_ready_to_ship,
+                            is_active = 1,
+                            updated_at = NOW()
+                        WHERE id = :existing_id OR code = :existing_code";
+                $params['existing_id'] = $existing['id'];
+                $params['existing_code'] = $existing['code'];
+            } else {
+                // Direct INSERT query
+                $sql = "INSERT INTO products (id, code, name, series, description, image, secondary_image, gallery_json, total_angles, category, categories_json, height, weight, bust, skin_tone, material, skeleton, price, original_price, special_option, gifts, order_index, video_url, video_urls_json, is_ready_to_ship, is_active) 
+                        VALUES (:id, :code, :name, :series, :description, :image, :secondary_image, :gallery_json, :total_angles, :category, :categories_json, :height, :weight, :bust, :skin_tone, :material, :skeleton, :price, :original_price, :special_option, :gifts, :order_index, :video_url, :video_urls_json, :is_ready_to_ship, 1)";
+                $params['id'] = $id;
+            }
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
 
             syncCacheFromDb($pdo, $jsonCacheFile);
 

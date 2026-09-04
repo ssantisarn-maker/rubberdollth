@@ -217,6 +217,7 @@ export default function ProductManager({ products, categories, onUpdateProducts 
     }
 
     onUpdateProducts(products.map(p => p.code === prod.code ? updated : p));
+    window.dispatchEvent(new CustomEvent('rbd_products_updated'));
     setToggleLoading(null);
   };
 
@@ -236,6 +237,7 @@ export default function ProductManager({ products, categories, onUpdateProducts 
     }
 
     onUpdateProducts(products.filter(p => p.code !== prod.code && p.id !== (prod.id || prod.code)));
+    window.dispatchEvent(new CustomEvent('rbd_products_updated'));
   };
 
   // Save Product (Create or Edit)
@@ -272,6 +274,7 @@ export default function ProductManager({ products, categories, onUpdateProducts 
       onUpdateProducts([{ ...formData, id: formData.code }, ...products]);
     }
 
+    window.dispatchEvent(new CustomEvent('rbd_products_updated'));
     setEditingProduct(null);
     setIsAddingNew(false);
   };

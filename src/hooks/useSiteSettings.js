@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const defaultSettings = {
   site_title: 'RUBBER DOLL THAILAND - ซิลิโคนแท้ระดับ Hi-End อันดับ 1 ในไทย',
@@ -77,11 +77,10 @@ const defaultSettings = {
   modal_specs_title: '📐 ข้อมูลสเปกความพรีเมียม (SPECIFICATIONS)',
   modal_gifts_title: '🎁 THE LUXURY COLLECTOR BOX (เซ็ตของขวัญระดับพรีเมียม)',
   modal_gifts_default: 'ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล, วิกผมเกรดพรีเมียม สัมผัสนุ่มลื่น, แป้งฝุ่นบำรุงผิว Silky Smooth Powder, เซ็ตอุปกรณ์ทำความสะอาดและดูแลรักษาครบวงจร',
-  modal_delivery_title: '🔒 มาตรฐานการจัดส่งลับเฉพาะ 100% (100% Confidential Delivery)',
-  modal_cta_btn_text: '💬 สั่งซื้อ / สอบถามรุ่นนี้แบบ Private LINE',
-  modal_trust_1: '🔒 กล่องทึบ 2 ชั้น ไม่ระบุชื่อสินค้า',
-  modal_trust_2: '🚚 ส่งด่วน 1-2 วันรับของทั่วประเทศ',
-  modal_trust_3: '🤝 ดูแลส่วนตัว 24 ชม.',
+  modal_cta_btn_text: '💬 สั่งซื้อ / สอบถามข้อมูล LINE',
+  modal_trust_1: 'กล่องทึบ 2 ชั้น ไม่ระบุชื่อสินค้า',
+  modal_trust_2: 'ส่งด่วน 1-2 วันรับของทั่วประเทศ',
+  modal_trust_3: 'ดูแลส่วนตัว 24 ชม.',
 
   // Navbar & Menu Navigation Links
   nav_search_placeholder: 'ค้นหารหัสโมเดล เช่น HALF-01, SLC-108...',
