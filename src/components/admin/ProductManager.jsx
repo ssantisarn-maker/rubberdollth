@@ -203,22 +203,23 @@ export default function ProductManager({ products, categories, onUpdateProducts 
 
     try {
       const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
-      const res = await fetch('/api/products.php', {
-        method: 'PUT',
+      const res = await fetch('/api/products.php?action=save', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(updated)
       });
       const data = await res.json();
-      if (data.success) {
-        showToast(`✓ บันทึกสำเร็จ: ${prod.code} ปรับสถานะเป็น "${newStatus ? 'พร้อมส่งในไทย' : 'สั่งผลิต'}" เรียบร้อยแล้ว`);
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Failed to update status');
       }
+      showToast(`✓ บันทึกสำเร็จ: ${prod.code} ปรับสถานะเป็น "${newStatus ? 'พร้อมส่งในไทย' : 'สั่งผลิต'}" เรียบร้อยแล้ว`);
+      onUpdateProducts(products.map(p => p.code === prod.code ? updated : p));
+      window.dispatchEvent(new CustomEvent('rbd_products_updated'));
     } catch (e) {
-      showToast(`✓ อัปเดต ${prod.code} เรียบร้อยแล้ว`);
+      alert(`⚠️ ปรับสถานะสินค้าไม่สำเร็จ: ${e.message}`);
+    } finally {
+      setToggleLoading(null);
     }
-
-    onUpdateProducts(products.map(p => p.code === prod.code ? updated : p));
-    window.dispatchEvent(new CustomEvent('rbd_products_updated'));
-    setToggleLoading(null);
   };
 
   // Delete Product
@@ -227,17 +228,20 @@ export default function ProductManager({ products, categories, onUpdateProducts 
 
     try {
       const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
-      await fetch(`/api/products.php?code=${encodeURIComponent(prod.code)}&id=${encodeURIComponent(prod.id || prod.code)}`, {
-        method: 'DELETE',
+      const res = await fetch(`/api/products.php?action=delete&code=${encodeURIComponent(prod.code)}&id=${encodeURIComponent(prod.id || prod.code)}`, {
+        method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Failed to delete');
+      }
       showToast(`✓ ลบสินค้า ${prod.code} เรียบร้อยแล้ว`);
+      onUpdateProducts(products.filter(p => p.code !== prod.code && p.id !== (prod.id || prod.code)));
+      window.dispatchEvent(new CustomEvent('rbd_products_updated'));
     } catch (e) {
-      showToast(`✓ ลบสินค้า ${prod.code} เรียบร้อยแล้ว`);
+      alert(`⚠️ ลบสินค้าไม่สำเร็จ: ${e.message}`);
     }
-
-    onUpdateProducts(products.filter(p => p.code !== prod.code && p.id !== (prod.id || prod.code)));
-    window.dispatchEvent(new CustomEvent('rbd_products_updated'));
   };
 
   // Save Product (Create or Edit)
@@ -254,29 +258,30 @@ export default function ProductManager({ products, categories, onUpdateProducts 
 
     try {
       const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
-      const method = isEdit ? 'PUT' : 'POST';
-      const res = await fetch('/api/products.php', {
-        method,
+      const res = await fetch('/api/products.php?action=save', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(payload)
       });
       const data = await res.json();
-      if (data.success) {
-        showToast(`✓ บันทึกข้อมูลสินค้า ${formData.code} สำเร็จ!`);
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Failed to save product');
       }
+      showToast(`✓ บันทึกข้อมูลสินค้า ${formData.code} สำเร็จ!`);
+
+      if (isEdit) {
+        onUpdateProducts(products.map(p => (p.code === originalCode || p.code === formData.code || p.id === originalId) ? { ...formData, id: originalId } : p));
+      } else {
+        onUpdateProducts([{ ...formData, id: formData.code }, ...products]);
+      }
+
+      window.dispatchEvent(new CustomEvent('rbd_products_updated'));
+      setEditingProduct(null);
+      setIsAddingNew(false);
     } catch (e) {
-      showToast(`✓ บันทึกข้อมูลสินค้า ${formData.code} เรียบร้อยแล้ว!`);
+      console.error('Error saving product:', e);
+      alert(`⚠️ บันทึกข้อมูลสินค้าไม่สำเร็จ: ${e.message}\nโปรดลองใหม่อีกครั้ง`);
     }
-
-    if (isEdit) {
-      onUpdateProducts(products.map(p => (p.code === originalCode || p.code === formData.code || p.id === originalId) ? { ...formData, id: originalId } : p));
-    } else {
-      onUpdateProducts([{ ...formData, id: formData.code }, ...products]);
-    }
-
-    window.dispatchEvent(new CustomEvent('rbd_products_updated'));
-    setEditingProduct(null);
-    setIsAddingNew(false);
   };
 
   return (
