@@ -3,13 +3,14 @@ import { Search, Plus, Edit, Trash2, CheckCircle2, XCircle, PackageCheck, Image 
 import ProductModalForm from './ProductModalForm';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 
-export default function ProductManager({ products, categories, onUpdateProducts }) {
+export default function ProductManager({ products, categories, onUpdateProducts, onBackToShop }) {
   const [search, setSearch] = useState('');
   const [selectedCat, setSelectedCat] = useState('all');
   const [editingProduct, setEditingProduct] = useState(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [toggleLoading, setToggleLoading] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
+  const [savedToast, setSavedToast] = useState(null);
   
   const { settings, setSettings } = useSiteSettings();
   const sortMode = settings.product_sort_mode || 'ready_first';
@@ -245,7 +246,7 @@ export default function ProductManager({ products, categories, onUpdateProducts 
   };
 
   // Save Product (Create or Edit)
-  const handleSaveProduct = async (formData) => {
+  const handleSaveProduct = async (formData, shouldRedirect = false) => {
     const isEdit = !!editingProduct;
     const originalCode = editingProduct?.code;
     const originalId = editingProduct?.id || originalCode;
@@ -267,17 +268,32 @@ export default function ProductManager({ products, categories, onUpdateProducts 
       if (!res.ok || !data.success) {
         throw new Error(data.error || 'Failed to save product');
       }
-      showToast(`✓ บันทึกข้อมูลสินค้า ${formData.code} สำเร็จ!`);
 
+      const updatedProduct = { ...formData, id: originalId || formData.code };
       if (isEdit) {
-        onUpdateProducts(products.map(p => (p.code === originalCode || p.code === formData.code || p.id === originalId) ? { ...formData, id: originalId } : p));
+        onUpdateProducts(products.map(p => (p.code === originalCode || p.code === formData.code || p.id === originalId) ? updatedProduct : p));
       } else {
-        onUpdateProducts([{ ...formData, id: formData.code }, ...products]);
+        onUpdateProducts([updatedProduct, ...products]);
       }
 
       window.dispatchEvent(new CustomEvent('rbd_products_updated'));
       setEditingProduct(null);
       setIsAddingNew(false);
+
+      if (shouldRedirect) {
+        // Jump directly to front shop website!
+        if (onBackToShop) {
+          onBackToShop();
+        } else {
+          window.location.href = '/';
+        }
+      } else {
+        // Show interactive notification with button to jump to website
+        setSavedToast({
+          code: formData.code,
+          name: formData.name
+        });
+      }
     } catch (e) {
       console.error('Error saving product:', e);
       alert(`⚠️ บันทึกข้อมูลสินค้าไม่สำเร็จ: ${e.message}\nโปรดลองใหม่อีกครั้ง`);
@@ -287,6 +303,39 @@ export default function ProductManager({ products, categories, onUpdateProducts 
   return (
     <div className="space-y-6">
       
+      {/* Interactive Success Toast with Jump to Website Button */}
+      {savedToast && (
+        <div className="fixed top-20 right-6 z-50 bg-emerald-800 text-white p-4 sm:p-5 rounded-3xl shadow-2xl border border-emerald-400/40 flex flex-col sm:flex-row items-start sm:items-center gap-3.5 animate-in slide-in-from-top-4 fade-in duration-300 max-w-md">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold text-base shrink-0">✓</div>
+            <div>
+              <p className="text-xs sm:text-sm font-bold text-white leading-tight">บันทึกข้อมูลสินค้า {savedToast.code} สำเร็จ!</p>
+              <p className="text-[11px] text-emerald-100 mt-0.5">ข้อมูลอัปเดตลงระบบและหน้าเว็บหลักเรียบร้อยแล้ว</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 pt-2 sm:pt-0 self-end sm:self-auto shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                if (onBackToShop) onBackToShop();
+                else window.location.href = '/';
+              }}
+              className="px-3.5 py-2 bg-amber-400 hover:bg-amber-300 text-neutral-950 rounded-xl text-xs font-bold shadow-md transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+            >
+              <span>🚀 เด้งไปดูหน้าเว็บทันที ↗</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setSavedToast(null)}
+              className="p-1.5 text-emerald-200 hover:text-white rounded-lg transition-colors cursor-pointer text-xs"
+              title="ปิด"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-20 right-6 z-50 bg-emerald-600 text-white px-5 py-3.5 rounded-2xl shadow-xl border border-emerald-400/30 flex items-center gap-3 animate-in slide-in-from-top-4 fade-in duration-300">

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   Package, Tag, MessageSquareQuote, Sliders, Bell, Phone, 
   Sparkles, HelpCircle, Layers, Globe, Lock, Droplets, 
@@ -15,7 +15,7 @@ import { useSiteSettings } from '../../hooks/useSiteSettings';
 import { useSiteFaqs } from '../../hooks/useSiteFaqs';
 import { useLiveCategories } from '../../hooks/useLiveCategories';
 
-export default function AdminDashboard({ onLogout }) {
+export default function AdminDashboard({ onLogout, onBackToShop }) {
   const [activeTab, setActiveTab] = useState('products');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -79,15 +79,17 @@ export default function AdminDashboard({ onLogout }) {
           </div>
         </div>
 
-        <a
-          href="/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-xl font-medium flex items-center gap-1.5"
+        <button
+          type="button"
+          onClick={() => {
+            if (onBackToShop) onBackToShop();
+            else window.location.href = '/';
+          }}
+          className="text-xs bg-amber-500 hover:bg-amber-600 text-neutral-950 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
         >
           <ExternalLink className="w-3.5 h-3.5" />
-          <span>ดูหน้าเว็บ</span>
-        </a>
+          <span>ดูหน้าเว็บหลัก</span>
+        </button>
       </header>
 
       {/* LEFT SIDEBAR NAVIGATION (Original Dark Luxury Styling) */}
@@ -175,15 +177,17 @@ export default function AdminDashboard({ onLogout }) {
         {/* Sidebar Bottom: Status & Actions */}
         <div className="p-4 border-t border-white/10 space-y-2 bg-black/40">
           <div className="flex items-center gap-2">
-            <a
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 py-2 px-3 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+            <button
+              type="button"
+              onClick={() => {
+                if (onBackToShop) onBackToShop();
+                else window.location.href = '/';
+              }}
+              className="flex-1 py-2 px-3 bg-amber-500 hover:bg-amber-600 text-neutral-950 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm"
             >
               <ExternalLink className="w-3.5 h-3.5" />
-              <span>เปิดหน้าเว็บจริง</span>
-            </a>
+              <span>เปิดดูหน้าเว็บหลัก</span>
+            </button>
 
             <button
               onClick={handleRefreshAll}
@@ -249,6 +253,17 @@ export default function AdminDashboard({ onLogout }) {
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                if (onBackToShop) onBackToShop();
+                else window.location.href = '/';
+              }}
+              className="text-xs bg-amber-500 hover:bg-amber-600 text-neutral-950 font-bold px-3.5 py-1.5 rounded-full flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>ดูหน้าเว็บหลัก</span>
+            </button>
             <span className="text-xs text-emerald-800 bg-emerald-50 border border-emerald-300 font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>เชื่อมต่อฐานข้อมูล MySQL สด</span>
@@ -262,6 +277,7 @@ export default function AdminDashboard({ onLogout }) {
             products={products}
             categories={categories}
             onUpdateProducts={setProducts}
+            onBackToShop={onBackToShop}
           />
         )}
 

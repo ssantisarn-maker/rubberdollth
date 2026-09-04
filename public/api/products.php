@@ -323,35 +323,35 @@ if ($method === 'POST' || $method === 'PUT') {
             $checkStmt->execute([$searchCode1, $searchCode2, $searchId1, $searchId2]);
             $existing = $checkStmt->fetch();
 
-            $params = [
-                ':code' => $code,
-                ':name' => $name,
-                ':series' => $series,
-                ':description' => $description,
-                ':image' => $image,
-                ':secondary_image' => $secondaryImage,
-                ':gallery_json' => json_encode($gallery, JSON_UNESCAPED_UNICODE),
-                ':total_angles' => count($gallery),
-                ':category' => $category,
-                ':categories_json' => json_encode($categories, JSON_UNESCAPED_UNICODE),
-                ':height' => $height,
-                ':weight' => $weight,
-                ':bust' => $bust,
-                ':skin_tone' => $skinTone,
-                ':material' => $material,
-                ':skeleton' => $skeleton,
-                ':price' => $price,
-                ':original_price' => $originalPrice,
-                ':special_option' => $specialOption,
-                ':order_index' => $orderIndex,
-                ':video_url' => $videoUrl,
-                ':video_urls_json' => json_encode($normalizedVideoUrls, JSON_UNESCAPED_UNICODE),
-                ':gifts' => $gifts,
-                ':is_ready_to_ship' => $isReadyToShip
+            $baseParams = [
+                'code' => $code,
+                'name' => $name,
+                'series' => $series,
+                'description' => $description,
+                'image' => $image,
+                'secondary_image' => $secondaryImage,
+                'gallery_json' => json_encode($gallery, JSON_UNESCAPED_UNICODE),
+                'total_angles' => count($gallery),
+                'category' => $category,
+                'categories_json' => json_encode($categories, JSON_UNESCAPED_UNICODE),
+                'height' => $height,
+                'weight' => $weight,
+                'bust' => $bust,
+                'skin_tone' => $skinTone,
+                'material' => $material,
+                'skeleton' => $skeleton,
+                'price' => $price,
+                'original_price' => $originalPrice,
+                'special_option' => $specialOption,
+                'order_index' => $orderIndex,
+                'video_url' => $videoUrl,
+                'video_urls_json' => json_encode($normalizedVideoUrls, JSON_UNESCAPED_UNICODE),
+                'gifts' => $gifts,
+                'is_ready_to_ship' => $isReadyToShip
             ];
 
             if ($existing) {
-                // Direct UPDATE query - rock solid and avoids key conflicts
+                // Direct UPDATE query by primary key ID
                 $sql = "UPDATE products SET 
                             code = :code,
                             name = :name,
@@ -379,25 +379,29 @@ if ($method === 'POST' || $method === 'PUT') {
                             is_ready_to_ship = :is_ready_to_ship,
                             is_active = 1,
                             updated_at = NOW()
-                        WHERE id = :existing_id OR code = :existing_code";
-                $params[':existing_id'] = $existing['id'];
-                $params[':existing_code'] = $existing['code'];
+                        WHERE id = :existing_id";
+                $updateParams = array_merge($baseParams, [
+                    'existing_id' => $existing['id']
+                ]);
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute($updateParams);
             } else {
                 // Direct INSERT query
                 $sql = "INSERT INTO products (id, code, name, series, description, image, secondary_image, gallery_json, total_angles, category, categories_json, height, weight, bust, skin_tone, material, skeleton, price, original_price, special_option, gifts, order_index, video_url, video_urls_json, is_ready_to_ship, is_active) 
                         VALUES (:id, :code, :name, :series, :description, :image, :secondary_image, :gallery_json, :total_angles, :category, :categories_json, :height, :weight, :bust, :skin_tone, :material, :skeleton, :price, :original_price, :special_option, :gifts, :order_index, :video_url, :video_urls_json, :is_ready_to_ship, 1)";
-                $params[':id'] = $id;
+                $insertParams = array_merge($baseParams, [
+                    'id' => $id
+                ]);
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute($insertParams);
             }
-
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute($params);
 
             syncCacheFromDb($pdo, $jsonCacheFile);
 
             sendResponse(['success' => true, 'message' => 'บันทึกข้อมูลสินค้าสำเร็จ', 'code' => $code]);
         } catch (PDOException $e) {
-            // Even if DB error occurred, JSON cache was successfully written
-            sendResponse(['success' => true, 'message' => 'บันทึกข้อมูลสินค้าสำเร็จ (อัปเดตไฟล์แคช)', 'code' => $code, 'db_notice' => $e->getMessage()]);
+            error_log('Database error in products.php: ' . $e->getMessage());
+            sendError('เกิดข้อผิดพลาดในการบันทึกฐานข้อมูล: ' . $e->getMessage(), 500);
         }
     } else {
         sendResponse(['success' => true, 'message' => 'บันทึกข้อมูลสินค้าสำเร็จ (อัปเดตไฟล์แคช)', 'code' => $code]);

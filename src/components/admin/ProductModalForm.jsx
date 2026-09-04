@@ -240,8 +240,8 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e, shouldRedirect = false) => {
+    if (e && e.preventDefault) e.preventDefault();
     if (!formData.code || !formData.name) {
       alert('กรุณากรอกรหัสและชื่อสินค้า');
       return;
@@ -265,7 +265,7 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
       videoUrls: cleanedVideoUrls,
       videoUrl: cleanedVideoUrls[0]?.url || formData.videoUrl || ''
     };
-    await onSave(finalData);
+    await onSave(finalData, shouldRedirect);
     setSaveLoading(false);
   };
 
@@ -734,21 +734,34 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
           </div>
 
           {/* Sticky Bottom Actions */}
-          <div className="pt-3 border-t border-sand-200 flex items-center justify-end gap-3 sticky bottom-0 bg-white/95 backdrop-blur-sm py-2">
+          <div className="pt-3 border-t border-sand-200 flex flex-wrap items-center justify-between gap-2.5 sticky bottom-0 bg-white/95 backdrop-blur-sm py-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-2xl bg-sand-100 hover:bg-sand-200 text-ink font-semibold text-xs sm:text-sm transition-colors border border-sand-300"
+              className="px-4 py-2.5 rounded-2xl bg-sand-100 hover:bg-sand-200 text-ink font-semibold text-xs sm:text-sm transition-colors border border-sand-300 cursor-pointer"
             >
               ยกเลิก
             </button>
-            <button
-              type="submit"
-              disabled={saveLoading}
-              className="px-6 py-2.5 rounded-2xl bg-ink hover:bg-ink-soft text-white font-semibold text-xs sm:text-sm transition-all shadow-md active:scale-98 flex items-center gap-2"
-            >
-              <span>{saveLoading ? 'กำลังบันทึก...' : '💾 บันทึกข้อมูลและรูปภาพสินค้า'}</span>
-            </button>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={(e) => handleSubmit(e, false)}
+                disabled={saveLoading}
+                className="px-4 py-2.5 rounded-2xl bg-sand-200 hover:bg-sand-300 text-ink font-bold text-xs sm:text-sm transition-all cursor-pointer disabled:opacity-50"
+              >
+                {saveLoading ? 'กำลังบันทึก...' : '💾 บันทึกและแก้ไขต่อ'}
+              </button>
+              
+              <button
+                type="button"
+                onClick={(e) => handleSubmit(e, true)}
+                disabled={saveLoading}
+                className="px-5 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-neutral-950 font-bold text-xs sm:text-sm transition-all shadow-md active:scale-98 flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                <span>{saveLoading ? 'กำลังบันทึก...' : '🚀 บันทึกแล้วเด้งไปดูหน้าเว็บ ↗'}</span>
+              </button>
+            </div>
           </div>
 
         </form>
