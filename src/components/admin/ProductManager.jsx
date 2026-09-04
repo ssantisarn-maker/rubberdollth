@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Edit, Trash2, CheckCircle2, XCircle, PackageCheck, Image as ImageIcon, Sparkles, Check, ArrowUpDown, SlidersHorizontal, ArrowDownAZ, Calendar, Zap, ListOrdered, Filter } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, CheckCircle2, XCircle, PackageCheck, Image as ImageIcon, Sparkles, Check, ArrowUpDown, SlidersHorizontal, ArrowDownAZ, Calendar, Zap, ListOrdered, Filter, Share2 } from 'lucide-react';
 import ProductModalForm from './ProductModalForm';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 
@@ -19,6 +19,23 @@ export default function ProductManager({ products, categories, onUpdateProducts,
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  const handleCopyShareLink = async (p) => {
+    const code = p.code || '';
+    const shareUrl = `${window.location.origin}/?p=${encodeURIComponent(code)}`;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      showToast(`✓ คัดลอกลิงก์สินค้า [${code}] แล้ว! นำไปส่งในแชท LINE ให้ลูกค้าได้ทันที`);
+    } catch (e) {
+      const input = document.createElement('input');
+      input.value = shareUrl;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      showToast(`✓ คัดลอกลิงก์สินค้า [${code}] แล้ว! นำไปส่งในแชท LINE ให้ลูกค้าได้ทันที`);
+    }
   };
 
   // Change sort mode and immediately sync to settings & localStorage
@@ -547,6 +564,14 @@ export default function ProductManager({ products, categories, onUpdateProducts,
                   {/* Actions */}
                   <td className="py-3 px-4 text-right">
                     <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => handleCopyShareLink(p)}
+                        className="px-2.5 py-1.5 rounded-xl bg-sand-100 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 text-ink text-xs font-semibold flex items-center gap-1 transition-colors border border-sand-300"
+                        title="คัดลอกลิงก์เพื่อส่งให้ลูกค้าทาง LINE / แชท"
+                      >
+                        <Share2 className="w-3.5 h-3.5 text-emerald-600" />
+                        <span className="hidden sm:inline">แชร์ลิงก์</span>
+                      </button>
                       <button
                         onClick={() => setEditingProduct(p)}
                         className="px-3 py-1.5 rounded-xl bg-sand-100 hover:bg-sand-200 text-ink text-xs font-semibold flex items-center gap-1 transition-colors border border-sand-300"

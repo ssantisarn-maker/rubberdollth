@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, MessageCircle, Layers, Flame, Tag } from 'lucide-react';
+import { Eye, MessageCircle, Layers, Flame, Tag, Share2, Check } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
@@ -7,8 +7,40 @@ import { useSiteSettings } from '../../hooks/useSiteSettings';
 export default function ProductCard({ product, onQuickView, isAdultMode, lang = 'th', priority = false }) {
   const [primaryLoaded, setPrimaryLoaded] = useState(false);
   const [hoverLoaded, setHoverLoaded] = useState(false);
+  const [copied, setCopied] = useState(false);
   const { settings } = useSiteSettings();
   const t = translations[lang] || translations.th;
+
+  const handleQuickShare = async (e) => {
+    e.stopPropagation();
+    const shareUrl = `${window.location.origin}/?p=${encodeURIComponent(product.code || '')}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `ตุ๊กตายาง รุ่น ${product.code} - ${product.name}`,
+          text: `ตุ๊กตายางเกรดพรีเมียม รุ่น ${product.code} - ${product.name}`,
+          url: shareUrl
+        });
+        return;
+      } catch (err) {
+        // Fallback to clipboard if share was cancelled or failed
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch (err) {
+      const input = document.createElement('input');
+      input.value = shareUrl;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
+  };
 
   // Gallery determination
   const gallery = product.gallery && product.gallery.length > 0 ? product.gallery : [product.image];
@@ -154,11 +186,11 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
           </div>
         </div>
 
-        {/* Action Buttons: Specs & Order */}
+        {/* Action Buttons: Specs, Order & Share */}
         <div className="pt-2 border-t border-sand-100 flex items-center gap-1.5 sm:gap-2">
           <button
             onClick={() => onQuickView(product)}
-            className="flex-1 py-2 sm:py-2.5 px-3 bg-sand-100 hover:bg-sand-200 text-ink rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-1 sm:gap-1.5 transition-colors active:scale-98 cursor-pointer"
+            className="flex-1 py-2 sm:py-2.5 px-2.5 sm:px-3 bg-sand-100 hover:bg-sand-200 text-ink rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-1 sm:gap-1.5 transition-colors active:scale-98 cursor-pointer"
           >
             <Eye className="w-3.5 h-3.5 text-ink-muted" />
             <span>{settings.card_specs_btn_text || t.catalog.card.specsBtn}</span>
@@ -168,11 +200,28 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
             href={lineProductUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="py-2 sm:py-2.5 px-3.5 sm:px-4 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-1 sm:gap-1.5 transition-colors shadow-2xs active:scale-98 cursor-pointer"
+            className="py-2 sm:py-2.5 px-3 sm:px-4 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-1 sm:gap-1.5 transition-colors shadow-2xs active:scale-98 cursor-pointer"
           >
             <MessageCircle className="w-3.5 h-3.5" />
             <span>{settings.card_order_btn_text || t.catalog.card.orderBtn}</span>
           </a>
+
+          <button
+            type="button"
+            onClick={handleQuickShare}
+            className={`p-2 sm:p-2.5 rounded-xl sm:rounded-2xl border transition-all cursor-pointer flex items-center justify-center ${
+              copied
+                ? 'bg-emerald-50 border-emerald-300 text-emerald-700'
+                : 'bg-sand-100 hover:bg-sand-200 border-transparent text-ink-muted hover:text-ink'
+            }`}
+            title="แชร์ลิงก์สินค้ารุ่นนี้"
+          >
+            {copied ? (
+              <Check className="w-3.5 h-3.5 text-emerald-600" />
+            ) : (
+              <Share2 className="w-3.5 h-3.5" />
+            )}
+          </button>
         </div>
 
       </div>

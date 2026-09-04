@@ -109,6 +109,9 @@ FileETag None
     RewriteEngine On
     RewriteBase /
 
+    # Product direct share route (/p/CODE or /p/CODE/) for LINE / Social Media previews
+    RewriteRule ^p/([^/]+)/?$ /share.php?p=$1 [L,QSA]
+
     # Don't rewrite requests for real files or directories
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d

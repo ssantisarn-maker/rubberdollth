@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { X, MessageCircle, ShieldCheck, Sparkles, Box, Check, Star, Lock, HeartHandshake, ChevronLeft, ChevronRight, Flame, Layers, DollarSign, Gift, CheckCircle2, FileText, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
+import { X, MessageCircle, ShieldCheck, Sparkles, Box, Check, Star, Lock, HeartHandshake, ChevronLeft, ChevronRight, Flame, Layers, DollarSign, Gift, CheckCircle2, FileText, ZoomIn, ZoomOut, Maximize2, Share2, Copy } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
@@ -55,8 +55,30 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
   const [videoError, setVideoError] = useState(false);
   const [isZoomOpen, setIsZoomOpen] = useState(false);
   const [zoomScale, setZoomScale] = useState(1);
+  const [copied, setCopied] = useState(false);
   const { settings } = useSiteSettings();
   const t = translations[lang] || translations.th;
+
+  const shareUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/?p=${encodeURIComponent(product?.code || '')}`
+    : `https://rubberdollth.com/?p=${encodeURIComponent(product?.code || '')}`;
+
+  const handleCopyShareLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch (e) {
+      const input = document.createElement('input');
+      input.value = shareUrl;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    }
+  };
 
   // Extract list of all videos
   const videoList = useMemo(() => {
@@ -496,6 +518,43 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 <MessageCircle className="w-4 h-4 fill-white" />
                 <span>{settings.modal_cta_btn_text || 'สั่งซื้อ / สอบถามรุ่นนี้แบบ Private LINE'}</span>
               </a>
+
+              {/* Share & Copy Link for direct customer consultation */}
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={handleCopyShareLink}
+                  className={`flex-1 py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                    copied
+                      ? 'bg-emerald-50 border-emerald-300 text-emerald-700 font-bold'
+                      : 'bg-white hover:bg-sand-50 border-sand-300 text-ink shadow-sm'
+                  }`}
+                  title="คัดลอกลิงก์เพื่อส่งให้ลูกค้า"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>✓ คัดลอกลิงก์แล้ว!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5 text-bronze" />
+                      <span>คัดลอกลิงก์ส่งลูกค้า</span>
+                    </>
+                  )}
+                </button>
+
+                <a
+                  href={`https://line.me/R/share?text=${encodeURIComponent(`ตุ๊กตายางเกรดพรีเมียม รุ่น ${product.code} - ${product.name}\nดูรายละเอียดและรูปเพิ่มเติมได้ที่:\n${shareUrl}`)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="py-2 px-3.5 rounded-xl border border-sand-300 bg-white hover:bg-emerald-50 hover:border-emerald-300 text-ink hover:text-emerald-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                  title="แชร์ไปยัง LINE โดยตรง"
+                >
+                  <Share2 className="w-3.5 h-3.5 text-[#06C755]" />
+                  <span>แชร์ไป LINE</span>
+                </a>
+              </div>
 
               <div className="flex items-center justify-center gap-3 sm:gap-4 text-[11px] text-ink-muted flex-wrap pt-1">
                 <span className="flex items-center gap-1.5">

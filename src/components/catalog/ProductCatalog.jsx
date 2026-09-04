@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import ProductCard from './ProductCard';
 import ProductFilter from './ProductFilter';
 import ProductModal from './ProductModal';
@@ -18,6 +18,73 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
   const [visibleCount, setVisibleCount] = useState(12);
   const productsGridRef = useRef(null);
   const t = translations[lang] || translations.th;
+
+  // Auto-detect product deep link (?p=..., ?code=..., #product-..., or /p/...)
+  useEffect(() => {
+    if (!products || products.length === 0) return;
+
+    const params = new URLSearchParams(window.location.search);
+    let targetCode = params.get('p') || params.get('code') || params.get('product');
+
+    if (!targetCode) {
+      const hash = window.location.hash.replace(/^#/, '').trim();
+      if (hash.startsWith('product-')) {
+        targetCode = hash.replace('product-', '');
+      } else if (hash.startsWith('p=')) {
+        targetCode = hash.replace('p=', '');
+      } else if (hash && !['admin', 'catalog', 'reviews', 'faq', 'contact', 'care', 'spotlight'].includes(hash.toLowerCase())) {
+        targetCode = hash;
+      }
+    }
+
+    if (!targetCode) {
+      const matchPath = window.location.pathname.match(/^\/p\/([^/?#]+)/i);
+      if (matchPath) {
+        targetCode = matchPath[1];
+      }
+    }
+
+    if (targetCode) {
+      const cleanTarget = decodeURIComponent(targetCode).trim().toLowerCase().replace(/\s+/g, '');
+      const matched = products.find(p => {
+        const pCode = (p.code || '').toLowerCase().replace(/\s+/g, '');
+        const pId = (p.id || '').toLowerCase().replace(/\s+/g, '');
+        return pCode === cleanTarget || pId === cleanTarget;
+      });
+
+      if (matched) {
+        setSelectedProduct(matched);
+        setTimeout(() => {
+          const el = document.getElementById('catalog');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 200);
+      }
+    }
+  }, [products]);
+
+  const handleOpenProduct = (prod) => {
+    setSelectedProduct(prod);
+    if (prod?.code) {
+      const params = new URLSearchParams(window.location.search);
+      params.set('p', prod.code);
+      window.history.replaceState({}, '', `?${params.toString()}${window.location.hash}`);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setSelectedProduct(null);
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('p') || params.has('code') || params.has('product')) {
+      params.delete('p');
+      params.delete('code');
+      params.delete('product');
+      const newSearch = params.toString() ? `?${params.toString()}` : '';
+      const newPath = window.location.pathname.startsWith('/p/') ? '/' : window.location.pathname;
+      window.history.replaceState({}, '', `${newPath}${newSearch}${window.location.hash}`);
+    } else if (window.location.hash.startsWith('#product-')) {
+      window.history.replaceState({}, '', window.location.pathname + window.location.search);
+    }
+  };
 
   // Bilingual Categories from Live MySQL / Cache + Dynamic Product Counts
   const categories = useMemo(() => {
@@ -365,7 +432,7 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
               <ProductCard
                 key={p.id}
                 product={p}
-                onQuickView={(prod) => setSelectedProduct(prod)}
+                onQuickView={(prod) => handleOpenProduct(prod)}
                 isAdultMode={isAdultMode}
                 lang={lang}
                 priority={idx < 4}
@@ -442,7 +509,7 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
       {selectedProduct && (
         <ProductModal
           product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
+          onClose={handleCloseModal}
           isAdultMode={isAdultMode}
           lang={lang}
         />
