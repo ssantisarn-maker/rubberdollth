@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Eye, MessageCircle, Layers, Flame, Tag, Share2, Check } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
@@ -11,9 +11,12 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
   const { settings } = useSiteSettings();
   const t = translations[lang] || translations.th;
 
+  const shareUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/?p=${encodeURIComponent(product?.code || '')}`
+    : `https://rubberdollth.com/?p=${encodeURIComponent(product?.code || '')}`;
+
   const handleQuickShare = async (e) => {
     e.stopPropagation();
-    const shareUrl = `${window.location.origin}/?p=${encodeURIComponent(product.code || '')}`;
     if (navigator.share) {
       try {
         await navigator.share({
@@ -46,6 +49,7 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
   const gallery = product.gallery && product.gallery.length > 0 ? product.gallery : [product.image];
   const displayMainImg = isAdultMode && gallery.length > 1 ? gallery[1] : gallery[0];
   const displayHoverImg = isAdultMode ? (gallery.length > 2 ? gallery[2] : gallery[0]) : (gallery.length > 1 ? gallery[1] : null);
+  const hasHover = Boolean(displayHoverImg && displayHoverImg !== displayMainImg);
 
   const lineProductUrl = settings.line_url || siteConfig.lineUrl || 'https://line.me/R/ti/p/~RUBBERDOLL.TH';
 
