@@ -8,12 +8,14 @@ import ProductManager from './ProductManager';
 import ReviewManager from './ReviewManager';
 import CategoryManager from './CategoryManager';
 import FaqManager from './FaqManager';
+import OptionManager from './OptionManager';
 import SiteSettingsManager from './SiteSettingsManager';
 import { useLiveProducts } from '../../hooks/useLiveProducts';
 import { useLiveReviews } from '../../hooks/useLiveReviews';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 import { useSiteFaqs } from '../../hooks/useSiteFaqs';
 import { useLiveCategories } from '../../hooks/useLiveCategories';
+import { useLiveOptions } from '../../hooks/useLiveOptions';
 
 export default function AdminDashboard({ onLogout, onBackToShop }) {
   const [activeTab, setActiveTab] = useState('products');
@@ -24,9 +26,17 @@ export default function AdminDashboard({ onLogout, onBackToShop }) {
   const { settings, setSettings, reload: reloadSettings } = useSiteSettings();
   const { faqs, setFaqs, reload: reloadFaqs } = useSiteFaqs();
   const { categories, setCategories, reload: reloadCategories } = useLiveCategories();
+  const { options, setOptions, reload: reloadOptions } = useLiveOptions(true);
 
   const handleRefreshAll = async () => {
-    await Promise.all([reloadProducts(), reloadReviews(), reloadSettings(), reloadFaqs(), reloadCategories()]);
+    await Promise.all([
+      reloadProducts(), 
+      reloadReviews(), 
+      reloadSettings(), 
+      reloadFaqs(), 
+      reloadCategories(),
+      reloadOptions ? reloadOptions() : Promise.resolve()
+    ]);
     alert('รีเฟรชดึงข้อมูลล่าสุดจากเซิร์ฟเวอร์เรียบร้อยแล้ว!');
   };
 
@@ -36,6 +46,7 @@ export default function AdminDashboard({ onLogout, onBackToShop }) {
       group: '🛍️ คลังสินค้าและรีวิว',
       items: [
         { id: 'products', label: `จัดการสินค้า (${products.length} รายการ)`, icon: Package, badge: products.length, desc: 'สเปก, ราคา, รูปภาพ, วิดีโอ, จัดเรียง' },
+        { id: 'options', label: `จัดการออฟชั่นเสริม (${options?.length || 0})`, icon: Sparkles, badge: options?.length || 0, desc: 'ปลูกผม, จิมิถอดได้, ระบบอุ่น, เสียง ฯลฯ' },
         { id: 'reviews', label: 'จัดการรีวิวจากลูกค้า', icon: MessageSquareQuote, badge: reviews.length, desc: 'รีวิว, ให้ดาว, รูปถ่ายจริง' },
         { id: 'categories', label: 'จัดการหมวดหมู่สินค้า', icon: Tag, desc: 'แถบกรองและหมวดหมู่' },
       ]
@@ -278,6 +289,13 @@ export default function AdminDashboard({ onLogout, onBackToShop }) {
             categories={categories}
             onUpdateProducts={setProducts}
             onBackToShop={onBackToShop}
+          />
+        )}
+
+        {activeTab === 'options' && (
+          <OptionManager
+            options={options}
+            onUpdateOptions={setOptions}
           />
         )}
 

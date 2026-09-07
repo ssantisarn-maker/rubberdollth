@@ -105,6 +105,21 @@ CREATE TABLE IF NOT EXISTS customer_reviews (
     is_active TINYINT(1) DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS custom_options (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    price DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    condition_text VARCHAR(255) DEFAULT '',
+    details_text TEXT DEFAULT '',
+    image VARCHAR(500) DEFAULT '',
+    video_url VARCHAR(500) DEFAULT '',
+    target_material VARCHAR(50) DEFAULT 'all',
+    is_active TINYINT(1) DEFAULT 1,
+    order_index INT DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ";
 
 $pdo->exec($sqlTables);

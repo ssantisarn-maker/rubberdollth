@@ -1,8 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { X, MessageCircle, ShieldCheck, Sparkles, Box, Check, Star, Lock, HeartHandshake, ChevronLeft, ChevronRight, Flame, Layers, DollarSign, Gift, CheckCircle2, FileText, ZoomIn, ZoomOut, Maximize2, Share2, Copy } from 'lucide-react';
+import { 
+  X, MessageCircle, ShieldCheck, Sparkles, Box, Check, Star, Lock, 
+  HeartHandshake, ChevronLeft, ChevronRight, Flame, Layers, DollarSign, 
+  Gift, CheckCircle2, FileText, ZoomIn, ZoomOut, Maximize2, Share2, Copy,
+  Play, Video, Image as ImageIcon, ChevronDown, ChevronUp, Eye
+} from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
+import { useLiveOptions } from '../../hooks/useLiveOptions';
 
 function getVideoEmbedInfo(rawUrl) {
   if (!rawUrl || typeof rawUrl !== 'string') return null;
@@ -56,7 +62,12 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
   const [isZoomOpen, setIsZoomOpen] = useState(false);
   const [zoomScale, setZoomScale] = useState(1);
   const [copied, setCopied] = useState(false);
+  const [copiedLineOrder, setCopiedLineOrder] = useState(false);
   const { settings } = useSiteSettings();
+  const { options } = useLiveOptions();
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [previewOptionMedia, setPreviewOptionMedia] = useState(null);
+  const [isOptionsExpanded, setIsOptionsExpanded] = useState(true);
   const t = translations[lang] || translations.th;
 
   const shareUrl = typeof window !== 'undefined'
@@ -79,6 +90,64 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
       setTimeout(() => setCopied(false), 3000);
     }
   };
+
+  // Base numerical price
+  const basePriceNum = useMemo(() => {
+    if (!product?.price) return 0;
+    const clean = String(product.price).replace(/[^0-9]/g, '');
+    return clean ? parseInt(clean, 10) : 0;
+  }, [product?.price]);
+
+  // Selected options objects
+  const selectedOptionList = useMemo(() => {
+    if (!options || !Array.isArray(options)) return [];
+    return options.filter(opt => selectedOptions.includes(opt.id));
+  }, [options, selectedOptions]);
+
+  // Total add-on price
+  const addOnsTotal = useMemo(() => {
+    return selectedOptionList.reduce((sum, opt) => sum + (Number(opt.price) || 0), 0);
+  }, [selectedOptionList]);
+
+  // Grand total
+  const grandTotal = basePriceNum > 0 ? basePriceNum + addOnsTotal : 0;
+
+  // Active sorted options
+  const activeOptions = useMemo(() => {
+    if (!options || !Array.isArray(options)) return [];
+    return options
+      .filter(o => o.is_active !== 0)
+      .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
+  }, [options]);
+
+  const handleToggleOption = (optId) => {
+    setSelectedOptions(prev => 
+      prev.includes(optId) ? prev.filter(id => id !== optId) : [...prev, optId]
+    );
+  };
+
+  // Line order prefilled message
+  const lineMessage = useMemo(() => {
+    let msg = `สวัสดีครับ สนใจสอบถาม/สั่งซื้อตุ๊กตายาง รุ่น: ${product?.code || ''} ${product?.name || ''}`;
+    if (basePriceNum > 0) {
+      msg += `\nราคาตัวตุ๊กตา: ฿${basePriceNum.toLocaleString()}.-`;
+    } else if (product?.price) {
+      msg += `\nราคาตัวตุ๊กตา: ${product.price}`;
+    }
+
+    if (selectedOptionList.length > 0) {
+      msg += `\n\n✨ ออฟชั่นเสริมที่เลือก (${selectedOptionList.length} รายการ):`;
+      selectedOptionList.forEach(opt => {
+        msg += `\n• ${opt.name} (+฿${Number(opt.price).toLocaleString()}.-)`;
+      });
+      if (grandTotal > 0) {
+        msg += `\n\n💰 ราคารวมทั้งสิ้น: ฿${grandTotal.toLocaleString()}.-`;
+      }
+    }
+
+    msg += `\n\nดูข้อมูลรุ่นนี้: ${shareUrl}`;
+    return msg;
+  }, [product, basePriceNum, selectedOptionList, grandTotal, shareUrl]);
 
   // Extract list of all videos
   const videoList = useMemo(() => {
@@ -103,6 +172,8 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
     setVideoError(false);
     setIsZoomOpen(false);
     setZoomScale(1);
+    setSelectedOptions([]);
+    setPreviewOptionMedia(null);
   }, [product?.id, product?.code]);
 
   // Handle keyboard events (ESC, Arrow Left, Arrow Right) and body scroll lock
@@ -423,11 +494,20 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
               {/* Price & Special Option Banner */}
               <div className="p-3.5 bg-sand-50 rounded-2xl border border-sand-200 space-y-1.5">
                 <div className="flex items-baseline justify-between gap-2 flex-wrap">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-xs text-ink-muted">ราคาพิเศษ:</span>
-                    <span className="text-xl sm:text-2xl font-black text-emerald-800 font-sans">
-                      {product.price || 'ติดต่อสอบถามทาง LINE'}
+                  <div className="flex items-baseline gap-2 flex-wrap">
+                    <span className="text-xs text-ink-muted">
+                      {selectedOptions.length > 0 ? 'ราคารวมออฟชั่น:' : 'ราคาพิเศษ:'}
                     </span>
+                    <span className="text-xl sm:text-2xl font-black text-emerald-800 font-sans">
+                      {selectedOptions.length > 0 && grandTotal > 0
+                        ? `฿${grandTotal.toLocaleString()}.-`
+                        : (product.price || 'ติดต่อสอบถามทาง LINE')}
+                    </span>
+                    {selectedOptions.length > 0 && (
+                      <span className="text-[10px] bg-amber-500/20 text-amber-800 font-bold px-2 py-0.5 rounded-md">
+                        + ออฟชั่น {selectedOptions.length} รายการ
+                      </span>
+                    )}
                   </div>
                   {originalPrice && (
                     <span className="text-xs text-ink-muted line-through font-sans">
@@ -436,6 +516,12 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                   )}
                 </div>
 
+                {selectedOptions.length > 0 && (
+                  <div className="text-[11px] text-ink-muted flex items-center gap-2 pt-0.5 border-t border-sand-200/60">
+                    <span>(ราคาตัว: {product.price || '-'} + ออฟชั่นเสริม: ฿{addOnsTotal.toLocaleString()}.-)</span>
+                  </div>
+                )}
+
                 {specialOption && (
                   <div className="pt-1 text-xs text-amber-900 bg-amber-100/70 px-2.5 py-1 rounded-lg font-medium flex items-center gap-1.5 border border-amber-300/60">
                     <span>📋</span>
@@ -443,6 +529,151 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                   </div>
                 )}
               </div>
+
+              {/* Custom Doll Options Section */}
+              {activeOptions.length > 0 && (
+                <div className="rounded-2xl border border-sand-200 bg-gradient-to-b from-sand-50/70 to-white overflow-hidden shadow-2xs">
+                  
+                  {/* Section Header Accordion */}
+                  <div 
+                    onClick={() => setIsOptionsExpanded(!isOptionsExpanded)}
+                    className="p-3 sm:p-3.5 flex items-center justify-between cursor-pointer hover:bg-sand-100/60 transition-colors border-b border-sand-200/60 select-none"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-7 h-7 rounded-xl bg-amber-500/15 text-amber-600 flex items-center justify-center text-xs shrink-0 font-bold">
+                        ✨
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className="text-xs sm:text-sm font-bold text-ink">
+                            ปรับแต่งออฟชั่นเสริมพิเศษ (Custom Options)
+                          </h4>
+                          <span className="text-[10px] bg-amber-500/20 text-amber-900 font-bold px-2 py-0.5 rounded-full">
+                            {activeOptions.length} รายการ
+                          </span>
+                        </div>
+                        <p className="text-[10px] sm:text-[11px] text-ink-muted truncate">
+                          เลือกเพิ่มออฟชั่นเสริมเพื่อคำนวณราคารวมทันที (ดูรูป/คลิปตัวอย่างได้)
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      {selectedOptions.length > 0 && (
+                        <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md">
+                          เลือกแล้ว {selectedOptions.length}
+                        </span>
+                      )}
+                      <div className="text-ink-muted hover:text-ink p-1 rounded-md">
+                        {isOptionsExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Options List */}
+                  {isOptionsExpanded && (
+                    <div className="p-3 sm:p-3.5 space-y-2 max-h-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-sand-300">
+                      {activeOptions.map((opt) => {
+                        const isSelected = selectedOptions.includes(opt.id);
+                        return (
+                          <div
+                            key={opt.id}
+                            onClick={() => handleToggleOption(opt.id)}
+                            className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-start gap-2.5 ${
+                              isSelected
+                                ? 'bg-amber-50/90 border-amber-400 shadow-xs'
+                                : 'bg-white hover:bg-sand-50 border-sand-200'
+                            }`}
+                          >
+                            {/* Checkbox */}
+                            <div className="pt-0.5 shrink-0">
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => {}} // Handled by parent container click
+                                className="w-4 h-4 rounded text-amber-600 focus:ring-amber-500 border-sand-300 pointer-events-none accent-amber-600"
+                              />
+                            </div>
+
+                            {/* Option Details */}
+                            <div className="flex-1 min-w-0 space-y-1">
+                              <div className="flex items-start justify-between gap-2">
+                                <span className={`text-xs font-bold leading-snug ${isSelected ? 'text-amber-950 font-extrabold' : 'text-ink'}`}>
+                                  {opt.name}
+                                </span>
+                                <span className="font-mono font-bold text-xs text-amber-700 whitespace-nowrap shrink-0">
+                                  {opt.price > 0 ? `+฿${Number(opt.price).toLocaleString()}.-` : 'ฟรี'}
+                                </span>
+                              </div>
+
+                              {/* Condition / Material Tag */}
+                              {opt.condition && (
+                                <div className="text-[10px] font-medium text-rose-600 bg-rose-50 border border-rose-200/60 px-2 py-0.5 rounded-md inline-block">
+                                  {opt.condition}
+                                </div>
+                              )}
+
+                              {/* Details note */}
+                              {opt.details && (
+                                <p className="text-[10px] text-ink-muted leading-relaxed line-clamp-2">
+                                  {opt.details}
+                                </p>
+                              )}
+
+                              {/* Media Preview Action Buttons */}
+                              {(opt.image || opt.video_url) && (
+                                <div className="flex items-center gap-1.5 pt-0.5" onClick={e => e.stopPropagation()}>
+                                  {opt.image && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setPreviewOptionMedia({ type: 'image', url: opt.image, title: opt.name })}
+                                      className="text-[10px] text-ink-muted hover:text-amber-800 bg-sand-100 hover:bg-sand-200 px-2 py-0.5 rounded-md flex items-center gap-1 border border-sand-200 transition-colors cursor-pointer"
+                                    >
+                                      <Eye className="w-3 h-3 text-bronze" />
+                                      <span>ดูรูปตัวอย่าง</span>
+                                    </button>
+                                  )}
+
+                                  {opt.video_url && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setPreviewOptionMedia({ type: 'video', url: opt.video_url, title: opt.name })}
+                                      className="text-[10px] text-amber-900 bg-amber-100/80 hover:bg-amber-200/80 px-2 py-0.5 rounded-md flex items-center gap-1 border border-amber-300/60 font-semibold transition-colors cursor-pointer"
+                                    >
+                                      <Play className="w-3 h-3 fill-amber-700 text-amber-700" />
+                                      <span>ดูคลิปตัวอย่าง</span>
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Summary Bar inside Section */}
+                  {selectedOptions.length > 0 && (
+                    <div className="p-3 bg-amber-500/10 border-t border-amber-500/20 flex items-center justify-between gap-2">
+                      <div className="text-xs">
+                        <span className="text-ink-muted">รวมออฟชั่น ({selectedOptions.length} รายการ): </span>
+                        <span className="font-bold font-mono text-amber-700">+฿{addOnsTotal.toLocaleString()}.-</span>
+                      </div>
+
+                      {grandTotal > 0 && (
+                        <div className="text-right">
+                          <span className="text-[10px] text-ink-muted block">ยอดรวมทั้งสิ้น</span>
+                          <span className="text-sm sm:text-base font-black font-mono text-emerald-800">
+                            ฿{grandTotal.toLocaleString()}.-
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                </div>
+              )}
 
               {/* Description */}
               {product.description && (
@@ -509,22 +740,36 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
 
             {/* Sticky Action Button */}
             <div className="space-y-2 pt-3 border-t border-sand-200">
-              <a
-                href={lineProductUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="w-full py-3 sm:py-3.5 px-6 rounded-2xl bg-[#06C755] hover:bg-[#05b34c] text-white font-bold text-sm sm:text-base shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition-all active:scale-98"
+              {copiedLineOrder && (
+                <div className="bg-emerald-50 border border-emerald-300 text-emerald-800 px-3 py-2 rounded-xl text-xs flex items-center gap-2 animate-in fade-in">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>✓ คัดลอกรายละเอียดคำสั่งซื้อพร้อมออฟชั่นแล้ว! สามารถกดวาง (Paste) ในแชท LINE ได้ทันที</span>
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(lineMessage);
+                    setCopiedLineOrder(true);
+                    setTimeout(() => setCopiedLineOrder(false), 4000);
+                  } catch (e) {}
+                  const targetUrl = settings.line_url || siteConfig.lineUrl || 'https://line.me/R/ti/p/~RUBBERDOLL.TH';
+                  window.open(targetUrl, '_blank', 'noopener,noreferrer');
+                }}
+                className="w-full py-3 sm:py-3.5 px-6 rounded-2xl bg-[#06C755] hover:bg-[#05b34c] text-white font-bold text-sm sm:text-base shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer"
               >
                 <MessageCircle className="w-4 h-4 fill-white" />
                 <span>{settings.modal_cta_btn_text || 'สั่งซื้อ / สอบถามรุ่นนี้แบบ Private LINE'}</span>
-              </a>
+              </button>
 
               {/* Share & Copy Link for direct customer consultation */}
               <div className="flex items-center gap-2 pt-1">
                 <button
                   type="button"
                   onClick={handleCopyShareLink}
-                  className={`flex-1 py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                  className={`flex-1 py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                     copied
                       ? 'bg-emerald-50 border-emerald-300 text-emerald-700 font-bold'
                       : 'bg-white hover:bg-sand-50 border-sand-300 text-ink shadow-sm'
@@ -545,14 +790,14 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 </button>
 
                 <a
-                  href={`https://line.me/R/share?text=${encodeURIComponent(`ตุ๊กตายางเกรดพรีเมียม รุ่น ${product.code} - ${product.name}\nดูรายละเอียดและรูปเพิ่มเติมได้ที่:\n${shareUrl}`)}`}
+                  href={`https://line.me/R/share?text=${encodeURIComponent(lineMessage)}`}
                   target="_blank"
                   rel="noreferrer"
                   className="py-2 px-3.5 rounded-xl border border-sand-300 bg-white hover:bg-emerald-50 hover:border-emerald-300 text-ink hover:text-emerald-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm"
-                  title="แชร์ไปยัง LINE โดยตรง"
+                  title="แชร์รายการสั่งซื้อและออฟชั่นที่เลือกไปยัง LINE โดยตรง"
                 >
                   <Share2 className="w-3.5 h-3.5 text-[#06C755]" />
-                  <span>แชร์ไป LINE</span>
+                  <span>ส่งรายการไป LINE</span>
                 </a>
               </div>
 
@@ -577,6 +822,57 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
         </div>
 
       </div>
+
+      {/* OPTION MEDIA LIGHTBOX MODAL */}
+      {previewOptionMedia && (
+        <div className="fixed inset-0 z-[110] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="relative max-w-2xl w-full bg-neutral-900 border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
+            <div className="p-3.5 border-b border-white/10 flex items-center justify-between">
+              <div className="flex items-center gap-2 min-w-0 pr-4">
+                <span className="text-xs bg-amber-500 text-neutral-950 font-bold px-2 py-0.5 rounded-full">
+                  ตัวอย่างออฟชั่น
+                </span>
+                <h4 className="text-white font-bold text-xs sm:text-sm truncate">{previewOptionMedia.title}</h4>
+              </div>
+              <button
+                onClick={() => setPreviewOptionMedia(null)}
+                className="p-1.5 text-neutral-400 hover:text-white rounded-full bg-white/10 hover:bg-white/20 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-3 bg-black flex items-center justify-center min-h-[280px] max-h-[70vh]">
+              {previewOptionMedia.type === 'image' ? (
+                <img src={previewOptionMedia.url} alt={previewOptionMedia.title} className="max-h-[65vh] w-auto object-contain rounded-xl" />
+              ) : (
+                (() => {
+                  const info = getVideoEmbedInfo(previewOptionMedia.url);
+                  if (info?.type === 'video' || info?.type === 'direct') {
+                    return (
+                      <video 
+                        src={info.src} 
+                        controls 
+                        autoPlay 
+                        className="max-h-[65vh] w-full rounded-xl bg-black"
+                      />
+                    );
+                  }
+                  return (
+                    <iframe
+                      src={info?.src || previewOptionMedia.url}
+                      title={previewOptionMedia.title}
+                      className="w-full aspect-video rounded-xl"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  );
+                })()
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* FULLSCREEN HD ZOOM LIGHTBOX MODAL */}
       {isZoomOpen && (
