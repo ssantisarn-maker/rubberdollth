@@ -47,9 +47,16 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
   const displayMainImg = isAdultMode && gallery.length > 1 ? gallery[1] : gallery[0];
   const displayHoverImg = isAdultMode ? (gallery.length > 2 ? gallery[2] : gallery[0]) : (gallery.length > 1 ? gallery[1] : null);
 
-  const hasHover = Boolean(displayHoverImg && displayHoverImg !== displayMainImg);
+  const lineProductUrl = settings.line_url || siteConfig.lineUrl || 'https://line.me/R/ti/p/~RUBBERDOLL.TH';
 
-  const lineProductUrl = settings.line_url || siteConfig.lineUrl || 'https://line.me/R/ti/p/@RUBBERDOLL.TH';
+  const quickOrderMessage = useMemo(() => {
+    let msg = `สวัสดีครับ สนใจสอบถาม/สั่งซื้อตุ๊กตายาง รุ่น: ${product?.code || ''} ${product?.name || ''}`;
+    if (product?.price) msg += `\nราคา: ${product.price}`;
+    msg += `\n\nดูข้อมูลรุ่นนี้: ${shareUrl}`;
+    return msg;
+  }, [product, shareUrl]);
+
+  const lineOrderUrl = `https://line.me/R/share?text=${encodeURIComponent(quickOrderMessage)}`;
 
   const seoImageAlt = `ตุ๊กตายาง ซิลิโคนแท้ระดับ Hi-End รุ่น ${product.code} ${product.name} ${product.series} สเปก ${product.height} RUBBER DOLL THAILAND`;
 
@@ -197,10 +204,16 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
           </button>
 
           <a
-            href={lineProductUrl}
+            href={lineOrderUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(quickOrderMessage);
+              } catch (e) {}
+            }}
             className="py-2 sm:py-2.5 px-3 sm:px-4 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-1 sm:gap-1.5 transition-colors shadow-2xs active:scale-98 cursor-pointer"
+            title="สั่งซื้อและส่งรายการสินค้านี้เข้า LINE ทันที"
           >
             <MessageCircle className="w-3.5 h-3.5" />
             <span>{settings.card_order_btn_text || t.catalog.card.orderBtn}</span>

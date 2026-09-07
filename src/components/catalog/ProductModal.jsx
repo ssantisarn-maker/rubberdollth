@@ -257,7 +257,11 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
 
   const currentImage = galleryImages[activeImageIdx] || product.image;
 
-  const lineProductUrl = settings.line_url || siteConfig.lineUrl || 'https://line.me/R/ti/p/@RUBBERDOLL.TH';
+  const lineProductUrl = settings.line_url || siteConfig.lineUrl || 'https://line.me/R/ti/p/~RUBBERDOLL.TH';
+  const lineShareUrl = useMemo(() => {
+    return `https://line.me/R/share?text=${encodeURIComponent(lineMessage)}`;
+  }, [lineMessage]);
+  const lineDirectUrl = settings.line_url || siteConfig.lineUrl || 'https://line.me/R/ti/p/~RUBBERDOLL.TH';
 
   const seoImageAlt = `ตุ๊กตายาง ซิลิโคนแท้ระดับ Hi-End รุ่น ${product.code} ${product.name} ${product.series} สเปก ${product.height} RUBBER DOLL THAILAND`;
 
@@ -781,62 +785,76 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
               {copiedLineOrder && (
                 <div className="bg-emerald-50 border border-emerald-300 text-emerald-800 px-3 py-2 rounded-xl text-xs flex items-center gap-2 animate-in fade-in">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>✓ คัดลอกรายละเอียดคำสั่งซื้อพร้อมออฟชั่นแล้ว! สามารถกดวาง (Paste) ในแชท LINE ได้ทันที</span>
+                  <span>✓ คัดลอกรายละเอียดคำสั่งซื้อพร้อมออฟชั่นแล้ว! หากเข้าแชทตรงสามารถกด "วาง" (Paste) ใน LINE ได้ทันที</span>
                 </div>
               )}
 
-              <button
-                type="button"
+              {/* 1. PRIMARY CTA: Directly sends model info, options, total price into LINE */}
+              <a
+                href={lineShareUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={async () => {
                   try {
                     await navigator.clipboard.writeText(lineMessage);
                     setCopiedLineOrder(true);
                     setTimeout(() => setCopiedLineOrder(false), 4000);
                   } catch (e) {}
-                  const targetUrl = settings.line_url || siteConfig.lineUrl || 'https://line.me/R/ti/p/~RUBBERDOLL.TH';
-                  window.open(targetUrl, '_blank', 'noopener,noreferrer');
                 }}
-                className="w-full py-3 sm:py-3.5 px-6 rounded-2xl bg-[#06C755] hover:bg-[#05b34c] text-white font-bold text-sm sm:text-base shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer"
+                className="w-full py-3 sm:py-3.5 px-6 rounded-2xl bg-[#06C755] hover:bg-[#05b34c] text-white font-bold text-sm sm:text-base shadow-md hover:shadow-lg flex flex-col items-center justify-center gap-0.5 transition-all active:scale-98 cursor-pointer group"
+                title="คลิกเพื่อส่งข้อมูลสินค้าและออฟชั่นเสริมเข้า LINE ทันที"
               >
-                <MessageCircle className="w-4 h-4 fill-white" />
-                <span>{settings.modal_cta_btn_text || 'สั่งซื้อ / สอบถามรุ่นนี้แบบ Private LINE'}</span>
-              </button>
+                <div className="flex items-center gap-2">
+                  <MessageCircle className="w-5 h-5 fill-white shrink-0" />
+                  <span>{settings.modal_cta_btn_text || 'สั่งซื้อ / ส่งรายการนี้เข้า LINE ทันที'}</span>
+                </div>
+                <span className="text-[11px] font-normal text-emerald-100 group-hover:text-white transition-colors">
+                  ✨ ส่งข้อมูลสินค้าและออฟชั่นเสริมเข้า LINE ทันที
+                </span>
+              </a>
 
-              {/* Share & Copy Link for direct customer consultation */}
+              {/* 2. SECONDARY ACTIONS: Direct Chat with Shop & Copy Link */}
               <div className="flex items-center gap-2 pt-1">
+                <a
+                  href={lineDirectUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(lineMessage);
+                      setCopiedLineOrder(true);
+                      setTimeout(() => setCopiedLineOrder(false), 4000);
+                    } catch (e) {}
+                  }}
+                  className="flex-1 py-2 px-3 rounded-xl border border-sand-300 bg-white hover:bg-emerald-50 hover:border-emerald-300 text-ink hover:text-emerald-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm cursor-pointer"
+                  title="เปิดหน้าแชทกับร้านค้าโดยตรง (ระบบจะคัดลอกข้อความคำสั่งซื้อให้ เพื่อนำไปกดวางในแชท)"
+                >
+                  <MessageCircle className="w-3.5 h-3.5 text-[#06C755]" />
+                  <span>แชทตรงกับร้าน (ID: {settings.line_id || siteConfig.lineId || 'RUBBERDOLL.TH'})</span>
+                </a>
+
                 <button
                   type="button"
                   onClick={handleCopyShareLink}
-                  className={`flex-1 py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  className={`py-2 px-3.5 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                     copied
                       ? 'bg-emerald-50 border-emerald-300 text-emerald-700 font-bold'
                       : 'bg-white hover:bg-sand-50 border-sand-300 text-ink shadow-sm'
                   }`}
-                  title="คัดลอกลิงก์เพื่อส่งให้ลูกค้า"
+                  title="คัดลอกลิงก์สินค้ารุ่นนี้เพื่อส่งต่อ"
                 >
                   {copied ? (
                     <>
                       <Check className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>✓ คัดลอกลิงก์แล้ว!</span>
+                      <span>✓ คัดลอกแล้ว</span>
                     </>
                   ) : (
                     <>
                       <Copy className="w-3.5 h-3.5 text-bronze" />
-                      <span>คัดลอกลิงก์ส่งลูกค้า</span>
+                      <span>คัดลอกลิงก์</span>
                     </>
                   )}
                 </button>
-
-                <a
-                  href={`https://line.me/R/share?text=${encodeURIComponent(lineMessage)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="py-2 px-3.5 rounded-xl border border-sand-300 bg-white hover:bg-emerald-50 hover:border-emerald-300 text-ink hover:text-emerald-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm"
-                  title="แชร์รายการสั่งซื้อและออฟชั่นที่เลือกไปยัง LINE โดยตรง"
-                >
-                  <Share2 className="w-3.5 h-3.5 text-[#06C755]" />
-                  <span>ส่งรายการไป LINE</span>
-                </a>
               </div>
 
               <div className="flex items-center justify-center gap-3 sm:gap-4 text-[11px] text-ink-muted flex-wrap pt-1">

@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react';
 const defaultSettings = {
   site_title: 'RUBBER DOLL THAILAND - ซิลิโคนแท้ระดับ Hi-End อันดับ 1 ในไทย',
   site_subtitle: 'ตุ๊กตายางพรีเมียม สัมผัสเสมือนจริง โครงสร้างข้อต่อสแตนเลส 360 องศา',
-  line_id: '@RUBBERDOLL.TH',
-  line_url: 'https://line.me/R/ti/p/@RUBBERDOLL.TH',
+  line_id: 'RUBBERDOLL.TH',
+  line_url: 'https://line.me/R/ti/p/~RUBBERDOLL.TH',
   phone: '086-004-3541',
   email: 'contact@rubberdollth.com',
   business_hours: 'เปิดบริการทุกวัน 24 ชม. (จัดส่งด่วนทุกวัน)',
