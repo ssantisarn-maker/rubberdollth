@@ -1,8 +1,10 @@
 <?php
 /**
- * RUBBER DOLL THAILAND - Dynamic Open Graph Product Share Router
+ * RUBBER DOLL THAILAND - Dynamic Open Graph & Social Share Router
  * Provides rich image, title, and spec cards for LINE, Facebook, Messenger, and Social Crawlers.
- * Seamlessly redirects human visitors directly to the interactive React SPA product modal.
+ * Handles both:
+ * 1. Specific product deep-links (/p/CODE or ?p=CODE)
+ * 2. Homepage & store-wide social sharing (https://rubberdollth.com/)
  */
 
 // Error handling - silent for production
@@ -17,21 +19,62 @@ if (empty($requestedCode) && isset($_SERVER['REQUEST_URI'])) {
     }
 }
 
-// Default fallback metadata
+// 1. Load Live Site Settings (from settings_cache.json or MySQL)
+$siteSettings = [];
+$settingsCacheFile = __DIR__ . '/api/settings_cache.json';
+if (file_exists($settingsCacheFile)) {
+    $cachedSettings = @file_get_contents($settingsCacheFile);
+    if ($cachedSettings) {
+        $decoded = @json_decode($cachedSettings, true);
+        if (is_array($decoded)) {
+            $siteSettings = $decoded;
+        }
+    }
+}
+if (empty($siteSettings) && file_exists(__DIR__ . '/api/config.php')) {
+    try {
+        require_once __DIR__ . '/api/config.php';
+        if (function_exists('getDbConnection')) {
+            $pdo = getDbConnection();
+            if ($pdo) {
+                $stmt = $pdo->query("SELECT setting_key, setting_value FROM site_settings");
+                $rows = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+                if (!empty($rows)) {
+                    foreach ($rows as $k => $v) {
+                        $dec = json_decode($v, true);
+                        $siteSettings[$k] = (json_last_error() === JSON_ERROR_NONE) ? $dec : $v;
+                    }
+                }
+            }
+        }
+    } catch (Exception $e) {}
+}
+
 $siteName = 'RUBBER DOLL THAILAND';
 $domain = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . ($_SERVER['HTTP_HOST'] ?? 'rubberdollth.com');
+
+// Default / Homepage metadata from Site Settings
 $targetUrl = $domain . '/';
-$title = "ตุ๊กตายางแท้เกรดพรีเมียม | " . $siteName;
-$description = "ตุ๊กตายางเกรดการแพทย์ สัดส่วนสมจริง สัมผัสเสมือนจริง จัดส่งด่วน กล่องทึบ ปลอดภัย 100%";
-$imageUrl = $domain . '/images/hero/hero-bg.webp';
+$title = !empty($siteSettings['seo_og_title']) ? $siteSettings['seo_og_title'] : "RUBBER DOLL THAILAND | ตุ๊กตายางซิลิโคนและสินค้านำเข้าจากต่างประเทศ";
+$description = !empty($siteSettings['seo_og_desc']) ? $siteSettings['seo_og_desc'] : "ตุ๊กตายางซิลิโคน ตุ๊กตาครึ่งตัวของเล่น SEXTOY การันตีการจัดส่ง 100%";
+
+$rawDefaultImg = !empty($siteSettings['seo_og_image']) ? $siteSettings['seo_og_image'] : (!empty($siteSettings['hero_bg_image']) ? $siteSettings['hero_bg_image'] : 'https://cdn.zyrosite.com/cdn-ecommerce/store_01KYYQFNVFQMCAMTY5SZA4J5H8/assets/7ee33a0f-4684-42bb-b140-e282b3df64a3.jpg');
+
+if (preg_match('#^https?://#i', $rawDefaultImg)) {
+    $imageUrl = $rawDefaultImg;
+} else {
+    $imageUrl = $domain . '/' . ltrim($rawDefaultImg, '/');
+}
+
 $productFound = false;
 $productCode = '';
 
+// 2. If a specific product was requested:
 if (!empty($requestedCode)) {
     $cleanCode = strtolower(preg_replace('/\s+/', '', $requestedCode));
     $matchedProduct = null;
 
-    // 1. Try reading from products_cache.json
+    // A. Try reading from products_cache.json
     $cacheFile = __DIR__ . '/api/products_cache.json';
     if (file_exists($cacheFile)) {
         $cachedContent = @file_get_contents($cacheFile);
@@ -51,7 +94,7 @@ if (!empty($requestedCode)) {
         }
     }
 
-    // 2. If not found in cache, fallback to MySQL
+    // B. If not found in cache, fallback to MySQL
     if (!$matchedProduct && file_exists(__DIR__ . '/api/config.php')) {
         try {
             require_once __DIR__ . '/api/config.php';
@@ -71,7 +114,7 @@ if (!empty($requestedCode)) {
         }
     }
 
-    // 3. Build rich metadata if product found
+    // C. Build rich metadata if product found
     if ($matchedProduct) {
         $productFound = true;
         $productCode = $matchedProduct['code'] ?? $requestedCode;
@@ -122,12 +165,19 @@ if (!empty($requestedCode)) {
     }
 }
 
+// Preserve any cache-busting query parameter (e.g. ?v=1 or ?t=...)
+if (!empty($_SERVER['QUERY_STRING'])) {
+    if (strpos($targetUrl, '?') === false) {
+        $targetUrl .= '?' . $_SERVER['QUERY_STRING'];
+    }
+}
+
 // Detect bots / social media crawlers
 $userAgent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
 $isBot = preg_match('/(line-poker|facebookexternalhit|meta-externalagent|twitterbot|slackbot|whatsapp|telegrambot|discordbot|bingbot|googlebot|applebot)/i', $userAgent);
 
-// If real user (not crawler bot), we redirect smoothly via HTTP 302 or instant JS/meta refresh
-if (!$isBot && $productFound) {
+// If real user (not crawler bot), redirect smoothly via HTTP 302
+if (!$isBot) {
     header("Location: {$targetUrl}", true, 302);
 }
 ?>

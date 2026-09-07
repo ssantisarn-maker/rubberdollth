@@ -136,9 +136,9 @@ const defaultSettings = {
   reviews_rating_text: '5.0 / 5.0 (รีวิวลูกค้าจริง 100%)',
 
   // Social Share & LINE Link Preview (Open Graph)
-  seo_og_title: 'RUBBER DOLL THAILAND | ผู้นำเข้าตุ๊กตายางซิลิโคนแท้เกรดพรีเมียมอันดับ 1',
-  seo_og_desc: 'ตุ๊กตายางซิลิโคนเกรดการแพทย์ 100% สัมผัสนุ่มเสมือนผิวคนจริง โครงสร้างสแตนเลส 360° การันตีจัดส่งมิดชิด 100% ไร้ชื่อสินค้าหน้ากล่อง',
-  seo_og_image: '',
+  seo_og_title: 'RUBBER DOLL THAILAND | ตุ๊กตายางซิลิโคนและสินค้านำเข้าจากต่างประเทศ',
+  seo_og_desc: 'ตุ๊กตายางซิลิโคน ตุ๊กตาครึ่งตัวของเล่น SEXTOY การันตีการจัดส่ง 100%',
+  seo_og_image: 'https://cdn.zyrosite.com/cdn-ecommerce/store_01KYYQFNVFQMCAMTY5SZA4J5H8/assets/7ee33a0f-4684-42bb-b140-e282b3df64a3.jpg',
 
   // Longevity Care
   care_tag: 'THE LONGEVITY CARE',

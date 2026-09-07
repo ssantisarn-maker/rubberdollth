@@ -36,6 +36,55 @@ if ($method === 'GET') {
     }
 }
 
+function syncOpenGraphToIndexHtml($settings) {
+    if (empty($settings) || !is_array($settings)) return false;
+
+    // Check possible locations of index.html (public_html/index.html or dev/dist)
+    $candidatePaths = [
+        dirname(__DIR__) . '/index.html',
+        dirname(dirname(__DIR__)) . '/index.html',
+        dirname(dirname(__DIR__)) . '/dist/index.html'
+    ];
+
+    $updatedAny = false;
+    $ogTitle = !empty($settings['seo_og_title']) ? $settings['seo_og_title'] : '';
+    $ogDesc = !empty($settings['seo_og_desc']) ? $settings['seo_og_desc'] : '';
+    $ogImg = !empty($settings['seo_og_image']) ? $settings['seo_og_image'] : '';
+
+    foreach ($candidatePaths as $path) {
+        if (!file_exists($path) || !is_writable($path)) continue;
+
+        $html = @file_get_contents($path);
+        if (empty($html)) continue;
+
+        if (!empty($ogTitle)) {
+            $escaped = htmlspecialchars($ogTitle, ENT_QUOTES, 'UTF-8');
+            $html = preg_replace('/<title>.*?<\/title>/is', '<title>' . $escaped . '</title>', $html);
+            $html = preg_replace('/<meta\s+name=["\']title["\']\s+content=["\'].*?["\']/is', '<meta name="title" content="' . $escaped . '"', $html);
+            $html = preg_replace('/<meta\s+property=["\']og:title["\']\s+content=["\'].*?["\']/is', '<meta property="og:title" content="' . $escaped . '"', $html);
+            $html = preg_replace('/<meta\s+name=["\']twitter:title["\']\s+content=["\'].*?["\']/is', '<meta name="twitter:title" content="' . $escaped . '"', $html);
+        }
+
+        if (!empty($ogDesc)) {
+            $escaped = htmlspecialchars($ogDesc, ENT_QUOTES, 'UTF-8');
+            $html = preg_replace('/<meta\s+name=["\']description["\']\s+content=["\'].*?["\']/is', '<meta name="description" content="' . $escaped . '"', $html);
+            $html = preg_replace('/<meta\s+property=["\']og:description["\']\s+content=["\'].*?["\']/is', '<meta property="og:description" content="' . $escaped . '"', $html);
+            $html = preg_replace('/<meta\s+name=["\']twitter:description["\']\s+content=["\'].*?["\']/is', '<meta name="twitter:description" content="' . $escaped . '"', $html);
+        }
+
+        if (!empty($ogImg)) {
+            $escaped = htmlspecialchars($ogImg, ENT_QUOTES, 'UTF-8');
+            $html = preg_replace('/<meta\s+property=["\']og:image["\']\s+content=["\'].*?["\']/is', '<meta property="og:image" content="' . $escaped . '"', $html);
+            $html = preg_replace('/<meta\s+name=["\']twitter:image["\']\s+content=["\'].*?["\']/is', '<meta name="twitter:image" content="' . $escaped . '"', $html);
+        }
+
+        @file_put_contents($path, $html);
+        $updatedAny = true;
+    }
+
+    return $updatedAny;
+}
+
 // POST or PUT: Update site settings
 if ($method === 'POST' || $method === 'PUT') {
     checkAdminAuth();
@@ -63,6 +112,8 @@ if ($method === 'POST' || $method === 'PUT') {
 
             // Sync cache
             file_put_contents($jsonCacheFile, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+            // Sync index.html physical meta tags
+            syncOpenGraphToIndexHtml($data);
             sendResponse(['success' => true, 'message' => 'บันทึกการตั้งค่าเว็บไซต์สำเร็จ', 'settings' => $data]);
         } catch (PDOException $e) {
             sendError('Database error: ' . $e->getMessage(), 500);
@@ -70,6 +121,7 @@ if ($method === 'POST' || $method === 'PUT') {
     } else {
         // Cache fallback update
         file_put_contents($jsonCacheFile, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+        syncOpenGraphToIndexHtml($data);
         sendResponse(['success' => true, 'message' => 'บันทึกลง Cache สำเร็จ', 'settings' => $data]);
     }
 }

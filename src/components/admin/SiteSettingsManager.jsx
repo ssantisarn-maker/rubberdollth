@@ -846,6 +846,55 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
                     className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl font-mono text-xs"
                   />
                 </div>
+
+                {/* LINE Preview Testing & Cache Busting Section */}
+                <div className="p-4 rounded-2xl bg-amber-50/80 border border-amber-200 space-y-3">
+                  <div className="flex items-start gap-2">
+                    <span className="text-base">⚡</span>
+                    <div>
+                      <h4 className="font-bold text-ink text-xs sm:text-sm">วิธีทำให้ LINE แสดงข้อมูลใหม่ทันที (แก้ปัญหาติดแคช):</h4>
+                      <p className="text-[11px] text-ink-muted leading-relaxed mt-0.5">
+                        ปกติแอป LINE จะจำแคช (Cache) บัตรพรีวิวของเว็บไว้ หากเคยส่งลิงก์ <code className="bg-amber-100 px-1 py-0.5 rounded text-ink font-mono text-[10px]">https://rubberdollth.com</code> ไปแล้ว LINE จะยังแสดงรูปและข้อความเดิม กดปุ่มด้านล่างเพื่อส่งแบบล้างแคชทันที:
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-amber-200/60">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const bustUrl = `${window.location.origin}/?v=${Date.now().toString().slice(-4)}`;
+                        navigator.clipboard.writeText(bustUrl);
+                        showToast(`✓ คัดลอกลิงก์ใหม่ [${bustUrl}] แล้ว! นำไปส่งใน LINE จะขึ้นรูปและข้อความใหม่ทันที 100%`);
+                      }}
+                      className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all active:scale-98"
+                      title="คัดลอกลิงก์แบบบังคับให้ LINE ดึงข้อมูลใหม่ทันที"
+                    >
+                      <Share2 className="w-3.5 h-3.5" />
+                      <span>คัดลอกลิงก์ส่ง LINE (แบบล้างแคชทันที)</span>
+                    </button>
+
+                    <a
+                      href="https://poker.line.naver.jp/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-2 bg-white hover:bg-sand-100 text-ink rounded-xl border border-sand-300 text-xs font-semibold flex items-center gap-1.5 transition-all"
+                      title="เครื่องมือล้างแคชทางการของ LINE (LINE Page Scraper)"
+                    >
+                      <span>🔄 ล้างแคชทางการที่ LINE Scraper ↗</span>
+                    </a>
+
+                    <a
+                      href="https://developers.facebook.com/tools/debug/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-2 bg-white hover:bg-sand-100 text-ink rounded-xl border border-sand-300 text-xs font-semibold flex items-center gap-1.5 transition-all"
+                      title="เครื่องมือล้างแคช Facebook / Messenger"
+                    >
+                      <span>ล้างแคช Facebook Debugger ↗</span>
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

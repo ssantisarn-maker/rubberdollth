@@ -112,6 +112,11 @@ FileETag None
     # Product direct share route (/p/CODE or /p/CODE/) for LINE / Social Media previews
     RewriteRule ^p/([^/]+)/?$ /share.php?p=$1 [L,QSA]
 
+    # Route Social Media Crawlers (LINE, Facebook, Twitter, WhatsApp, etc.) for Homepage to share.php
+    RewriteCond %{HTTP_USER_AGENT} (line-poker|facebookexternalhit|meta-externalagent|twitterbot|slackbot|whatsapp|telegrambot|discordbot|bingbot|applebot) [NC]
+    RewriteCond %{REQUEST_URI} ^/?$
+    RewriteRule ^.*$ /share.php [L,QSA]
+
     # Don't rewrite requests for real files or directories
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
