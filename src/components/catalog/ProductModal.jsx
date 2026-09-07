@@ -9,6 +9,7 @@ import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 import { useLiveOptions } from '../../hooks/useLiveOptions';
+import { useLiveCategories } from '../../hooks/useLiveCategories';
 
 function getVideoEmbedInfo(rawUrl) {
   if (!rawUrl || typeof rawUrl !== 'string') return null;
@@ -65,10 +66,45 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
   const [copiedLineOrder, setCopiedLineOrder] = useState(false);
   const { settings } = useSiteSettings();
   const { options } = useLiveOptions();
+  const { categories: allCategories } = useLiveCategories();
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [previewOptionMedia, setPreviewOptionMedia] = useState(null);
   const [isOptionsExpanded, setIsOptionsExpanded] = useState(true);
   const t = translations[lang] || translations.th;
+
+  // Determine if this specific product and its categories allow custom options
+  const allowsCustomOptions = useMemo(() => {
+    // 1. Explicit product-level setting overrides everything
+    if (product?.allowCustomOptions === false || product?.allow_custom_options === 0) {
+      return false;
+    }
+    if (product?.allowCustomOptions === true || product?.allow_custom_options === 1) {
+      return true;
+    }
+
+    // 2. Category checks
+    const pCats = Array.isArray(product?.categories) ? product.categories : [];
+    const pCatStr = String(product?.category || '');
+
+    // Check if any matching category in database explicitly disables options
+    if (Array.isArray(allCategories) && allCategories.length > 0) {
+      const matchedCats = allCategories.filter(c => 
+        pCats.includes(c.id) || pCats.includes(c.label_th) || pCatStr.includes(c.id) || (c.label_th && pCatStr.includes(c.label_th))
+      );
+      const hasExplicitDisable = matchedCats.some(c => c.id !== 'all' && (c.allow_custom_options === 0 || c.allowCustomOptions === false));
+      const hasExplicitEnable = matchedCats.some(c => c.id !== 'all' && (c.allow_custom_options === 1 || c.allowCustomOptions === true));
+      if (hasExplicitDisable && !hasExplicitEnable) {
+        return false;
+      }
+    }
+
+    // Default safety heuristics for adult toys and torso
+    if (pCats.includes('toys') || pCatStr.includes('ของเล่น') || pCats.includes('torso') || pCatStr.includes('ครึ่งตัว')) {
+      return false;
+    }
+
+    return true;
+  }, [product, allCategories]);
 
   const shareUrl = typeof window !== 'undefined'
     ? `${window.location.origin}/?p=${encodeURIComponent(product?.code || '')}`
@@ -100,9 +136,10 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
 
   // Selected options objects
   const selectedOptionList = useMemo(() => {
+    if (!allowsCustomOptions) return [];
     if (!options || !Array.isArray(options)) return [];
     return options.filter(opt => selectedOptions.includes(opt.id));
-  }, [options, selectedOptions]);
+  }, [allowsCustomOptions, options, selectedOptions]);
 
   // Total add-on price
   const addOnsTotal = useMemo(() => {
@@ -114,11 +151,12 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
 
   // Active sorted options
   const activeOptions = useMemo(() => {
+    if (!allowsCustomOptions) return [];
     if (!options || !Array.isArray(options)) return [];
     return options
       .filter(o => o.is_active !== 0)
       .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
-  }, [options]);
+  }, [allowsCustomOptions, options]);
 
   const handleToggleOption = (optId) => {
     setSelectedOptions(prev => 

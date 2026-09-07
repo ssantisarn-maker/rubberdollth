@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * RUBBER DOLL THAILAND - Category Management API
  * Quad-Layer Persistence: MySQL Table + site_settings Table + Server Disk JSON Cache + Client Auto-Sync
@@ -32,8 +32,13 @@ function ensureCategoriesTable($pdo, $defaultCategories, $jsonCacheFile) {
             label_th VARCHAR(255) NOT NULL,
             label_en VARCHAR(255) NOT NULL,
             order_index INT DEFAULT 99,
+            allow_custom_options TINYINT(1) DEFAULT 1,
             is_active TINYINT(1) DEFAULT 1
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+        try {
+            $pdo->exec("ALTER TABLE categories ADD COLUMN allow_custom_options TINYINT(1) DEFAULT 1");
+        } catch (Exception $e) {}
 
         $count = (int)$pdo->query("SELECT COUNT(*) FROM categories")->fetchColumn();
         if ($count === 0) {
@@ -44,13 +49,14 @@ function ensureCategoriesTable($pdo, $defaultCategories, $jsonCacheFile) {
                     $source = $cached;
                 }
             }
-            $stmt = $pdo->prepare("INSERT INTO categories (id, label_th, label_en, order_index, is_active) VALUES (:id, :label_th, :label_en, :order_index, 1)");
+            $stmt = $pdo->prepare("INSERT INTO categories (id, label_th, label_en, order_index, allow_custom_options, is_active) VALUES (:id, :label_th, :label_en, :order_index, :allow_custom_options, 1)");
             foreach ($source as $c) {
                 $stmt->execute([
                     'id' => $c['id'],
                     'label_th' => $c['label_th'] ?? $c['label'] ?? $c['id'],
                     'label_en' => $c['label_en'] ?? $c['label_th'] ?? $c['id'],
-                    'order_index' => (int)($c['order_index'] ?? 99)
+                    'order_index' => (int)($c['order_index'] ?? 99),
+                    'allow_custom_options' => isset($c['allow_custom_options']) ? (int)$c['allow_custom_options'] : ($c['id'] === 'toys' || $c['id'] === 'torso' || $c['id'] === 'reviews' ? 0 : 1)
                 ]);
             }
         }
@@ -67,8 +73,13 @@ function syncCategoriesCache($pdo, $jsonCacheFile) {
         $stmt = $pdo->query("SELECT * FROM categories WHERE is_active = 1 ORDER BY order_index ASC, id ASC");
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (!empty($rows)) {
-            file_put_contents($jsonCacheFile, json_encode($rows, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
-            return $rows;
+            $formatted = array_map(function($r) {
+                $r['allow_custom_options'] = isset($r['allow_custom_options']) ? (int)$r['allow_custom_options'] : ($r['id'] === 'toys' || $r['id'] === 'torso' || $r['id'] === 'reviews' ? 0 : 1);
+                $r['allowCustomOptions'] = (bool)$r['allow_custom_options'];
+                return $r;
+            }, $rows);
+            file_put_contents($jsonCacheFile, json_encode($formatted, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+            return $formatted;
         }
     } catch (Exception $e) {}
     return null;
@@ -133,22 +144,25 @@ if ($method === 'POST' || $method === 'PUT') {
                     label_th VARCHAR(255) NOT NULL,
                     label_en VARCHAR(255) NOT NULL,
                     order_index INT DEFAULT 99,
+                    allow_custom_options TINYINT(1) DEFAULT 1,
                     is_active TINYINT(1) DEFAULT 1
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
                 $pdo->exec("DELETE FROM categories");
-                $stmt = $pdo->prepare("INSERT INTO categories (id, label_th, label_en, order_index, is_active) VALUES (:id, :label_th, :label_en, :order_index, 1)");
+                $stmt = $pdo->prepare("INSERT INTO categories (id, label_th, label_en, order_index, allow_custom_options, is_active) VALUES (:id, :label_th, :label_en, :order_index, :allow_custom_options, 1)");
                 $idx = 1;
                 foreach ($incoming as $cat) {
                     $cId = trim($cat['id'] ?? '');
                     $cTh = trim($cat['label_th'] ?? $cat['label'] ?? '');
                     $cEn = trim($cat['label_en'] ?? $cTh);
+                    $allowOpt = isset($cat['allow_custom_options']) ? (int)$cat['allow_custom_options'] : (isset($cat['allowCustomOptions']) ? ($cat['allowCustomOptions'] ? 1 : 0) : ($cId === 'toys' || $cId === 'torso' || $cId === 'reviews' ? 0 : 1));
                     if (empty($cId) || empty($cTh)) continue;
                     $stmt->execute([
                         'id' => $cId,
                         'label_th' => $cTh,
                         'label_en' => $cEn,
-                        'order_index' => (int)($cat['order_index'] ?? $idx)
+                        'order_index' => (int)($cat['order_index'] ?? $idx),
+                        'allow_custom_options' => $allowOpt
                     ]);
                     $idx++;
                 }
@@ -182,6 +196,7 @@ if ($method === 'POST' || $method === 'PUT') {
     $label_th = trim($data['label_th'] ?? '');
     $label_en = trim($data['label_en'] ?? $label_th);
     $order_index = isset($data['order_index']) ? (int)$data['order_index'] : null;
+    $allow_custom_options = isset($data['allow_custom_options']) ? (int)$data['allow_custom_options'] : (isset($data['allowCustomOptions']) ? ($data['allowCustomOptions'] ? 1 : 0) : ($id === 'toys' || $id === 'torso' || $id === 'reviews' ? 0 : 1));
 
     if (empty($id) || empty($label_th)) {
         sendError('กรุณากรอกรหัสหมวดหมู่ (id) และชื่อภาษาไทย (label_th)');
@@ -203,14 +218,15 @@ if ($method === 'POST' || $method === 'PUT') {
                 }
             }
 
-            $stmt = $pdo->prepare("INSERT INTO categories (id, label_th, label_en, order_index, is_active) 
-                                   VALUES (:id, :label_th, :label_en, :order_index, 1) 
-                                   ON DUPLICATE KEY UPDATE label_th = :label_th, label_en = :label_en, order_index = :order_index, is_active = 1");
+            $stmt = $pdo->prepare("INSERT INTO categories (id, label_th, label_en, order_index, allow_custom_options, is_active) 
+                                   VALUES (:id, :label_th, :label_en, :order_index, :allow_custom_options, 1) 
+                                   ON DUPLICATE KEY UPDATE label_th = :label_th, label_en = :label_en, order_index = :order_index, allow_custom_options = :allow_custom_options, is_active = 1");
             $stmt->execute([
                 'id' => $id,
                 'label_th' => $label_th,
                 'label_en' => $label_en,
-                'order_index' => $order_index
+                'order_index' => $order_index,
+                'allow_custom_options' => $allow_custom_options
             ]);
 
             $synced = syncCategoriesCache($pdo, $jsonCacheFile);
@@ -225,6 +241,8 @@ if ($method === 'POST' || $method === 'PUT') {
             if ($item['id'] === $id) {
                 $item['label_th'] = $label_th;
                 $item['label_en'] = $label_en;
+                $item['allow_custom_options'] = $allow_custom_options;
+                $item['allowCustomOptions'] = (bool)$allow_custom_options;
                 if ($order_index !== null) $item['order_index'] = $order_index;
                 $found = true;
                 break;
@@ -235,7 +253,9 @@ if ($method === 'POST' || $method === 'PUT') {
                 'id' => $id,
                 'label_th' => $label_th,
                 'label_en' => $label_en,
-                'order_index' => $order_index ?? (count($current) + 1)
+                'order_index' => $order_index ?? (count($current) + 1),
+                'allow_custom_options' => $allow_custom_options,
+                'allowCustomOptions' => (bool)$allow_custom_options
             ];
         }
         writeCategoriesCache($jsonCacheFile, $current);
@@ -246,7 +266,7 @@ if ($method === 'POST' || $method === 'PUT') {
         'success' => true,
         'message' => 'บันทึกหมวดหมู่เรียบร้อยแล้ว',
         'categories' => $allCats,
-        'category' => ['id' => $id, 'label_th' => $label_th, 'label_en' => $label_en, 'order_index' => $order_index]
+        'category' => ['id' => $id, 'label_th' => $label_th, 'label_en' => $label_en, 'order_index' => $order_index, 'allow_custom_options' => $allow_custom_options]
     ]);
 }
 

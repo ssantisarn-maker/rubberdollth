@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Plus, Trash2, Edit2, Tag, Check, Sparkles, FolderPlus, Layers, AlertCircle, RefreshCw, ArrowUp, ArrowDown, Save } from 'lucide-react';
 import { useLiveProducts } from '../../hooks/useLiveProducts';
 
@@ -125,6 +125,20 @@ export default function CategoryManager({ categories = [], onUpdateCategories, p
     const ordered = newArr.map((c, i) => ({ ...c, order_index: i + 1 }));
     await saveAllCategoriesToServer(ordered);
     showToast(`✓ ปรับลำดับหมวดหมู่สำเร็จ`);
+  };
+
+  // Toggle Category Options support
+  const handleToggleCategoryOptions = async (catId) => {
+    const nextList = categories.map(c => {
+      if (c.id === catId) {
+        const currentVal = c.allow_custom_options !== undefined ? c.allow_custom_options : (c.allowCustomOptions ? 1 : 0);
+        const newVal = (currentVal === 0) ? 1 : 0;
+        return { ...c, allow_custom_options: newVal, allowCustomOptions: Boolean(newVal) };
+      }
+      return c;
+    });
+    await saveAllCategoriesToServer(nextList);
+    showToast('✓ อัปเดตการแสดงออฟชั่นเสริมของหมวดหมู่เรียบร้อยแล้ว');
   };
 
   return (
@@ -279,7 +293,22 @@ export default function CategoryManager({ categories = [], onUpdateCategories, p
                 )}
 
                 {/* Right controls & Count */}
-                <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                <div className="flex items-center gap-2 sm:gap-3 shrink-0 flex-wrap">
+                  {/* Category Options Support Toggle */}
+                  <button
+                    type="button"
+                    onClick={() => handleToggleCategoryOptions(cat.id)}
+                    className={`px-2.5 py-1 rounded-xl text-[10px] font-bold border transition-all flex items-center gap-1 cursor-pointer ${
+                      cat.allow_custom_options !== 0 && cat.allowCustomOptions !== false
+                        ? 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
+                        : 'bg-neutral-100 text-neutral-500 border-neutral-200 hover:bg-neutral-200 opacity-60'
+                    }`}
+                    title={cat.allow_custom_options !== 0 ? 'คลิกเพื่อปิดออฟชั่นในหมวดนี้' : 'คลิกเพื่อเปิดออฟชั่นในหมวดนี้'}
+                  >
+                    <Sparkles className={`w-3 h-3 ${cat.allow_custom_options !== 0 && cat.allowCustomOptions !== false ? 'text-amber-600' : 'text-neutral-400'}`} />
+                    <span>{cat.allow_custom_options !== 0 && cat.allowCustomOptions !== false ? 'เปิดออฟชั่น' : 'ปิดออฟชั่น'}</span>
+                  </button>
+
                   <span className="text-xs font-semibold bg-sand-100 text-ink px-2.5 py-1 rounded-full border border-sand-200">
                     {count} สินค้า
                   </span>

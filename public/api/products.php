@@ -86,6 +86,8 @@ function formatProductRow($r) {
     $r['gifts'] = $r['gifts'] ?? '';
     $r['order_index'] = (int)($r['order_index'] ?? 999);
     $r['orderIndex'] = (int)($r['order_index'] ?? 999);
+    $r['allowCustomOptions'] = isset($r['allow_custom_options']) ? (bool)$r['allow_custom_options'] : true;
+    $r['allow_custom_options'] = isset($r['allow_custom_options']) ? (int)$r['allow_custom_options'] : 1;
     return $r;
 }
 
@@ -229,6 +231,9 @@ if ($method === 'POST' || $method === 'PUT') {
 
     $gifts = $data['gifts'] ?? 'ชุดแฟชั่นสั่งตัด, วิกผมพรีเมียม, แป้งฝุ่นบำรุงผิว Silky Smooth, เซ็ตอุปกรณ์ทำความสะอาด';
     $isReadyToShip = (!empty($data['isReadyToShip']) || !empty($data['is_ready_to_ship'])) ? 1 : 0;
+    $allowCustomOptions = isset($data['allowCustomOptions']) 
+        ? ($data['allowCustomOptions'] ? 1 : 0) 
+        : (isset($data['allow_custom_options']) ? ($data['allow_custom_options'] ? 1 : 0) : 1);
 
     $originalCode = trim($data['originalCode'] ?? ($data['original_code'] ?? ($data['old_code'] ?? '')));
     $id = trim($data['id'] ?? $code);
@@ -271,7 +276,9 @@ if ($method === 'POST' || $method === 'PUT') {
         'videoUrls' => $normalizedVideoUrls,
         'video_urls' => $normalizedVideoUrls,
         'isReadyToShip' => (bool)$isReadyToShip,
-        'is_ready_to_ship' => $isReadyToShip
+        'is_ready_to_ship' => $isReadyToShip,
+        'allowCustomOptions' => (bool)$allowCustomOptions,
+        'allow_custom_options' => $allowCustomOptions
     ];
 
     if (file_exists($jsonCacheFile)) {
@@ -306,7 +313,8 @@ if ($method === 'POST' || $method === 'PUT') {
                 "gifts TEXT DEFAULT NULL",
                 "order_index INT DEFAULT 999",
                 "video_url VARCHAR(500) DEFAULT ''",
-                "video_urls_json LONGTEXT DEFAULT NULL"
+                "video_urls_json LONGTEXT DEFAULT NULL",
+                "allow_custom_options TINYINT(1) DEFAULT 1"
             ];
             foreach ($columnsToAdd as $colDef) {
                 try {
@@ -347,7 +355,8 @@ if ($method === 'POST' || $method === 'PUT') {
                 'video_url' => $videoUrl,
                 'video_urls_json' => json_encode($normalizedVideoUrls, JSON_UNESCAPED_UNICODE),
                 'gifts' => $gifts,
-                'is_ready_to_ship' => $isReadyToShip
+                'is_ready_to_ship' => $isReadyToShip,
+                'allow_custom_options' => $allowCustomOptions
             ];
 
             if ($existing) {
@@ -377,6 +386,7 @@ if ($method === 'POST' || $method === 'PUT') {
                             video_urls_json = :video_urls_json,
                             gifts = :gifts,
                             is_ready_to_ship = :is_ready_to_ship,
+                            allow_custom_options = :allow_custom_options,
                             is_active = 1,
                             updated_at = NOW()
                         WHERE id = :existing_id";
@@ -387,8 +397,8 @@ if ($method === 'POST' || $method === 'PUT') {
                 $stmt->execute($updateParams);
             } else {
                 // Direct INSERT query
-                $sql = "INSERT INTO products (id, code, name, series, description, image, secondary_image, gallery_json, total_angles, category, categories_json, height, weight, bust, skin_tone, material, skeleton, price, original_price, special_option, gifts, order_index, video_url, video_urls_json, is_ready_to_ship, is_active) 
-                        VALUES (:id, :code, :name, :series, :description, :image, :secondary_image, :gallery_json, :total_angles, :category, :categories_json, :height, :weight, :bust, :skin_tone, :material, :skeleton, :price, :original_price, :special_option, :gifts, :order_index, :video_url, :video_urls_json, :is_ready_to_ship, 1)";
+                $sql = "INSERT INTO products (id, code, name, series, description, image, secondary_image, gallery_json, total_angles, category, categories_json, height, weight, bust, skin_tone, material, skeleton, price, original_price, special_option, gifts, order_index, video_url, video_urls_json, is_ready_to_ship, allow_custom_options, is_active) 
+                        VALUES (:id, :code, :name, :series, :description, :image, :secondary_image, :gallery_json, :total_angles, :category, :categories_json, :height, :weight, :bust, :skin_tone, :material, :skeleton, :price, :original_price, :special_option, :gifts, :order_index, :video_url, :video_urls_json, :is_ready_to_ship, :allow_custom_options, 1)";
                 $insertParams = array_merge($baseParams, [
                     'id' => $id
                 ]);

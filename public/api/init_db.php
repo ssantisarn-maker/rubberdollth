@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS categories (
     label_th VARCHAR(255) NOT NULL,
     label_en VARCHAR(255) NOT NULL,
     order_index INT DEFAULT 99,
+    allow_custom_options TINYINT(1) DEFAULT 1,
     is_active TINYINT(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -70,6 +71,7 @@ CREATE TABLE IF NOT EXISTS products (
     special_option VARCHAR(255) DEFAULT '',
     gifts TEXT DEFAULT NULL,
     is_ready_to_ship TINYINT(1) DEFAULT 0,
+    allow_custom_options TINYINT(1) DEFAULT 1,
     is_active TINYINT(1) DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -133,13 +135,18 @@ $columnsToAdd = [
     "special_option VARCHAR(255) DEFAULT ''",
     "gifts TEXT DEFAULT NULL",
     "order_index INT DEFAULT 999",
-    "video_url VARCHAR(500) DEFAULT ''"
+    "video_url VARCHAR(500) DEFAULT ''",
+    "allow_custom_options TINYINT(1) DEFAULT 1"
 ];
 foreach ($columnsToAdd as $colDef) {
     try {
         $pdo->exec("ALTER TABLE products ADD COLUMN $colDef");
     } catch (Exception $e) {}
 }
+
+try {
+    $pdo->exec("ALTER TABLE categories ADD COLUMN allow_custom_options TINYINT(1) DEFAULT 1");
+} catch (Exception $e) {}
 
 // 3. Admin User (Create or update WINZOI05)
 $defaultHash = password_hash('S0r@w13388456@3312886@19259', PASSWORD_DEFAULT);
@@ -148,16 +155,16 @@ $stmt->execute(['hash' => $defaultHash]);
 
 // 4. Categories (Upsert only)
 $defaultCategories = [
-    ['all', 'สินค้าทั้งหมด', 'All Masterpieces', 1],
-    ['ready', 'สินค้าพร้อมส่ง (ไทย)', 'Ready to Ship (TH)', 2],
-    ['toys', 'ของเล่นสำหรับผู้ใหญ่', 'Adult Toys', 3],
-    ['anime', 'ตุ๊กตาซิลิโคน สาวสวยและอนิเมะ การ์ตูน', 'Anime & Fantasy', 4],
-    ['western', 'ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวฝรั่ง / ยุโรป', 'Western / European', 5],
-    ['asian', 'ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวเอเชีย', 'Asian Aesthetics', 6],
-    ['torso', 'ตุ๊กตายางครึ่งตัว TORSO', 'Torso & Half Body', 7],
-    ['reviews', 'รีวิวตุ๊กตายางจากลูกค้า', 'Customer Reviews', 8],
+    ['all', 'สินค้าทั้งหมด', 'All Masterpieces', 1, 1],
+    ['ready', 'สินค้าพร้อมส่ง (ไทย)', 'Ready to Ship (TH)', 2, 1],
+    ['toys', 'ของเล่นสำหรับผู้ใหญ่', 'Adult Toys', 3, 0],
+    ['anime', 'ตุ๊กตาซิลิโคน สาวสวยและอนิเมะ การ์ตูน', 'Anime & Fantasy', 4, 1],
+    ['western', 'ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวฝรั่ง / ยุโรป', 'Western / European', 5, 1],
+    ['asian', 'ตุ๊กตาซิลิโคน สาวสวยหน้าตาแนวเอเชีย', 'Asian Aesthetics', 6, 1],
+    ['torso', 'ตุ๊กตายางครึ่งตัว TORSO', 'Torso & Half Body', 7, 0],
+    ['reviews', 'รีวิวตุ๊กตายางจากลูกค้า', 'Customer Reviews', 8, 0],
 ];
-$stmtCat = $pdo->prepare("INSERT INTO categories (id, label_th, label_en, order_index, is_active) VALUES (?, ?, ?, ?, 1) ON DUPLICATE KEY UPDATE label_th = VALUES(label_th), label_en = VALUES(label_en)");
+$stmtCat = $pdo->prepare("INSERT INTO categories (id, label_th, label_en, order_index, allow_custom_options, is_active) VALUES (?, ?, ?, ?, ?, 1) ON DUPLICATE KEY UPDATE label_th = VALUES(label_th), label_en = VALUES(label_en)");
 foreach ($defaultCategories as $c) {
     $stmtCat->execute($c);
 }

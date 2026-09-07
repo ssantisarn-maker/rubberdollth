@@ -20,6 +20,7 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
     price: 'ติดต่อสอบถามทาง LINE',
     originalPrice: '',
     specialOption: '',
+    allowCustomOptions: true,
     gifts: 'ชุดแฟชั่นสั่งตัดตามสไตล์โมเดล, วิกผมเกรดพรีเมียม สัมผัสนุ่มลื่น, แป้งฝุ่นบำรุงผิว Silky Smooth Powder, เซ็ตอุปกรณ์ทำความสะอาดและดูแลรักษาครบวงจร',
     isReadyToShip: false,
     orderIndex: 999,
@@ -144,6 +145,11 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
         skeleton: product.skeleton || 'EVO Stainless-Steel 360° Articulated Frame',
         originalPrice: product.originalPrice || product.original_price || '',
         specialOption: product.specialOption || product.special_option || '',
+        allowCustomOptions: product.allowCustomOptions !== undefined 
+          ? Boolean(product.allowCustomOptions) 
+          : (product.allow_custom_options !== undefined 
+              ? Boolean(product.allow_custom_options) 
+              : (!product.categories?.includes('toys') && !product.categories?.includes('torso') && product.category !== 'ของเล่นสำหรับผู้ใหญ่')),
         orderIndex: product.orderIndex ?? product.order_index ?? 999,
         videoUrl: product.videoUrl || product.video_url || '',
         videoUrls: initialVideoUrls,
@@ -155,11 +161,20 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
   const handleCategoryToggle = (catId) => {
     setFormData(prev => {
       const current = prev.categories || [];
-      if (current.includes(catId)) {
-        return { ...prev, categories: current.filter(c => c !== catId) };
-      } else {
-        return { ...prev, categories: [...current, catId] };
+      const updated = current.includes(catId)
+        ? current.filter(c => c !== catId)
+        : [...current, catId];
+
+      let autoCustomOptions = prev.allowCustomOptions;
+      if (!isEdit) {
+        if (updated.includes('toys') || updated.includes('torso')) {
+          autoCustomOptions = false;
+        } else if (updated.some(c => ['anime', 'western', 'asian'].includes(c))) {
+          autoCustomOptions = true;
+        }
       }
+
+      return { ...prev, categories: updated, allowCustomOptions: autoCustomOptions };
     });
   };
 
@@ -598,6 +613,34 @@ export default function ProductModalForm({ product, categories, onClose, onSave 
                   className="w-full px-3.5 py-2.5 bg-white border border-sand-300 rounded-xl text-ink-soft focus:outline-none focus:border-bronze"
                 />
               </div>
+            </div>
+
+            {/* Custom Options Toggle Switch */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 bg-white rounded-2xl border border-amber-200 shadow-xs">
+              <div className="space-y-0.5">
+                <label className="font-bold text-xs sm:text-sm text-ink flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-600" />
+                  <span>เปิดใช้งานออฟชั่นเสริมสำหรับสินค้านี้ (Custom Doll Options)</span>
+                </label>
+                <p className="text-[11px] text-ink-muted leading-relaxed">
+                  หากปิดสวิตช์นี้ สินค้าชิ้นนี้จะไม่มีกล่องเลือกออฟชั่น 14 รายการในหน้าเว็บ (เหมาะสำหรับของเล่นผู้ใหญ่, สินค้าครึ่งตัว, หรือสินค้าที่มีสเปกตายตัว)
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, allowCustomOptions: !prev.allowCustomOptions }))}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  formData.allowCustomOptions ? 'bg-amber-500' : 'bg-neutral-300'
+                }`}
+                title={formData.allowCustomOptions ? 'คลิกเพื่อปิดออฟชั่น' : 'คลิกเพื่อเปิดออฟชั่น'}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                    formData.allowCustomOptions ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
             </div>
           </div>
 
