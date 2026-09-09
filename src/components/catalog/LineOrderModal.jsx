@@ -346,10 +346,12 @@ export default function LineOrderModal({
           </div>
 
           {/* Privacy & Trust Badge */}
-          <div className="p-2.5 rounded-xl bg-emerald-50/50 border border-emerald-100 flex items-center justify-center gap-2 text-[11px] text-emerald-800">
-            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>บรรจุกล่องทึบ 2 ชั้น ไม่ระบุชื่อสินค้า รักษาความลับ 100%</span>
-          </div>
+          {settings.line_order_privacy_badge !== '' && (
+            <div className="p-2.5 rounded-xl bg-emerald-50/50 border border-emerald-100 flex items-center justify-center gap-2 text-[11px] text-emerald-800 text-center">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>{settings.line_order_privacy_badge || 'บรรจุกล่องทึบ 2 ชั้น ไม่ระบุชื่อสินค้า รักษาความลับ 100%'}</span>
+            </div>
+          )}
 
         </div>
 

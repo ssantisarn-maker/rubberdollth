@@ -81,6 +81,7 @@ const defaultSettings = {
   modal_trust_1: 'กล่องทึบ 2 ชั้น ไม่ระบุชื่อสินค้า',
   modal_trust_2: 'ส่งด่วน 1-2 วันรับของทั่วประเทศ',
   modal_trust_3: 'ดูแลส่วนตัว 24 ชม.',
+  line_order_privacy_badge: 'บรรจุกล่องทึบ 2 ชั้น ไม่ระบุชื่อสินค้า รักษาความลับ 100%',
 
   // Navbar & Menu Navigation Links
   nav_search_placeholder: 'ค้นหารหัสโมเดล เช่น HALF-01, SLC-108...',

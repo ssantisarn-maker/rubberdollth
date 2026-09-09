@@ -727,6 +727,24 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
                         />
                       </div>
                     </div>
+
+                    {/* Privacy & Trust Badge in LINE Order Assistant Modal */}
+                    <div className="pt-3 border-t border-sand-200 space-y-1.5">
+                      <label className="font-semibold text-ink text-xs sm:text-sm flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <span>🔒 ข้อความแถบล่างในหน้าต่างสั่งซื้อ LINE (แถบรักษาความลับ / Privacy Badge)</span>
+                      </label>
+                      <p className="text-xs text-ink-muted">
+                        แก้ไขข้อความสีเขียวแถบล่างสุดในหน้าต่างขั้นตอนสั่งซื้อ LINE (LineOrderModal) เช่น การันตีส่งลับเฉพาะ ไม่ระบุชื่อสินค้า
+                      </p>
+                      <input
+                        type="text"
+                        value={formData.line_order_privacy_badge !== undefined ? formData.line_order_privacy_badge : 'บรรจุกล่องทึบ 2 ชั้น ไม่ระบุชื่อสินค้า รักษาความลับ 100%'}
+                        onChange={e => setFormData({ ...formData, line_order_privacy_badge: e.target.value })}
+                        placeholder="เช่น บรรจุกล่องทึบ 2 ชั้น ไม่ระบุชื่อสินค้า รักษาความลับ 100%"
+                        className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:border-bronze focus:bg-white text-ink"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1339,6 +1357,21 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
                   placeholder="เช่น เปิดบริการทุกวัน 24 ชม. (จัดส่งด่วนทุกวัน)"
                   className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
                 />
+              </div>
+
+              <div className="space-y-1.5 sm:col-span-2 pt-2 border-t border-sand-200">
+                <label className="font-semibold text-ink flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <span>ข้อความแถบล่างในหน้าต่างสั่งซื้อ LINE (แถบรักษาความลับ / Privacy Badge)</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.line_order_privacy_badge !== undefined ? formData.line_order_privacy_badge : 'บรรจุกล่องทึบ 2 ชั้น ไม่ระบุชื่อสินค้า รักษาความลับ 100%'}
+                  onChange={e => setFormData({ ...formData, line_order_privacy_badge: e.target.value })}
+                  placeholder="เช่น บรรจุกล่องทึบ 2 ชั้น ไม่ระบุชื่อสินค้า รักษาความลับ 100%"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white text-ink text-xs sm:text-sm font-medium"
+                />
+                <p className="text-[11px] text-ink-muted">ข้อความสีเขียวแถบล่างสุดในหน้าต่างขั้นตอนสั่งซื้อ LINE (LineOrderModal)</p>
               </div>
             </div>
           </div>
