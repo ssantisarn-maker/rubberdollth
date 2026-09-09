@@ -3,11 +3,13 @@ import { Eye, MessageCircle, Layers, Flame, Tag, Share2, Check } from 'lucide-re
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
+import LineOrderModal from './LineOrderModal';
 
 export default function ProductCard({ product, onQuickView, isAdultMode, lang = 'th', priority = false }) {
   const [primaryLoaded, setPrimaryLoaded] = useState(false);
   const [hoverLoaded, setHoverLoaded] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showLineOrderModal, setShowLineOrderModal] = useState(false);
   const { settings } = useSiteSettings();
   const t = translations[lang] || translations.th;
 
@@ -207,21 +209,20 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
             <span>{settings.card_specs_btn_text || t.catalog.card.specsBtn}</span>
           </button>
 
-          <a
-            href={lineOrderUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
             onClick={async () => {
               try {
                 await navigator.clipboard.writeText(quickOrderMessage);
               } catch (e) {}
+              setShowLineOrderModal(true);
             }}
             className="py-2 sm:py-2.5 px-3 sm:px-4 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-1 sm:gap-1.5 transition-colors shadow-2xs active:scale-98 cursor-pointer"
             title="สั่งซื้อและส่งรายการสินค้านี้เข้า LINE ทันที"
           >
             <MessageCircle className="w-3.5 h-3.5" />
             <span>{settings.card_order_btn_text || t.catalog.card.orderBtn}</span>
-          </a>
+          </button>
 
           <button
             type="button"
@@ -242,6 +243,22 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
         </div>
 
       </div>
+
+      {/* SMART LINE ORDER ASSISTANT MODAL */}
+      {showLineOrderModal && (
+        <LineOrderModal
+          isOpen={showLineOrderModal}
+          onClose={() => setShowLineOrderModal(false)}
+          product={product}
+          selectedOptions={[]}
+          grandTotal={0}
+          basePriceNum={0}
+          lineMessage={quickOrderMessage}
+          settings={settings}
+          siteConfig={siteConfig}
+          onCustomize={onQuickView}
+        />
+      )}
 
     </article>
   );

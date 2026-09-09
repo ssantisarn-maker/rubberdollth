@@ -10,6 +10,7 @@ import { translations } from '../../data/translations';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 import { useLiveOptions } from '../../hooks/useLiveOptions';
 import { useLiveCategories } from '../../hooks/useLiveCategories';
+import LineOrderModal from './LineOrderModal';
 
 function getVideoEmbedInfo(rawUrl) {
   if (!rawUrl || typeof rawUrl !== 'string') return null;
@@ -70,6 +71,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [previewOptionMedia, setPreviewOptionMedia] = useState(null);
   const [isOptionsExpanded, setIsOptionsExpanded] = useState(true);
+  const [showLineOrderModal, setShowLineOrderModal] = useState(false);
   const t = translations[lang] || translations.th;
 
   // Determine if this specific product and its categories allow custom options
@@ -789,29 +791,28 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 </div>
               )}
 
-              {/* 1. PRIMARY CTA: Directly sends model info, options, total price into LINE */}
-              <a
-                href={lineShareUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              {/* 1. PRIMARY CTA: Opens the Smart LINE Order Assistant */}
+              <button
+                type="button"
                 onClick={async () => {
                   try {
                     await navigator.clipboard.writeText(lineMessage);
                     setCopiedLineOrder(true);
                     setTimeout(() => setCopiedLineOrder(false), 4000);
                   } catch (e) {}
+                  setShowLineOrderModal(true);
                 }}
                 className="w-full py-3 sm:py-3.5 px-6 rounded-2xl bg-[#06C755] hover:bg-[#05b34c] text-white font-bold text-sm sm:text-base shadow-md hover:shadow-lg flex flex-col items-center justify-center gap-0.5 transition-all active:scale-98 cursor-pointer group"
-                title="คลิกเพื่อส่งข้อมูลสินค้าและออฟชั่นเสริมเข้า LINE ทันที"
+                title="คลิกเพื่อสั่งซื้อและส่งรายการนี้เข้า LINE"
               >
                 <div className="flex items-center gap-2">
                   <MessageCircle className="w-5 h-5 fill-white shrink-0" />
                   <span>{settings.modal_cta_btn_text || 'สั่งซื้อ / ส่งรายการนี้เข้า LINE ทันที'}</span>
                 </div>
                 <span className="text-[11px] font-normal text-emerald-100 group-hover:text-white transition-colors">
-                  ✨ ส่งข้อมูลสินค้าและออฟชั่นเสริมเข้า LINE ทันที
+                  ✨ คลิกเพื่อส่งรายการเข้า LINE (รองรับทั้งลูกค้าใหม่และลูกค้าเดิม)
                 </span>
-              </a>
+              </button>
 
               {/* 2. SECONDARY ACTIONS: Direct Chat with Shop & Copy Link */}
               <div className="flex items-center gap-2 pt-1">
@@ -1023,6 +1024,19 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
 
         </div>
       )}
+
+      {/* SMART LINE ORDER ASSISTANT MODAL */}
+      <LineOrderModal
+        isOpen={showLineOrderModal}
+        onClose={() => setShowLineOrderModal(false)}
+        product={product}
+        selectedOptions={selectedOptionList}
+        grandTotal={grandTotal}
+        basePriceNum={basePriceNum}
+        lineMessage={lineMessage}
+        settings={settings}
+        siteConfig={siteConfig}
+      />
 
     </div>
   );
