@@ -5,6 +5,7 @@ export default function LineOrderModal({
   isOpen,
   onClose,
   product,
+  selectedSpecs = [],
   selectedOptions = [],
   grandTotal = 0,
   basePriceNum = 0,
@@ -109,6 +110,13 @@ export default function LineOrderModal({
               <h4 className="font-bold text-xs sm:text-sm text-ink truncate mt-0.5">
                 {product.name}
               </h4>
+
+              {selectedSpecs.length > 0 && (
+                <div className="text-[11px] text-purple-700 font-semibold mt-1 flex items-center gap-1">
+                  <span>🎨</span>
+                  <span>สเปกสั่งทำพิเศษ {selectedSpecs.length} รายการ</span>
+                </div>
+              )}
 
               {selectedOptions.length > 0 && (
                 <div className="text-[11px] text-emerald-700 font-semibold mt-1 flex items-center gap-1">

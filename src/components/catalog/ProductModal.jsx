@@ -10,6 +10,7 @@ import { translations } from '../../data/translations';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 import { useLiveOptions } from '../../hooks/useLiveOptions';
 import { useLiveCategories } from '../../hooks/useLiveCategories';
+import { useLiveCustomSpecs } from '../../hooks/useLiveCustomSpecs';
 import LineOrderModal from './LineOrderModal';
 
 function getVideoEmbedInfo(rawUrl) {
@@ -68,7 +69,10 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
   const { settings } = useSiteSettings();
   const { options } = useLiveOptions();
   const { categories: allCategories } = useLiveCategories();
+  const { activeGroups: specGroups, itemsByGroup: specItemsByGroup, defaultSelection: defaultSpecSelection } = useLiveCustomSpecs();
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [selectedSpecs, setSelectedSpecs] = useState({});
+  const [isSpecsExpanded, setIsSpecsExpanded] = useState(true);
   const [previewOptionMedia, setPreviewOptionMedia] = useState(null);
   const [isOptionsExpanded, setIsOptionsExpanded] = useState(true);
   const [showLineOrderModal, setShowLineOrderModal] = useState(false);
@@ -143,13 +147,35 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
     return options.filter(opt => selectedOptions.includes(opt.id));
   }, [allowsCustomOptions, options, selectedOptions]);
 
+  // Selected custom specifications (wig, eyes, breast, nails, skin, etc.)
+  const selectedSpecList = useMemo(() => {
+    if (!allowsCustomOptions) return [];
+    if (!specGroups || !Array.isArray(specGroups)) return [];
+    const list = [];
+    specGroups.forEach(g => {
+      const gItems = specItemsByGroup[g.id] || [];
+      if (gItems.length === 0) return;
+      const selectedId = selectedSpecs[g.id] || defaultSpecSelection[g.id] || gItems[0]?.id;
+      const item = gItems.find(i => i.id === selectedId) || gItems[0];
+      if (item) {
+        list.push({ group: g, item });
+      }
+    });
+    return list;
+  }, [allowsCustomOptions, specGroups, specItemsByGroup, selectedSpecs, defaultSpecSelection]);
+
+  // Total specs price
+  const specsTotal = useMemo(() => {
+    return selectedSpecList.reduce((sum, entry) => sum + (Number(entry.item.price) || 0), 0);
+  }, [selectedSpecList]);
+
   // Total add-on price
   const addOnsTotal = useMemo(() => {
     return selectedOptionList.reduce((sum, opt) => sum + (Number(opt.price) || 0), 0);
   }, [selectedOptionList]);
 
   // Grand total
-  const grandTotal = basePriceNum > 0 ? basePriceNum + addOnsTotal : 0;
+  const grandTotal = basePriceNum > 0 ? (basePriceNum + addOnsTotal + specsTotal) : 0;
 
   // Active sorted options
   const activeOptions = useMemo(() => {
@@ -175,19 +201,28 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
       msg += `\nราคาตัวตุ๊กตา: ${product.price}`;
     }
 
+    if (selectedSpecList.length > 0) {
+      msg += `\n\n🎨 สเปกสั่งทำที่เลือก:`;
+      selectedSpecList.forEach(({ group, item }) => {
+        const priceStr = Number(item.price) > 0 ? ` (+฿${Number(item.price).toLocaleString()}.-)` : ` (ฟรี)`;
+        msg += `\n• ${group.name}: ${item.name}${priceStr}`;
+      });
+    }
+
     if (selectedOptionList.length > 0) {
-      msg += `\n\n✨ ออฟชั่นเสริมที่เลือก (${selectedOptionList.length} รายการ):`;
+      msg += `\n\n✨ ออฟชั่นเสริมพิเศษ (${selectedOptionList.length} รายการ):`;
       selectedOptionList.forEach(opt => {
         msg += `\n• ${opt.name} (+฿${Number(opt.price).toLocaleString()}.-)`;
       });
-      if (grandTotal > 0) {
-        msg += `\n\n💰 ราคารวมทั้งสิ้น: ฿${grandTotal.toLocaleString()}.-`;
-      }
+    }
+
+    if (grandTotal > 0) {
+      msg += `\n\n💰 ราคารวมทั้งสิ้น: ฿${grandTotal.toLocaleString()}.-`;
     }
 
     msg += `\n\nดูข้อมูลรุ่นนี้: ${shareUrl}`;
     return msg;
-  }, [product, basePriceNum, selectedOptionList, grandTotal, shareUrl]);
+  }, [product, basePriceNum, selectedSpecList, selectedOptionList, grandTotal, shareUrl]);
 
   // Extract list of all videos
   const videoList = useMemo(() => {
@@ -213,6 +248,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
     setIsZoomOpen(false);
     setZoomScale(1);
     setSelectedOptions([]);
+    setSelectedSpecs({});
     setPreviewOptionMedia(null);
   }, [product?.id, product?.code]);
 
@@ -540,18 +576,25 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                 <div className="flex items-baseline justify-between gap-2 flex-wrap">
                   <div className="flex items-baseline gap-2 flex-wrap">
                     <span className="text-xs text-ink-muted">
-                      {selectedOptions.length > 0 ? 'ราคารวมออฟชั่น:' : 'ราคาพิเศษ:'}
+                      {(selectedOptions.length > 0 || specsTotal > 0) ? 'ราคารวมทั้งสิ้น:' : 'ราคาพิเศษ:'}
                     </span>
                     <span className="text-xl sm:text-2xl font-black text-emerald-800 font-sans">
-                      {selectedOptions.length > 0 && grandTotal > 0
+                      {(selectedOptions.length > 0 || specsTotal > 0) && grandTotal > 0
                         ? `฿${grandTotal.toLocaleString()}.-`
                         : (product.price || 'ติดต่อสอบถามทาง LINE')}
                     </span>
-                    {selectedOptions.length > 0 && (
-                      <span className="text-[10px] bg-amber-500/20 text-amber-800 font-bold px-2 py-0.5 rounded-md">
-                        + ออฟชั่น {selectedOptions.length} รายการ
-                      </span>
-                    )}
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {specsTotal > 0 && (
+                        <span className="text-[10px] bg-purple-500/20 text-purple-900 font-bold px-2 py-0.5 rounded-md">
+                          + สเปก ฿{specsTotal.toLocaleString()}.-
+                        </span>
+                      )}
+                      {selectedOptions.length > 0 && (
+                        <span className="text-[10px] bg-amber-500/20 text-amber-800 font-bold px-2 py-0.5 rounded-md">
+                          + ออฟชั่น {selectedOptions.length} รายการ
+                        </span>
+                      )}
+                    </div>
                   </div>
                   {originalPrice && (
                     <span className="text-xs text-ink-muted line-through font-sans">
@@ -560,9 +603,12 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                   )}
                 </div>
 
-                {selectedOptions.length > 0 && (
-                  <div className="text-[11px] text-ink-muted flex items-center gap-2 pt-0.5 border-t border-sand-200/60">
-                    <span>(ราคาตัว: {product.price || '-'} + ออฟชั่นเสริม: ฿{addOnsTotal.toLocaleString()}.-)</span>
+                {(selectedOptions.length > 0 || specsTotal > 0) && (
+                  <div className="text-[11px] text-ink-muted flex items-center gap-2 pt-0.5 border-t border-sand-200/60 flex-wrap">
+                    <span>(ราคาตัว: {product.price || '-'}</span>
+                    {specsTotal > 0 && <span>+ สเปก: ฿{specsTotal.toLocaleString()}.-</span>}
+                    {addOnsTotal > 0 && <span>+ ออฟชั่นเสริม: ฿{addOnsTotal.toLocaleString()}.-</span>}
+                    <span>)</span>
                   </div>
                 )}
 
@@ -573,6 +619,142 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                   </div>
                 )}
               </div>
+
+              {/* Custom Doll Specifications Section (Dropdowns: วิกผม, สีตา, ขนาดหน้าอก, สีเล็บ, สีผิว ฯลฯ) */}
+              {allowsCustomOptions && specGroups.length > 0 && (
+                <div className="rounded-2xl border border-purple-200/80 bg-gradient-to-b from-purple-50/40 via-sand-50/30 to-white overflow-hidden shadow-2xs">
+                  
+                  {/* Specifications Header Accordion */}
+                  <div 
+                    onClick={() => setIsSpecsExpanded(!isSpecsExpanded)}
+                    className="p-3 sm:p-3.5 flex items-center justify-between cursor-pointer hover:bg-purple-100/40 transition-colors border-b border-purple-200/60 select-none"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-7 h-7 rounded-xl bg-purple-600/15 text-purple-700 flex items-center justify-center text-xs shrink-0 font-bold">
+                        🎨
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className="text-xs sm:text-sm font-bold text-ink">
+                            เลือกสเปกสั่งทำ (Custom Specifications)
+                          </h4>
+                          <span className="text-[10px] bg-purple-500/20 text-purple-900 font-bold px-2 py-0.5 rounded-full">
+                            {specGroups.length} หัวข้อ
+                          </span>
+                        </div>
+                        <p className="text-[10px] sm:text-[11px] text-ink-muted truncate">
+                          ปรับแต่งวิกผม, สีตา, หน้าอก, สีเล็บ, สีผิว ฯลฯ พร้อมดูภาพตัวอย่าง
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      {specsTotal > 0 ? (
+                        <span className="text-[11px] font-bold text-purple-700 bg-purple-100/90 px-2 py-0.5 rounded-md">
+                          +฿{specsTotal.toLocaleString()}.-
+                        </span>
+                      ) : (
+                        <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md">
+                          รวมในราคาแล้ว
+                        </span>
+                      )}
+                      <div className="text-ink-muted hover:text-ink p-1 rounded-md">
+                        {isSpecsExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Specifications Dropdown Grid */}
+                  {isSpecsExpanded && (
+                    <div className="p-3 sm:p-4 space-y-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {specGroups.map(group => {
+                          const items = specItemsByGroup[group.id] || [];
+                          if (items.length === 0) return null;
+
+                          const currentSelectedId = selectedSpecs[group.id] || defaultSpecSelection[group.id] || items[0]?.id;
+                          const currentItem = items.find(it => it.id === currentSelectedId) || items[0];
+
+                          return (
+                            <div 
+                              key={group.id} 
+                              className="bg-white p-2.5 sm:p-3 rounded-xl border border-sand-200/90 shadow-2xs hover:border-purple-300 transition-colors flex flex-col justify-between gap-1.5"
+                            >
+                              <div>
+                                <div className="flex items-center justify-between gap-2 mb-1.5">
+                                  <label className="text-xs font-bold text-ink flex items-center gap-1.5 truncate">
+                                    <span>{group.icon || '✨'}</span>
+                                    <span className="truncate">{group.name}</span>
+                                  </label>
+                                  {currentItem && Number(currentItem.price) > 0 ? (
+                                    <span className="text-[11px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full shrink-0 border border-purple-200/60">
+                                      +฿{Number(currentItem.price).toLocaleString()}.-
+                                    </span>
+                                  ) : (
+                                    <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full shrink-0 border border-emerald-200/60">
+                                      ฟรี
+                                    </span>
+                                  )}
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                  <select
+                                    value={currentSelectedId}
+                                    onChange={(e) => {
+                                      const newId = e.target.value;
+                                      setSelectedSpecs(prev => ({
+                                        ...prev,
+                                        [group.id]: newId
+                                      }));
+                                    }}
+                                    className="flex-1 min-w-0 bg-sand-50/70 hover:bg-white text-xs font-medium text-ink border border-sand-300 rounded-xl px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 cursor-pointer transition-all truncate"
+                                  >
+                                    {items.map(it => {
+                                      const p = Number(it.price) || 0;
+                                      const pLabel = p > 0 ? ` (+฿${p.toLocaleString()}.-)` : ' (ฟรี)';
+                                      return (
+                                        <option key={it.id} value={it.id}>
+                                          {it.name}{pLabel}
+                                        </option>
+                                      );
+                                    })}
+                                  </select>
+
+                                  {currentItem?.image && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setPreviewOptionMedia({
+                                        type: 'image',
+                                        url: currentItem.image,
+                                        title: `${group.name}: ${currentItem.name}`,
+                                        tag: 'ตัวอย่างสเปก'
+                                      })}
+                                      className="p-1 rounded-xl border border-sand-200 hover:border-purple-400 bg-sand-50 hover:bg-purple-50 text-ink-muted hover:text-purple-700 transition-all flex items-center justify-center shrink-0 group"
+                                      title="คลิกเพื่อดูรูปภาพตัวอย่างสเปกนี้"
+                                    >
+                                      <img 
+                                        src={currentItem.image} 
+                                        alt="" 
+                                        className="w-7 h-7 object-cover rounded-lg border border-sand-200 group-hover:scale-105 transition-transform" 
+                                      />
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+
+                              {currentItem?.description && (
+                                <p className="text-[10px] text-ink-muted leading-tight truncate">
+                                  {currentItem.description}
+                                </p>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Custom Doll Options Section */}
               {activeOptions.length > 0 && (
@@ -887,7 +1069,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
             <div className="p-3.5 border-b border-white/10 flex items-center justify-between">
               <div className="flex items-center gap-2 min-w-0 pr-4">
                 <span className="text-xs bg-amber-500 text-neutral-950 font-bold px-2 py-0.5 rounded-full">
-                  ตัวอย่างออฟชั่น
+                  {previewOptionMedia.tag || 'ตัวอย่างออฟชั่น'}
                 </span>
                 <h4 className="text-white font-bold text-xs sm:text-sm truncate">{previewOptionMedia.title}</h4>
               </div>
@@ -1030,6 +1212,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
         isOpen={showLineOrderModal}
         onClose={() => setShowLineOrderModal(false)}
         product={product}
+        selectedSpecs={selectedSpecList}
         selectedOptions={selectedOptionList}
         grandTotal={grandTotal}
         basePriceNum={basePriceNum}
