@@ -13,6 +13,7 @@ export default function StickyMobileBar({ onSearchClick, isAdultMode, onToggleAd
       <button
         onClick={onSearchClick}
         className="flex-1 py-2 px-2 rounded-xl bg-sand-800/80 hover:bg-sand-700 text-[11px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform"
+        aria-label="ค้นหาแคตตาล็อกสินค้า"
       >
         <Search className="w-4 h-4 text-bronze" />
         <span>{lang === 'th' ? 'ค้นหา/รุ่น' : 'Catalog'}</span>
@@ -26,6 +27,7 @@ export default function StickyMobileBar({ onSearchClick, isAdultMode, onToggleAd
             ? 'bg-rose-600 text-white shadow-rose-900 shadow-md'
             : 'bg-sand-800/80 text-sand-200'
         }`}
+        aria-label="สลับโหมด 18+ Uncensored"
       >
         <Flame className={`w-4 h-4 ${isAdultMode ? 'fill-white' : 'text-rose-400'}`} />
         <span>{isAdultMode ? '18+ ON' : '18+ OFF'}</span>
@@ -35,6 +37,7 @@ export default function StickyMobileBar({ onSearchClick, isAdultMode, onToggleAd
       <button
         onClick={() => onSetLang(lang === 'th' ? 'en' : 'th')}
         className="flex-1 py-2 px-2 rounded-xl bg-sand-800/80 hover:bg-sand-700 text-[11px] font-bold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform"
+        aria-label="เปลี่ยนภาษาเว็บไซต์ / Switch Language"
       >
         <Globe className="w-4 h-4 text-sand-300" />
         <span>{lang === 'th' ? 'EN 🇬🇧' : 'TH 🇹🇭'}</span>
@@ -46,6 +49,7 @@ export default function StickyMobileBar({ onSearchClick, isAdultMode, onToggleAd
         target="_blank"
         rel="noopener noreferrer"
         className="flex-1.5 py-2.5 px-3 rounded-xl bg-[#06C755] hover:bg-[#05b34c] text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-lg active:scale-95 transition-transform"
+        aria-label="แชทสั่งซื้อทาง LINE"
       >
         <MessageCircle className="w-4 h-4 fill-white shrink-0" />
         <span>{lang === 'th' ? 'แชท LINE' : 'LINE'}</span>

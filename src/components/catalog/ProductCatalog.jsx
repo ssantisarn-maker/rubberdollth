@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import ProductCard from './ProductCard';
 import ProductFilter from './ProductFilter';
-import ProductModal from './ProductModal';
+const ProductModal = React.lazy(() => import('./ProductModal'));
 import { useLiveProducts } from '../../hooks/useLiveProducts';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 import { useLiveCategories } from '../../hooks/useLiveCategories';
@@ -507,12 +507,14 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
 
       {/* Modal */}
       {selectedProduct && (
-        <ProductModal
-          product={selectedProduct}
-          onClose={handleCloseModal}
-          isAdultMode={isAdultMode}
-          lang={lang}
-        />
+        <React.Suspense fallback={null}>
+          <ProductModal
+            product={selectedProduct}
+            onClose={handleCloseModal}
+            isAdultMode={isAdultMode}
+            lang={lang}
+          />
+        </React.Suspense>
       )}
     </section>
   );

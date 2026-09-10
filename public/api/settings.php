@@ -78,6 +78,31 @@ function syncOpenGraphToIndexHtml($settings) {
             $html = preg_replace('/<meta\s+name=["\']twitter:image["\']\s+content=["\'].*?["\']/is', '<meta name="twitter:image" content="' . $escaped . '"', $html);
         }
 
+        // 4. Sync LCP Hero Image Preload to eliminate discovery delay
+        $heroBg = !empty($settings['hero_bg_image']) ? $settings['hero_bg_image'] : '/images/hero-model.webp';
+        if (!empty($heroBg)) {
+            $escapedHero = htmlspecialchars($heroBg, ENT_QUOTES, 'UTF-8');
+            $html = preg_replace('/<link\s+id=["\']lcp-hero-preload["\'].*?>/is', '<link id="lcp-hero-preload" rel="preload" as="image" fetchpriority="high" href="' . $escapedHero . '" />', $html);
+        }
+
+        // 5. Sync window.__INITIAL_SETTINGS__ into index.html to eliminate CLS (Layout Shift)
+        $cleanSettings = [
+            'site_title' => $settings['site_title'] ?? '',
+            'hero_tag' => $settings['hero_tag'] ?? '',
+            'hero_title' => $settings['hero_title'] ?? '',
+            'hero_subtitle' => $settings['hero_subtitle'] ?? '',
+            'hero_bg_image' => $settings['hero_bg_image'] ?? '',
+            'line_url' => $settings['line_url'] ?? '',
+            'announcement_enabled' => $settings['announcement_enabled'] ?? true,
+            'announcement_text' => $settings['announcement_text'] ?? '',
+            'announcement_badge' => $settings['announcement_badge'] ?? ''
+        ];
+        $jsonStr = json_encode($cleanSettings, JSON_UNESCAPED_UNICODE);
+        $scriptTag = '<script id="rbd-init-settings">window.__INITIAL_SETTINGS__ = ' . $jsonStr . ';</script>';
+        if (strpos($html, 'id="rbd-init-settings"') !== false) {
+            $html = preg_replace('/<script\s+id=["\']rbd-init-settings["\']>.*?<\/script>/is', $scriptTag, $html);
+        }
+
         @file_put_contents($path, $html);
         $updatedAny = true;
     }

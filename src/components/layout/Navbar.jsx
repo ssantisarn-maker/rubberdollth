@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { MessageCircle, Search, Menu, X, Flame, Bell, Phone } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
@@ -102,6 +102,7 @@ export default function Navbar({ onSearchClick, isAdultMode, onToggleAdultMode, 
                 onClick={onSearchClick}
                 className="p-2.5 rounded-2xl text-ink-soft hover:text-bronze hover:bg-sand-100/80 transition-all"
                 title={settings.nav_search_placeholder || t.nav.search}
+                aria-label={settings.nav_search_placeholder || t.nav.search || "ค้นหาแคตตาล็อกสินค้า"}
               >
                 <Search className="w-5 h-5" />
               </button>
@@ -115,6 +116,7 @@ export default function Navbar({ onSearchClick, isAdultMode, onToggleAdultMode, 
                     : 'bg-sand-100 border-sand-300 text-ink-soft hover:border-rose-400 hover:text-rose-600'
                 }`}
                 title="สลับโหมดภาพ Uncensored"
+                aria-label="สลับโหมดภาพ 18+ Uncensored"
               >
                 <Flame className={`w-3.5 h-3.5 ${isAdultMode ? 'fill-white' : 'text-rose-500'}`} />
                 <span className="hidden sm:inline">
@@ -129,6 +131,7 @@ export default function Navbar({ onSearchClick, isAdultMode, onToggleAdultMode, 
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hidden sm:inline-flex items-center space-x-2 bg-[#06C755] hover:bg-[#05b34c] text-white px-4 py-2.5 rounded-2xl text-xs font-semibold shadow-soft hover:shadow-soft-hover transition-all duration-200 active:scale-98"
+                aria-label="สอบถามและสั่งซื้อทาง LINE"
               >
                 <MessageCircle className="w-4 h-4" />
                 <span>{settings.nav_cta_btn || t.nav.lineContact}</span>
@@ -138,7 +141,7 @@ export default function Navbar({ onSearchClick, isAdultMode, onToggleAdultMode, 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="lg:hidden p-2.5 rounded-2xl text-ink hover:bg-sand-100 transition-colors"
-                aria-label="เปิดเมนูนำทาง"
+                aria-label={mobileMenuOpen ? "ปิดเมนูนำทาง" : "เปิดเมนูนำทาง"}
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>

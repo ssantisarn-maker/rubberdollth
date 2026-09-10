@@ -12,9 +12,10 @@ import FaqSection from './components/faq/FaqSection';
 import ContactSection from './components/contact/ContactSection';
 import Footer from './components/layout/Footer';
 import StickyMobileBar from './components/layout/StickyMobileBar';
-import AdminDashboard from './components/admin/AdminDashboard';
-import AdminLogin from './components/admin/AdminLogin';
 import { Flame, Check, ArrowUp } from 'lucide-react';
+
+const AdminDashboard = React.lazy(() => import('./components/admin/AdminDashboard'));
+const AdminLogin = React.lazy(() => import('./components/admin/AdminLogin'));
 import { translations } from './data/translations';
 import { useSiteSettings } from './hooks/useSiteSettings';
 
@@ -96,29 +97,40 @@ export default function App() {
   };
 
   if (route === 'admin') {
+    const adminFallback = (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-sand-50 text-ink gap-3">
+        <div className="w-8 h-8 border-3 border-bronze border-t-transparent rounded-full animate-spin" />
+        <span className="text-xs font-semibold text-ink-muted">กำลังโหลดระบบจัดการหลังบ้าน...</span>
+      </div>
+    );
+
     if (!isAdminAuthenticated) {
       return (
-        <AdminLogin
-          onLoginSuccess={() => setIsAdminAuthenticated(true)}
+        <React.Suspense fallback={adminFallback}>
+          <AdminLogin
+            onLoginSuccess={() => setIsAdminAuthenticated(true)}
+            onBackToShop={() => {
+              window.history.pushState({}, '', '/');
+              setRoute('shop');
+            }}
+          />
+        </React.Suspense>
+      );
+    }
+    return (
+      <React.Suspense fallback={adminFallback}>
+        <AdminDashboard
+          onLogout={() => {
+            localStorage.removeItem('rbd_admin_token');
+            localStorage.removeItem('rbd_admin_user');
+            setIsAdminAuthenticated(false);
+          }}
           onBackToShop={() => {
             window.history.pushState({}, '', '/');
             setRoute('shop');
           }}
         />
-      );
-    }
-    return (
-      <AdminDashboard
-        onLogout={() => {
-          localStorage.removeItem('rbd_admin_token');
-          localStorage.removeItem('rbd_admin_user');
-          setIsAdminAuthenticated(false);
-        }}
-        onBackToShop={() => {
-          window.history.pushState({}, '', '/');
-          setRoute('shop');
-        }}
-      />
+      </React.Suspense>
     );
   }
 
@@ -175,6 +187,7 @@ export default function App() {
           onClick={scrollToTop}
           className="fixed bottom-6 right-6 z-30 hidden sm:flex p-3 rounded-full bg-sand-900/90 text-white hover:bg-sand-800 shadow-soft hover:shadow-soft-hover transition-all duration-200 active:scale-95 items-center justify-center border border-sand-700"
           title="กลับขึ้นด้านบน / Back to Top"
+          aria-label="กลับขึ้นด้านบน / Back to Top"
         >
           <ArrowUp className="w-5 h-5 text-bronze" />
         </button>

@@ -67,10 +67,28 @@ if ($isVideo) {
         if ($fileData) {
             $sourceImage = @imagecreatefromstring($fileData);
             if ($sourceImage) {
+                $origW = imagesx($sourceImage);
+                $origH = imagesy($sourceImage);
+                $maxW = 1200;
+                $maxH = 1600;
+
+                // Auto-downscale large camera/phone uploads to crisp Retina dimensions
+                if ($origW > $maxW || $origH > $maxH) {
+                    $ratio = min($maxW / $origW, $maxH / $origH);
+                    $newW = (int)round($origW * $ratio);
+                    $newH = (int)round($origH * $ratio);
+                    $resized = imagecreatetruecolor($newW, $newH);
+                    imagealphablending($resized, false);
+                    imagesavealpha($resized, true);
+                    imagecopyresampled($resized, $sourceImage, 0, 0, 0, 0, $newW, $newH, $origW, $origH);
+                    @imagedestroy($sourceImage);
+                    $sourceImage = $resized;
+                }
+
                 imagepalettetotruecolor($sourceImage);
                 imagealphablending($sourceImage, true);
                 imagesavealpha($sourceImage, true);
-                if (@imagewebp($sourceImage, $targetPath, 85)) {
+                if (@imagewebp($sourceImage, $targetPath, 82)) {
                     $converted = true;
                 }
                 @imagedestroy($sourceImage);

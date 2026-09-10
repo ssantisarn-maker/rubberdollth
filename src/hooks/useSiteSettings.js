@@ -203,6 +203,9 @@ const fetchGlobalSettings = async (force = false) => {
 export function useSiteSettings() {
   const [settings, setSettings] = useState(() => {
     try {
+      if (typeof window !== 'undefined' && window.__INITIAL_SETTINGS__) {
+        return { ...defaultSettings, ...window.__INITIAL_SETTINGS__ };
+      }
       const saved = localStorage.getItem('rbd_site_settings');
       if (saved) {
         return { ...defaultSettings, ...JSON.parse(saved) };

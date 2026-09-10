@@ -8,6 +8,7 @@ import LineOrderModal from './LineOrderModal';
 export default function ProductCard({ product, onQuickView, isAdultMode, lang = 'th', priority = false }) {
   const [primaryLoaded, setPrimaryLoaded] = useState(false);
   const [hoverLoaded, setHoverLoaded] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showLineOrderModal, setShowLineOrderModal] = useState(false);
   const { settings } = useSiteSettings();
@@ -69,7 +70,9 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
   const originalPrice = product.originalPrice || product.original_price || '';
 
   return (
-    <article className={`bg-white rounded-2xl sm:rounded-3xl border transition-all duration-300 overflow-hidden flex flex-col justify-between group ${
+    <article 
+      onMouseEnter={() => { if (hasHover && !isHovered) setIsHovered(true); }}
+      className={`bg-white rounded-2xl sm:rounded-3xl border transition-all duration-300 overflow-hidden flex flex-col justify-between group ${
       isAdultMode 
         ? 'border-rose-300/80 shadow-soft hover:shadow-rose-100 hover:border-rose-400' 
         : 'border-sand-200 shadow-soft hover:shadow-soft-hover'
@@ -109,8 +112,8 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
           }}
         />
 
-        {/* 2. Hover Image (Desktop cross-fade) */}
-        {hasHover && (
+        {/* 2. Hover Image (Desktop cross-fade loaded on-demand on mouse hover) */}
+        {hasHover && isHovered && (
           <img
             key={displayHoverImg}
             src={displayHoverImg}
@@ -233,6 +236,7 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
                 : 'bg-sand-100 hover:bg-sand-200 border-transparent text-ink-muted hover:text-ink'
             }`}
             title="แชร์ลิงก์สินค้ารุ่นนี้"
+            aria-label={`แชร์ลิงก์สินค้ารุ่น ${product.code || ''} ${product.name || ''}`}
           >
             {copied ? (
               <Check className="w-3.5 h-3.5 text-emerald-600" />

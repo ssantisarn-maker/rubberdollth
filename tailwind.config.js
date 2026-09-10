@@ -27,8 +27,8 @@ export default {
         ink: {
           DEFAULT: '#19181B',
           soft: '#2D2C31',
-          muted: '#5E5B66',
-          light: '#8E8A96',
+          muted: '#524F5A',
+          light: '#5E5B66',
         }
       },
       fontFamily: {
