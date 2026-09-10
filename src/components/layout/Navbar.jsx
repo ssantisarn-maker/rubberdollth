@@ -130,7 +130,7 @@ export default function Navbar({ onSearchClick, isAdultMode, onToggleAdultMode, 
                 href={lineUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:inline-flex items-center space-x-2 bg-[#06C755] hover:bg-[#05b34c] text-white px-4 py-2.5 rounded-2xl text-xs font-semibold shadow-soft hover:shadow-soft-hover transition-all duration-200 active:scale-98"
+                className="hidden sm:inline-flex items-center space-x-2 bg-[#047835] hover:bg-[#03632b] text-white px-4 py-2.5 rounded-2xl text-xs font-semibold shadow-soft hover:shadow-soft-hover transition-all duration-200 active:scale-98"
                 aria-label="สอบถามและสั่งซื้อทาง LINE"
               >
                 <MessageCircle className="w-4 h-4" />
@@ -180,7 +180,7 @@ export default function Navbar({ onSearchClick, isAdultMode, onToggleAdultMode, 
               href={lineUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 bg-[#06C755] hover:bg-[#05b34c] text-white py-3.5 rounded-2xl text-sm font-bold shadow-md"
+              className="w-full flex items-center justify-center gap-2 bg-[#047835] hover:bg-[#03632b] text-white py-3.5 rounded-2xl text-sm font-bold shadow-md"
             >
               <MessageCircle className="w-5 h-5" />
               <span>{settings.nav_cta_btn || `ติดต่อแอดมินทาง LINE (${lineId})`}</span>

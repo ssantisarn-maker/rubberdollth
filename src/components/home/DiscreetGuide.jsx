@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Shield, Package, Lock } from 'lucide-react';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 
@@ -54,7 +54,7 @@ export default function DiscreetGuide({ lang = 'th' }) {
                   <div className="w-14 h-14 rounded-2xl bg-white border border-sand-300 flex items-center justify-center text-bronze shadow-2xs">
                     <Icon className="w-7 h-7 text-amber-700" />
                   </div>
-                  <span className="font-sans text-3xl sm:text-4xl font-black tracking-tight text-amber-900/30">0{l.step}</span>
+                  <span aria-hidden="true" className="font-sans text-3xl sm:text-4xl font-black tracking-tight text-amber-900/60 select-none">0{l.step}</span>
                 </div>
                 <h3 className="font-sans text-base sm:text-lg font-bold text-ink">{l.title}</h3>
                 <p className="text-sm text-ink-soft leading-relaxed font-normal">{l.description}</p>

@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Shield, Sparkles, MessageCircle, ArrowRight, CheckCircle2, Star, Zap } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
@@ -67,7 +67,7 @@ export default function HeroSection({ onExploreClick, lang = 'th' }) {
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto px-7 py-4 rounded-2xl bg-white hover:bg-sand-100 text-ink border border-sand-300 text-sm sm:text-base font-bold tracking-wide shadow-xs transition-all duration-200 flex items-center justify-center gap-2.5"
               >
-                <MessageCircle className="w-5 h-5 text-[#06C755]" />
+                <MessageCircle className="w-5 h-5 text-[#047835]" />
                 <span>{btnSecondary}</span>
               </a>
             </div>

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Sparkles, MessageCircle, Zap, Play, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 import { translations } from '../../data/translations';
@@ -188,7 +188,7 @@ export default function SpotlightShowcase({ lang = 'th' }) {
                   href={lineUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-4 px-6 rounded-2xl bg-[#06C755] hover:bg-[#05b34c] text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-xl shadow-[#06C755]/20 hover:scale-[1.02] active:scale-98 transition-all"
+                  className="w-full py-4 px-6 rounded-2xl bg-[#047835] hover:bg-[#03632b] text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-xl shadow-[#047835]/20 hover:scale-[1.02] active:scale-98 transition-all"
                 >
                   <MessageCircle className="w-5 h-5 fill-white" />
                   <span>{ctaText}</span>

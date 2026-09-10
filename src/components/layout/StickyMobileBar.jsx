@@ -48,7 +48,7 @@ export default function StickyMobileBar({ onSearchClick, isAdultMode, onToggleAd
         href={siteConfig.lineUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex-1.5 py-2.5 px-3 rounded-xl bg-[#06C755] hover:bg-[#05b34c] text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-lg active:scale-95 transition-transform"
+        className="flex-1.5 py-2.5 px-3 rounded-xl bg-[#047835] hover:bg-[#03632b] text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-lg active:scale-95 transition-transform"
         aria-label="แชทสั่งซื้อทาง LINE"
       >
         <MessageCircle className="w-4 h-4 fill-white shrink-0" />

@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { MessageCircle, Mail, Clock, Phone, ShieldCheck, Heart } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
@@ -33,8 +33,8 @@ export default function ContactSection({ lang = 'th' }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
           {/* LINE Card */}
-          <div className="p-8 rounded-3xl bg-[#06C755]/5 border border-[#06C755]/25 text-center space-y-4 shadow-2xs hover:shadow-soft transition-all">
-            <div className="w-16 h-16 rounded-2xl bg-[#06C755] text-white flex items-center justify-center mx-auto shadow-md">
+          <div className="p-8 rounded-3xl bg-[#047835]/5 border border-[#047835]/25 text-center space-y-4 shadow-2xs hover:shadow-soft transition-all">
+            <div className="w-16 h-16 rounded-2xl bg-[#047835] text-white flex items-center justify-center mx-auto shadow-md">
               <MessageCircle className="w-8 h-8 fill-white" />
             </div>
             <div>
@@ -45,7 +45,7 @@ export default function ContactSection({ lang = 'th' }) {
               href={lineUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center w-full py-3.5 rounded-xl bg-[#06C755] hover:bg-[#05b34c] text-white text-xs sm:text-sm font-bold shadow-md transition-colors"
+              className="inline-flex items-center justify-center w-full py-3.5 rounded-xl bg-[#047835] hover:bg-[#03632b] text-white text-xs sm:text-sm font-bold shadow-md transition-colors"
             >
               {settings.contact_line_btn || (lineId ? `${t.contact.lineCta} (${lineId})` : t.contact.lineCta)}
             </a>

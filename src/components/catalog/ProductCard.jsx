@@ -220,7 +220,7 @@ export default function ProductCard({ product, onQuickView, isAdultMode, lang = 
               } catch (e) {}
               setShowLineOrderModal(true);
             }}
-            className="py-2 sm:py-2.5 px-3 sm:px-4 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-1 sm:gap-1.5 transition-colors shadow-2xs active:scale-98 cursor-pointer"
+            className="py-2 sm:py-2.5 px-3 sm:px-4 bg-[#047835] hover:bg-[#03632b] text-white rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-1 sm:gap-1.5 transition-colors shadow-2xs active:scale-98 cursor-pointer"
             title="สั่งซื้อและส่งรายการสินค้านี้เข้า LINE ทันที"
           >
             <MessageCircle className="w-3.5 h-3.5" />

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Star, ShieldCheck, CheckCircle2, Image as ImageIcon, X, Sparkles, ZoomIn } from 'lucide-react';
 import { useLiveReviews } from '../../hooks/useLiveReviews';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
@@ -54,6 +54,8 @@ export default function ReviewSection({ lang = 'th' }) {
                       <img
                         src={mainImg}
                         alt={`ภาพรีวิวจาก ${rev.name}`}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         onError={e => { e.target.src = '/favicon.png'; }}
                       />
@@ -81,9 +83,10 @@ export default function ReviewSection({ lang = 'th' }) {
                           key={sIdx}
                           type="button"
                           onClick={() => setLightboxImage(subImg)}
+                          aria-label={`ดูภาพรีวิวเพิ่มเติมที่ ${sIdx + 1} จาก ${rev.name}`}
                           className="w-8 h-8 rounded-lg overflow-hidden border border-sand-300 hover:border-bronze shrink-0"
                         >
-                          <img src={subImg} alt="" className="w-full h-full object-cover" />
+                          <img src={subImg} alt={`ภาพรีวิวย่อยที่ ${sIdx + 1}`} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                         </button>
                       ))}
                     </div>

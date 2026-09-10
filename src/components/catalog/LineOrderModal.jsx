@@ -67,7 +67,7 @@ export default function LineOrderModal({
       <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-sand-200 overflow-hidden z-10 animate-in zoom-in-95 duration-200 max-h-[92vh] flex flex-col">
         
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-600 via-[#06C755] to-emerald-700 p-4 sm:p-5 text-white flex items-center justify-between shrink-0">
+        <div className="bg-gradient-to-r from-emerald-700 via-[#047835] to-emerald-800 p-4 sm:p-5 text-white flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0">
               <MessageCircle className="w-5 h-5 fill-white text-white" />
@@ -207,7 +207,7 @@ export default function LineOrderModal({
                 <button
                   type="button"
                   onClick={handleStep1AddFriend}
-                  className="w-full py-2.5 px-4 rounded-xl bg-[#06C755] hover:bg-[#05b34c] text-white text-xs sm:text-sm font-bold shadow flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer"
+                  className="w-full py-2.5 px-4 rounded-xl bg-[#047835] hover:bg-[#03632b] text-white text-xs sm:text-sm font-bold shadow flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer"
                 >
                   <UserPlus className="w-4 h-4" />
                   <span>กดแอดเพื่อน LINE: {lineId}</span>
@@ -242,7 +242,7 @@ export default function LineOrderModal({
                   onClick={handleStep2SendOrder}
                   className={`w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold shadow flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer ${
                     step1Done
-                      ? 'bg-[#06C755] hover:bg-[#05b34c] text-white ring-2 ring-emerald-300'
+                      ? 'bg-[#047835] hover:bg-[#03632b] text-white ring-2 ring-emerald-300'
                       : 'bg-emerald-700/80 hover:bg-emerald-700 text-white'
                   }`}
                 >
@@ -273,7 +273,7 @@ export default function LineOrderModal({
               <button
                 type="button"
                 onClick={handleStep2SendOrder}
-                className="w-full py-3.5 px-4 rounded-2xl bg-[#06C755] hover:bg-[#05b34c] text-white font-bold text-sm sm:text-base shadow-md flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer"
+                className="w-full py-3.5 px-4 rounded-2xl bg-[#047835] hover:bg-[#03632b] text-white font-bold text-sm sm:text-base shadow-md flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer"
               >
                 <Send className="w-5 h-5 fill-white" />
                 <span>🚀 ส่งรายการสั่งซื้อเข้า LINE ทันที</span>

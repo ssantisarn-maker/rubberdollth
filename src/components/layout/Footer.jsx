@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Sparkles, MessageCircle, Mail, Globe, Phone } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { translations } from '../../data/translations';
@@ -103,7 +103,7 @@ export default function Footer({ lang = 'th', onSetLang }) {
                 href={lineUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-[#06C755] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow hover:bg-[#05b34c] transition-colors"
+                className="inline-flex items-center gap-2 bg-[#047835] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow hover:bg-[#03632b] transition-colors"
               >
                 <MessageCircle className="w-4 h-4 fill-white" />
                 <span>{settings.nav_cta_btn || t.nav.lineContact}</span>

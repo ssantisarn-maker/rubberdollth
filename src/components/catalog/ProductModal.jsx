@@ -1006,7 +1006,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                   } catch (e) {}
                   setShowLineOrderModal(true);
                 }}
-                className="w-full py-3 sm:py-3.5 px-6 rounded-2xl bg-[#06C755] hover:bg-[#05b34c] text-white font-bold text-sm sm:text-base shadow-md hover:shadow-lg flex flex-col items-center justify-center gap-0.5 transition-all active:scale-98 cursor-pointer group"
+                className="w-full py-3 sm:py-3.5 px-6 rounded-2xl bg-[#047835] hover:bg-[#03632b] text-white font-bold text-sm sm:text-base shadow-md hover:shadow-lg flex flex-col items-center justify-center gap-0.5 transition-all active:scale-98 cursor-pointer group"
                 title="คลิกเพื่อสั่งซื้อและส่งรายการนี้เข้า LINE"
               >
                 <div className="flex items-center gap-2">
@@ -1034,7 +1034,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                   className="flex-1 py-2 px-3 rounded-xl border border-sand-300 bg-white hover:bg-emerald-50 hover:border-emerald-300 text-ink hover:text-emerald-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm cursor-pointer"
                   title="เปิดหน้าแชทกับร้านค้าโดยตรง (ระบบจะคัดลอกข้อความคำสั่งซื้อให้ เพื่อนำไปกดวางในแชท)"
                 >
-                  <MessageCircle className="w-3.5 h-3.5 text-[#06C755]" />
+                  <MessageCircle className="w-3.5 h-3.5 text-[#047835]" />
                   <span>แชทตรงกับร้าน (ID: {settings.line_id || siteConfig.lineId || 'RUBBERDOLL.TH'})</span>
                 </a>
 

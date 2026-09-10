@@ -28,11 +28,11 @@ const defaultSettings = {
   product_sort_prefix: 'HALF',
   
   // Hero Section
-  hero_tag: 'MASTERPIECES OF REALISM • HYPER-REALISTIC SILICONE',
-  hero_pretitle: 'นิยามใหม่แห่งความสมจริงเหนือระดับ',
-  hero_title: 'สุนทรียภาพแห่งสัมผัสเสมือนจริง ระดับ Hi-End อันดับ 1 ในไทย',
-  hero_subtitle: 'ตุ๊กตายางซิลิโคนแท้ 100% เกรดการแพทย์ โครงสร้างสแตนเลส 360° ปรับได้ทุกท่วงท่า จัดส่งมิดชิดลับเฉพาะ 100% รับประกันคุณภาพสูงสุด',
-  hero_bg_image: '',
+  hero_tag: 'NEW MODEL • SLC-162 ✨ น้องไอยู✨',
+  hero_pretitle: 'ตุ๊กตายางนำเข้าจากต่างประเทศ ขายเฉพาะในประเทศไทยเท่านั้นจ้า',
+  hero_title: '🆕สินค้าเข้าใหม่ :  น้องไอยู',
+  hero_subtitle: '✨SLC-162 น้องไอยู✨\n\nตุ๊กตายางพรีเมียม สไตล์สาวนักเรียนน่ารักเซ็กซี่\n\nน้องไอยูมาในลุคสาวนักเรียนสุดน่ารักที่ทั้งสดใสและเย้ายวน',
+  hero_bg_image: '/images/products/SLC-162_1788898701_af9fd7.webp',
   hero_btn_primary_text: 'ดูแคตตาล็อกสินค้าทั้งหมด',
   hero_btn_secondary_text: 'ปรึกษาแอดมินทาง LINE',
 
