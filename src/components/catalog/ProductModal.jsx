@@ -336,7 +336,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
       <div className="fixed inset-0" onClick={onClose} />
 
       {/* Modal Card / Mobile Bottom Sheet */}
-      <div className="relative bg-white rounded-t-3xl sm:rounded-3xl max-w-4xl w-full max-h-[92vh] sm:max-h-[90vh] overflow-y-auto shadow-modal border border-sand-200 z-10 animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200 pb-20 sm:pb-0">
+      <div className="relative bg-white rounded-t-3xl sm:rounded-3xl max-w-4xl lg:max-w-5xl xl:max-w-6xl w-full max-h-[92vh] sm:max-h-[90vh] overflow-y-auto shadow-modal border border-sand-200 z-10 animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200 pb-20 sm:pb-0">
         
         {/* Mobile Pull Indicator */}
         <div className="sm:hidden w-12 h-1.5 bg-sand-300 rounded-full mx-auto my-3" />
@@ -350,10 +350,10 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
           <X className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 p-4 sm:p-6 lg:p-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 items-start">
           
           {/* Left: Product Image & Gallery Thumbnails */}
-          <div className="md:col-span-6 space-y-3">
+          <div className="md:col-span-5 md:sticky md:top-4 md:self-start space-y-3">
             
             {/* Main Featured Image or Video Player */}
             <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-sand-100 border border-sand-200 shadow-sm group">
@@ -569,7 +569,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
           </div>
 
           {/* Right: Technical Specs & Details */}
-          <div className="md:col-span-6 flex flex-col justify-between space-y-4 sm:space-y-6">
+          <div className="md:col-span-7 flex flex-col justify-between space-y-4 sm:space-y-6 min-w-0">
             
             <div className="space-y-4">
               
@@ -681,7 +681,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                   {/* Specifications Dropdown Grid */}
                   {isSpecsExpanded && (
                     <div className="p-3 sm:p-4 space-y-3">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
                         {specGroups.map(group => {
                           const items = specItemsByGroup[group.id] || [];
                           if (items.length === 0) return null;
@@ -692,7 +692,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                           return (
                             <div 
                               key={group.id} 
-                              className="bg-white p-2.5 sm:p-3 rounded-xl border border-sand-200/90 shadow-2xs hover:border-purple-300 transition-colors flex flex-col justify-between gap-1.5"
+                              className="bg-white p-2.5 sm:p-3 rounded-xl border border-sand-200/90 shadow-2xs hover:border-purple-300 transition-colors flex flex-col justify-between gap-1.5 min-w-0"
                             >
                               <div>
                                 <div className="flex items-center justify-between gap-2 mb-1.5">
