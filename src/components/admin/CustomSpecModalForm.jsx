@@ -245,10 +245,10 @@ export default function CustomSpecModalForm({
 
             <div className="flex gap-2">
               <input
-                type="url"
+                type="text"
                 value={formData.image}
                 onChange={e => setFormData({ ...formData, image: e.target.value })}
-                placeholder="วางลิงก์รูปภาพ https://... หรือกดอัปโหลดด้านขวา"
+                placeholder="วางลิงก์รูปภาพ /images/... หรือ https://... หรือกดอัปโหลดด้านขวา"
                 className="flex-1 px-3.5 py-2 bg-sand-50 border border-sand-300 rounded-xl text-xs focus:outline-none focus:border-bronze focus:bg-white truncate"
               />
               <label className="py-2 px-3 rounded-xl bg-sand-100 hover:bg-sand-200 border border-sand-300 text-ink text-xs font-semibold flex items-center gap-1.5 cursor-pointer shrink-0 transition-colors">
@@ -295,6 +295,22 @@ export default function CustomSpecModalForm({
               value={formData.description}
               onChange={e => setFormData({ ...formData, description: e.target.value })}
               placeholder="เช่น สไตล์ญี่ปุ่น สัมผัสนุ่มลื่นเป็นธรรมชาติ"
+              className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs focus:outline-none focus:border-bronze focus:bg-white"
+            />
+          </div>
+
+          {/* Order Index */}
+          <div className="space-y-1.5">
+            <label className="font-bold text-ink flex items-center justify-between">
+              <span>ลำดับการแสดงผล (Order Index)</span>
+              <span className="text-[11px] font-normal text-ink-muted">(เลขน้อยจะขึ้นก่อนในดรอปดาวน์)</span>
+            </label>
+            <input
+              type="number"
+              min="0"
+              value={formData.order_index}
+              onChange={e => setFormData({ ...formData, order_index: Number(e.target.value) || 0 })}
+              placeholder="0"
               className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs focus:outline-none focus:border-bronze focus:bg-white"
             />
           </div>

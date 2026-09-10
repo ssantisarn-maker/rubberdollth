@@ -400,6 +400,68 @@ if ($method === 'POST' || $method === 'PUT') {
             sendResponse(['success' => true, 'message' => 'ลบจาก Cache สำเร็จ', 'data' => $cached]);
         }
     }
+
+    // 5. Action: Reorder Items
+    if ($action === 'reorder_items') {
+        $itemIds = $data['item_ids'] ?? [];
+        if (!is_array($itemIds) || empty($itemIds)) {
+            sendError('กรุณาระบุรายการที่ต้องการจัดลำดับ');
+        }
+
+        if ($pdo) {
+            try {
+                $stmt = $pdo->prepare("UPDATE custom_spec_items SET order_index = :idx, updated_at = NOW() WHERE id = :id");
+                foreach ($itemIds as $idx => $itemId) {
+                    $stmt->execute(['idx' => $idx + 1, 'id' => $itemId]);
+                }
+                $synced = syncSpecsCache($pdo, $jsonCacheFile);
+                sendResponse(['success' => true, 'message' => 'บันทึกลำดับเรียบร้อยแล้ว', 'data' => $synced]);
+            } catch (PDOException $e) {
+                sendError('Database error: ' . $e->getMessage(), 500);
+            }
+        } else {
+            $cached = file_exists($jsonCacheFile) ? (json_decode(file_get_contents($jsonCacheFile), true) ?: $defaultSpecs) : $defaultSpecs;
+            $orderMap = array_flip($itemIds);
+            foreach ($cached['items'] as &$ci) {
+                if (isset($orderMap[$ci['id']])) {
+                    $ci['order_index'] = $orderMap[$ci['id']] + 1;
+                }
+            }
+            file_put_contents($jsonCacheFile, json_encode($cached, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+            sendResponse(['success' => true, 'message' => 'บันทึกลำดับลง Cache สำเร็จ', 'data' => $cached]);
+        }
+    }
+
+    // 6. Action: Reorder Groups
+    if ($action === 'reorder_groups') {
+        $groupIds = $data['group_ids'] ?? [];
+        if (!is_array($groupIds) || empty($groupIds)) {
+            sendError('กรุณาระบุหัวข้อที่ต้องการจัดลำดับ');
+        }
+
+        if ($pdo) {
+            try {
+                $stmt = $pdo->prepare("UPDATE custom_spec_groups SET order_index = :idx, updated_at = NOW() WHERE id = :id");
+                foreach ($groupIds as $idx => $gid) {
+                    $stmt->execute(['idx' => $idx + 1, 'id' => $gid]);
+                }
+                $synced = syncSpecsCache($pdo, $jsonCacheFile);
+                sendResponse(['success' => true, 'message' => 'บันทึกลำดับหัวข้อเรียบร้อยแล้ว', 'data' => $synced]);
+            } catch (PDOException $e) {
+                sendError('Database error: ' . $e->getMessage(), 500);
+            }
+        } else {
+            $cached = file_exists($jsonCacheFile) ? (json_decode(file_get_contents($jsonCacheFile), true) ?: $defaultSpecs) : $defaultSpecs;
+            $orderMap = array_flip($groupIds);
+            foreach ($cached['groups'] as &$cg) {
+                if (isset($orderMap[$cg['id']])) {
+                    $cg['order_index'] = $orderMap[$cg['id']] + 1;
+                }
+            }
+            file_put_contents($jsonCacheFile, json_encode($cached, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+            sendResponse(['success' => true, 'message' => 'บันทึกลำดับหัวข้อลง Cache สำเร็จ', 'data' => $cached]);
+        }
+    }
 }
 
 // DELETE: Delete Item or Group

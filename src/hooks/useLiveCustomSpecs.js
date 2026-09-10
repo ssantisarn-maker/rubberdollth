@@ -241,6 +241,66 @@ export function useLiveCustomSpecs(includeAll = false) {
     return updated;
   };
 
+  // Reorder Items in a group
+  const reorderItems = async (groupId, itemIds) => {
+    // Optimistic local update
+    const orderMap = {};
+    itemIds.forEach((id, idx) => { orderMap[id] = idx + 1; });
+    const nextItems = (data.items || []).map(i => {
+      if (orderMap[i.id] !== undefined) {
+        return { ...i, order_index: orderMap[i.id] };
+      }
+      return i;
+    });
+    const updated = { ...data, items: nextItems };
+    updateSpecsState(updated);
+
+    try {
+      const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
+      const res = await fetch('/api/custom_specs.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ action: 'reorder_items', group_id: groupId, item_ids: itemIds })
+      });
+      const resJson = await res.json();
+      if (resJson.success && resJson.data) {
+        updateSpecsState(resJson.data);
+      }
+    } catch (e) {
+      console.warn('Reorder specs API error:', e);
+    }
+  };
+
+  // Reorder Groups
+  const reorderGroups = async (groupIds) => {
+    // Optimistic local update
+    const orderMap = {};
+    groupIds.forEach((id, idx) => { orderMap[id] = idx + 1; });
+    const nextGroups = (data.groups || []).map(g => {
+      if (orderMap[g.id] !== undefined) {
+        return { ...g, order_index: orderMap[g.id] };
+      }
+      return g;
+    });
+    const updated = { ...data, groups: nextGroups };
+    updateSpecsState(updated);
+
+    try {
+      const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
+      const res = await fetch('/api/custom_specs.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ action: 'reorder_groups', group_ids: groupIds })
+      });
+      const resJson = await res.json();
+      if (resJson.success && resJson.data) {
+        updateSpecsState(resJson.data);
+      }
+    } catch (e) {
+      console.warn('Reorder groups API error:', e);
+    }
+  };
+
   return {
     groups,
     activeGroups,
@@ -254,6 +314,8 @@ export function useLiveCustomSpecs(includeAll = false) {
     deleteGroup,
     saveItem,
     deleteItem,
+    reorderItems,
+    reorderGroups,
     setSpecsData: updateSpecsState
   };
 }

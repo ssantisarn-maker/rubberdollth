@@ -6,7 +6,16 @@ import {
 import CustomSpecModalForm from './CustomSpecModalForm';
 
 export default function CustomSpecManager({ specsData, onUpdateSpecs }) {
-  const { groups = [], items = [], saveGroup, deleteGroup, saveItem, deleteItem } = specsData;
+  const { 
+    groups = [], 
+    items = [], 
+    saveGroup, 
+    deleteGroup, 
+    saveItem, 
+    deleteItem,
+    reorderItems,
+    reorderGroups
+  } = specsData;
 
   const [activeGroupId, setActiveGroupId] = useState(() => groups[0]?.id || 'wig');
   const [search, setSearch] = useState('');
@@ -102,6 +111,41 @@ export default function CustomSpecManager({ specsData, onUpdateSpecs }) {
     } catch (e) {
       showToast('❌ ไม่สามารถเปลี่ยนสถานะได้');
     }
+  };
+
+  // Reorder Item (Move Up / Down)
+  const handleMoveItemOrder = async (index, direction) => {
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= filteredItems.length) return;
+
+    const newSorted = [...filteredItems];
+    const temp = newSorted[index];
+    newSorted[index] = newSorted[targetIndex];
+    newSorted[targetIndex] = temp;
+
+    const newItemIds = newSorted.map(item => item.id);
+    if (typeof reorderItems === 'function') {
+      await reorderItems(currentGroup.id, newItemIds);
+    }
+    showToast(`✓ สลับลำดับ "${temp.name}" เรียบร้อย`);
+  };
+
+  // Reorder Group (Move Left / Right)
+  const handleMoveGroupOrder = async (index, direction, e) => {
+    if (e) e.stopPropagation();
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= groups.length) return;
+
+    const newGroups = [...groups];
+    const temp = newGroups[index];
+    newGroups[index] = newGroups[targetIndex];
+    newGroups[targetIndex] = temp;
+
+    const newGroupIds = newGroups.map(g => g.id);
+    if (typeof reorderGroups === 'function') {
+      await reorderGroups(newGroupIds);
+    }
+    showToast(`✓ ปรับลำดับหัวข้อ "${temp.name}" เรียบร้อย`);
   };
 
   // Open Add Group Modal
@@ -233,7 +277,7 @@ export default function CustomSpecManager({ specsData, onUpdateSpecs }) {
 
       {/* Category Tabs (Dynamic Groups) */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-        {groups.map(g => {
+        {groups.map((g, gIdx) => {
           const isActive = g.id === currentGroup.id;
           const count = groupItemCounts[g.id] || 0;
           return (
@@ -254,8 +298,34 @@ export default function CustomSpecManager({ specsData, onUpdateSpecs }) {
                 {count}
               </span>
 
-              {/* Edit / Delete Group Actions */}
-              <div className="flex items-center gap-1 pl-1 ml-1 border-l border-white/20">
+              {/* Edit / Delete / Reorder Group Actions */}
+              <div className="flex items-center gap-0.5 pl-1 ml-1 border-l border-white/20">
+                {groups.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={(e) => handleMoveGroupOrder(gIdx, -1, e)}
+                      disabled={gIdx === 0}
+                      className={`p-1 rounded-md transition-colors disabled:opacity-20 ${
+                        isActive ? 'hover:bg-white/20 text-neutral-300 hover:text-white' : 'hover:bg-sand-200 text-ink-muted hover:text-ink'
+                      }`}
+                      title="ย้ายหัวข้อไปทางซ้าย"
+                    >
+                      ◀
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => handleMoveGroupOrder(gIdx, 1, e)}
+                      disabled={gIdx === groups.length - 1}
+                      className={`p-1 rounded-md transition-colors disabled:opacity-20 ${
+                        isActive ? 'hover:bg-white/20 text-neutral-300 hover:text-white' : 'hover:bg-sand-200 text-ink-muted hover:text-ink'
+                      }`}
+                      title="ย้ายหัวข้อไปทางขวา"
+                    >
+                      ▶
+                    </button>
+                  </>
+                )}
                 <button
                   type="button"
                   onClick={(e) => handleOpenEditGroup(g, e)}
@@ -390,19 +460,46 @@ export default function CustomSpecManager({ specsData, onUpdateSpecs }) {
           </div>
         ) : (
           <div className="divide-y divide-sand-200">
-            {filteredItems.map(item => {
+            {filteredItems.map((item, idx) => {
               const isFree = !item.price || Number(item.price) === 0;
               const isActive = item.is_active === 1 || item.is_active === undefined;
+              const isFilterActive = Boolean(search || priceFilter !== 'all' || statusFilter !== 'all');
 
               return (
                 <div
                   key={item.id}
-                  className={`p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${
+                  className={`p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${
                     !isActive ? 'bg-sand-50/80 opacity-65' : 'hover:bg-sand-50/50'
                   }`}
                 >
-                  {/* Left: Thumbnail & Info */}
-                  <div className="flex items-center gap-3 min-w-0">
+                  {/* Left: Reorder Controls + Thumbnail & Info */}
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                    
+                    {/* Reorder Buttons (▲ / ▼) */}
+                    <div className="flex flex-col items-center justify-center shrink-0 pr-1 select-none">
+                      <button
+                        type="button"
+                        onClick={() => handleMoveItemOrder(idx, -1)}
+                        disabled={idx === 0 || isFilterActive}
+                        className="p-1 text-ink-muted hover:text-amber-600 hover:bg-amber-50 disabled:opacity-20 disabled:hover:text-ink-muted disabled:hover:bg-transparent rounded-lg transition-colors cursor-pointer text-xs font-bold leading-none"
+                        title={isFilterActive ? 'กรุณาล้างการค้นหา/ตัวกรองก่อนสลับลำดับ' : 'เลื่อนขึ้น (แสดงก่อน)'}
+                      >
+                        ▲
+                      </button>
+                      <span className="text-[10px] font-mono font-bold text-ink-muted/80 my-0.5" title="ลำดับที่">
+                        #{idx + 1}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleMoveItemOrder(idx, 1)}
+                        disabled={idx === filteredItems.length - 1 || isFilterActive}
+                        className="p-1 text-ink-muted hover:text-amber-600 hover:bg-amber-50 disabled:opacity-20 disabled:hover:text-ink-muted disabled:hover:bg-transparent rounded-lg transition-colors cursor-pointer text-xs font-bold leading-none"
+                        title={isFilterActive ? 'กรุณาล้างการค้นหา/ตัวกรองก่อนสลับลำดับ' : 'เลื่อนลง (แสดงหลัง)'}
+                      >
+                        ▼
+                      </button>
+                    </div>
+
                     {/* Thumbnail */}
                     <div
                       onClick={() => item.image && setPreviewImage({ url: item.image, title: item.name })}
