@@ -164,9 +164,17 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
     return list;
   }, [allowsCustomOptions, specGroups, specItemsByGroup, selectedSpecs, defaultSpecSelection]);
 
-  // Total specs price
+  // Total specs price (used for grandTotal calculation)
   const specsTotal = useMemo(() => {
     return selectedSpecList.reduce((sum, entry) => sum + (Number(entry.item.price) || 0), 0);
+  }, [selectedSpecList]);
+
+  // Visible specs total (only showing price additions if show_price !== 0)
+  const visibleSpecsTotal = useMemo(() => {
+    return selectedSpecList.reduce((sum, entry) => {
+      const isVisible = entry.item.show_price !== 0 && entry.item.show_price !== false;
+      return sum + (isVisible ? (Number(entry.item.price) || 0) : 0);
+    }, 0);
   }, [selectedSpecList]);
 
   // Total add-on price
@@ -174,7 +182,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
     return selectedOptionList.reduce((sum, opt) => sum + (Number(opt.price) || 0), 0);
   }, [selectedOptionList]);
 
-  // Grand total
+  // Grand total (includes base price, add-ons, and all specs price)
   const grandTotal = basePriceNum > 0 ? (basePriceNum + addOnsTotal + specsTotal) : 0;
 
   // Active sorted options
@@ -204,7 +212,13 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
     if (selectedSpecList.length > 0) {
       msg += `\n\n🎨 สเปกสั่งทำที่เลือก:`;
       selectedSpecList.forEach(({ group, item }) => {
-        const priceStr = Number(item.price) > 0 ? ` (+฿${Number(item.price).toLocaleString()}.-)` : ` (ฟรี)`;
+        const isVisible = item.show_price !== 0 && item.show_price !== false;
+        let priceStr = '';
+        if (Number(item.price) > 0) {
+          priceStr = isVisible ? ` (+฿${Number(item.price).toLocaleString()}.-)` : '';
+        } else {
+          priceStr = ' (ฟรี)';
+        }
         msg += `\n• ${group.name}: ${item.name}${priceStr}`;
       });
     }
@@ -584,9 +598,9 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                         : (product.price || 'ติดต่อสอบถามทาง LINE')}
                     </span>
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      {specsTotal > 0 && (
+                      {visibleSpecsTotal > 0 && (
                         <span className="text-[10px] bg-purple-500/20 text-purple-900 font-bold px-2 py-0.5 rounded-md">
-                          + สเปก ฿{specsTotal.toLocaleString()}.-
+                          + สเปก ฿{visibleSpecsTotal.toLocaleString()}.-
                         </span>
                       )}
                       {selectedOptions.length > 0 && (
@@ -603,10 +617,10 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                   )}
                 </div>
 
-                {(selectedOptions.length > 0 || specsTotal > 0) && (
+                {(selectedOptions.length > 0 || visibleSpecsTotal > 0) && (
                   <div className="text-[11px] text-ink-muted flex items-center gap-2 pt-0.5 border-t border-sand-200/60 flex-wrap">
                     <span>(ราคาตัว: {product.price || '-'}</span>
-                    {specsTotal > 0 && <span>+ สเปก: ฿{specsTotal.toLocaleString()}.-</span>}
+                    {visibleSpecsTotal > 0 && <span>+ สเปก: ฿{visibleSpecsTotal.toLocaleString()}.-</span>}
                     {addOnsTotal > 0 && <span>+ ออฟชั่นเสริม: ฿{addOnsTotal.toLocaleString()}.-</span>}
                     <span>)</span>
                   </div>
@@ -649,13 +663,13 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      {specsTotal > 0 ? (
+                      {visibleSpecsTotal > 0 ? (
                         <span className="text-[11px] font-bold text-purple-700 bg-purple-100/90 px-2 py-0.5 rounded-md">
-                          +฿{specsTotal.toLocaleString()}.-
+                          +฿{visibleSpecsTotal.toLocaleString()}.-
                         </span>
                       ) : (
                         <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md">
-                          รวมในราคาแล้ว
+                          {specsTotal > 0 ? 'รวมในราคารวมแล้ว' : 'รวมในราคาแล้ว'}
                         </span>
                       )}
                       <div className="text-ink-muted hover:text-ink p-1 rounded-md">
@@ -687,9 +701,11 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                                     <span className="truncate">{group.name}</span>
                                   </label>
                                   {currentItem && Number(currentItem.price) > 0 ? (
-                                    <span className="text-[11px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full shrink-0 border border-purple-200/60">
-                                      +฿{Number(currentItem.price).toLocaleString()}.-
-                                    </span>
+                                    (currentItem.show_price !== 0 && currentItem.show_price !== false) ? (
+                                      <span className="text-[11px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full shrink-0 border border-purple-200/60">
+                                        +฿{Number(currentItem.price).toLocaleString()}.-
+                                      </span>
+                                    ) : null
                                   ) : (
                                     <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full shrink-0 border border-emerald-200/60">
                                       ฟรี
@@ -711,7 +727,13 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                                   >
                                     {items.map(it => {
                                       const p = Number(it.price) || 0;
-                                      const pLabel = p > 0 ? ` (+฿${p.toLocaleString()}.-)` : ' (ฟรี)';
+                                      const isVisible = it.show_price !== 0 && it.show_price !== false;
+                                      let pLabel = '';
+                                      if (p > 0) {
+                                        pLabel = isVisible ? ` (+฿${p.toLocaleString()}.-)` : '';
+                                      } else {
+                                        pLabel = ' (ฟรี)';
+                                      }
                                       return (
                                         <option key={it.id} value={it.id}>
                                           {it.name}{pLabel}

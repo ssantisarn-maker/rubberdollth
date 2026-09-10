@@ -538,8 +538,13 @@ export default function CustomSpecManager({ specsData, onUpdateSpecs }) {
                             🟢 ฟรี (รวมในค่าตัว)
                           </span>
                         ) : (
-                          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 shrink-0">
-                            🟠 +฿{Number(item.price).toLocaleString()}.-
+                          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 shrink-0 flex items-center gap-1">
+                            <span>🟠 +฿{Number(item.price).toLocaleString()}.-</span>
+                            {item.show_price === 0 && (
+                              <span className="text-[9px] bg-purple-200/80 text-purple-900 px-1.5 py-0.5 rounded-md font-semibold">
+                                🔒 ซ่อนในเว็บ (รวมในยอด)
+                              </span>
+                            )}
                           </span>
                         )}
 

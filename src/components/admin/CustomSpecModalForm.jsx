@@ -14,6 +14,7 @@ export default function CustomSpecModalForm({
     group_id: activeGroupId,
     price: 0,
     isFree: true,
+    show_price: 1,
     image: '',
     description: '',
     is_default: 0,
@@ -32,6 +33,7 @@ export default function CustomSpecModalForm({
         group_id: initialData.group_id || activeGroupId,
         price: Number(initialData.price) || 0,
         isFree: !initialData.price || Number(initialData.price) === 0,
+        show_price: initialData.show_price !== undefined ? (initialData.show_price ? 1 : 0) : 1,
         image: initialData.image || '',
         description: initialData.description || '',
         is_default: initialData.is_default ? 1 : 0,
@@ -44,6 +46,7 @@ export default function CustomSpecModalForm({
         group_id: activeGroupId,
         price: 0,
         isFree: true,
+        show_price: 1,
         image: '',
         description: '',
         is_default: 0,
@@ -212,22 +215,46 @@ export default function CustomSpecModalForm({
             </div>
 
             {!formData.isFree && (
-              <div className="pt-2 space-y-1.5 animate-in fade-in">
-                <label className="font-semibold text-xs text-ink">
-                  จำนวนเงินที่ต้องเพิ่ม (บาท)
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-bronze">฿</span>
-                  <input
-                    type="number"
-                    min="0"
-                    step="50"
-                    value={formData.price}
-                    onChange={e => setFormData({ ...formData, price: e.target.value })}
-                    placeholder="เช่น 1200"
-                    className="w-full pl-8 pr-3.5 py-2.5 bg-white border border-sand-300 rounded-xl font-bold text-ink focus:outline-none focus:border-bronze"
-                  />
-                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-ink-muted">.- บาท</span>
+              <div className="pt-2 space-y-2.5 animate-in fade-in">
+                <div className="space-y-1.5">
+                  <label className="font-semibold text-xs text-ink">
+                    จำนวนเงินที่ต้องเพิ่ม (บาท)
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-bronze">฿</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="50"
+                      value={formData.price}
+                      onChange={e => setFormData({ ...formData, price: e.target.value })}
+                      placeholder="เช่น 1200"
+                      className="w-full pl-8 pr-3.5 py-2.5 bg-white border border-sand-300 rounded-xl font-bold text-ink focus:outline-none focus:border-bronze"
+                    />
+                    <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-ink-muted">.- บาท</span>
+                  </div>
+                </div>
+
+                {/* Option to Show or Hide extra price badge on front-end */}
+                <div className="pt-2 border-t border-sand-200/80">
+                  <label className="flex items-start gap-2.5 p-2.5 rounded-xl bg-white border border-sand-200 cursor-pointer hover:bg-sand-50 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={formData.show_price === 1}
+                      onChange={e => setFormData({ ...formData, show_price: e.target.checked ? 1 : 0 })}
+                      className="w-4 h-4 mt-0.5 text-emerald-600 rounded border-sand-300 focus:ring-emerald-500 cursor-pointer shrink-0"
+                    />
+                    <div className="min-w-0">
+                      <span className="text-xs font-bold text-ink block">
+                        👁️ แสดงราคาที่เพิ่ม (+฿) ให้ลูกค้าเห็นในหน้าเว็บ
+                      </span>
+                      <span className="text-[11px] text-ink-muted block mt-0.5 leading-tight">
+                        {formData.show_price === 1 
+                          ? `✅ เปิดอยู่: ดรอปดาวน์จะแสดง "(+฿${Number(formData.price || 0).toLocaleString()}.-)" ต่อท้ายชื่อ`
+                          : `🔒 ซ่อนอยู่: หน้าเว็บจะไม่แสดงตัวเลขราคา แต่ระบบจะนำเงิน ฿${Number(formData.price || 0).toLocaleString()}.- ไปคำนวณรวมในราคาสุทธิ (Grand Total) ให้อัตโนมัติ`}
+                      </span>
+                    </div>
+                  </label>
                 </div>
               </div>
             )}

@@ -77,11 +77,17 @@ function ensureSpecTables($pdo, $defaultSpecs, $jsonCacheFile) {
             description VARCHAR(500) DEFAULT '',
             is_default TINYINT(1) DEFAULT 0,
             is_active TINYINT(1) DEFAULT 1,
+            show_price TINYINT(1) DEFAULT 1,
             order_index INT DEFAULT 0,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             INDEX idx_group (group_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+        // Auto-migration: ensure show_price column exists
+        try {
+            $pdo->exec("ALTER TABLE custom_spec_items ADD COLUMN show_price TINYINT(1) DEFAULT 1 AFTER is_active");
+        } catch (Exception $e) {}
 
         // Seed if empty
         $chk = $pdo->query("SELECT COUNT(*) FROM custom_spec_groups")->fetchColumn();
@@ -153,6 +159,7 @@ function syncSpecsCache($pdo, $jsonCacheFile) {
                     'description' => $i['description'] ?? '',
                     'is_default' => (int)$i['is_default'],
                     'is_active' => (int)$i['is_active'],
+                    'show_price' => isset($i['show_price']) ? (int)$i['show_price'] : 1,
                     'order_index' => (int)$i['order_index']
                 ];
             }, $items)
@@ -200,6 +207,7 @@ if ($method === 'GET') {
                         'description' => $i['description'] ?? '',
                         'is_default' => (int)$i['is_default'],
                         'is_active' => (int)$i['is_active'],
+                        'show_price' => isset($i['show_price']) ? (int)$i['show_price'] : 1,
                         'order_index' => (int)$i['order_index']
                     ];
                 }, $items)
@@ -322,6 +330,7 @@ if ($method === 'POST' || $method === 'PUT') {
         $description = trim($item['description'] ?? '');
         $isDefault = isset($item['is_default']) ? (int)$item['is_default'] : 0;
         $isActive = isset($item['is_active']) ? (int)$item['is_active'] : 1;
+        $showPrice = isset($item['show_price']) ? (int)$item['show_price'] : 1;
         $orderIndex = (int)($item['order_index'] ?? 0);
 
         if ($pdo) {
@@ -331,13 +340,13 @@ if ($method === 'POST' || $method === 'PUT') {
                     $pdo->prepare("UPDATE custom_spec_items SET is_default = 0 WHERE group_id = :gid")->execute(['gid' => $groupId]);
                 }
 
-                $stmt = $pdo->prepare("INSERT INTO custom_spec_items (id, group_id, name, price, image, description, is_default, is_active, order_index)
-                    VALUES (:id, :group_id, :name, :price, :image, :description, :is_default, :is_active, :order_index)
-                    ON DUPLICATE KEY UPDATE group_id = VALUES(group_id), name = VALUES(name), price = VALUES(price), image = VALUES(image), description = VALUES(description), is_default = VALUES(is_default), is_active = VALUES(is_active), order_index = VALUES(order_index), updated_at = NOW()");
+                $stmt = $pdo->prepare("INSERT INTO custom_spec_items (id, group_id, name, price, image, description, is_default, is_active, show_price, order_index)
+                    VALUES (:id, :group_id, :name, :price, :image, :description, :is_default, :is_active, :show_price, :order_index)
+                    ON DUPLICATE KEY UPDATE group_id = VALUES(group_id), name = VALUES(name), price = VALUES(price), image = VALUES(image), description = VALUES(description), is_default = VALUES(is_default), is_active = VALUES(is_active), show_price = VALUES(show_price), order_index = VALUES(order_index), updated_at = NOW()");
                 $stmt->execute([
                     'id' => $id, 'group_id' => $groupId, 'name' => $name, 'price' => $price,
                     'image' => $image, 'description' => $description, 'is_default' => $isDefault,
-                    'is_active' => $isActive, 'order_index' => $orderIndex
+                    'is_active' => $isActive, 'show_price' => $showPrice, 'order_index' => $orderIndex
                 ]);
 
                 $synced = syncSpecsCache($pdo, $jsonCacheFile);
@@ -362,6 +371,7 @@ if ($method === 'POST' || $method === 'PUT') {
                     $ci['description'] = $description;
                     $ci['is_default'] = $isDefault;
                     $ci['is_active'] = $isActive;
+                    $ci['show_price'] = $showPrice;
                     $ci['order_index'] = $orderIndex;
                     $found = true;
                     break;
@@ -371,7 +381,7 @@ if ($method === 'POST' || $method === 'PUT') {
                 $cached['items'][] = [
                     'id' => $id, 'group_id' => $groupId, 'name' => $name, 'price' => $price,
                     'image' => $image, 'description' => $description, 'is_default' => $isDefault,
-                    'is_active' => $isActive, 'order_index' => $orderIndex
+                    'is_active' => $isActive, 'show_price' => $showPrice, 'order_index' => $orderIndex
                 ];
             }
             file_put_contents($jsonCacheFile, json_encode($cached, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
