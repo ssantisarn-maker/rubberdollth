@@ -15,6 +15,7 @@ export default function CustomSpecModalForm({
     price: 0,
     isFree: true,
     show_price: 1,
+    show_free: 1,
     image: '',
     description: '',
     is_default: 0,
@@ -34,6 +35,7 @@ export default function CustomSpecModalForm({
         price: Number(initialData.price) || 0,
         isFree: !initialData.price || Number(initialData.price) === 0,
         show_price: initialData.show_price !== undefined ? (initialData.show_price ? 1 : 0) : 1,
+        show_free: initialData.show_free !== undefined ? (initialData.show_free ? 1 : 0) : 1,
         image: initialData.image || '',
         description: initialData.description || '',
         is_default: initialData.is_default ? 1 : 0,
@@ -47,6 +49,7 @@ export default function CustomSpecModalForm({
         price: 0,
         isFree: true,
         show_price: 1,
+        show_free: 1,
         image: '',
         description: '',
         is_default: 0,
@@ -213,6 +216,29 @@ export default function CustomSpecModalForm({
                 <span>🟠 คิดเงินเพิ่ม (+฿)</span>
               </button>
             </div>
+
+            {formData.isFree && (
+              <div className="pt-2 border-t border-sand-200/80 animate-in fade-in">
+                <label className="flex items-start gap-2.5 p-2.5 rounded-xl bg-white border border-sand-200 cursor-pointer hover:bg-sand-50 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={formData.show_free === 1}
+                    onChange={e => setFormData({ ...formData, show_free: e.target.checked ? 1 : 0 })}
+                    className="w-4 h-4 mt-0.5 text-emerald-600 rounded border-sand-300 focus:ring-emerald-500 cursor-pointer shrink-0"
+                  />
+                  <div className="min-w-0">
+                    <span className="text-xs font-bold text-ink block">
+                      👁️ แสดงคำว่า "(ฟรี)" ให้ลูกค้าเห็นในหน้าเว็บ
+                    </span>
+                    <span className="text-[11px] text-ink-muted block mt-0.5 leading-tight">
+                      {formData.show_free === 1 
+                        ? '✅ เปิดอยู่: ดรอปดาวน์และป้ายจะแสดงคำว่า "(ฟรี)" ต่อท้ายชื่อตัวเลือกนี้'
+                        : '🔒 ปิดอยู่: หน้าเว็บจะแสดงเฉพาะชื่อตัวเลือกเท่านั้น โดยไม่แสดงคำว่า "(ฟรี)"'}
+                    </span>
+                  </div>
+                </label>
+              </div>
+            )}
 
             {!formData.isFree && (
               <div className="pt-2 space-y-2.5 animate-in fade-in">

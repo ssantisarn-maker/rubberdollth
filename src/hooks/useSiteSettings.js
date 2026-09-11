@@ -169,7 +169,8 @@ const defaultSettings = {
   // Footer & General
   footer_tagline: 'สัมผัสนิยามใหม่แห่งความสมจริงเหนือระดับ ตุ๊กตายางซิลิโคนแท้เกรดการแพทย์ 100% อันดับ 1 ในไทย',
   footer_copyright_text: '© 2019-2026 RUBBER DOLL THAILAND. All rights reserved. ผู้นำเข้าตุ๊กตายางซิลิโคนแท้เกรดพรีเมียมอันดับ 1 ในไทย',
-  footer_disclaimer: 'เว็บไซต์นี้สำหรับผู้ที่มีอายุ 18 ปีขึ้นไปเท่านั้น การสั่งซื้อทุกรายการจัดส่งมิดชิดเป็นความลับสูงสุด'
+  footer_disclaimer: 'เว็บไซต์นี้สำหรับผู้ที่มีอายุ 18 ปีขึ้นไปเท่านั้น การสั่งซื้อทุกรายการจัดส่งมิดชิดเป็นความลับสูงสุด',
+  specs_show_free_label: true
 };
 
 let globalSettingsPromise = null;

@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Plus, Edit, Trash2, Sparkles, Image as ImageIcon, CheckCircle2, 
-  XCircle, Search, Eye, X, Settings, ArrowUpDown, DollarSign, FolderPlus 
+  XCircle, Search, Eye, X, Settings, ArrowUpDown, DollarSign, FolderPlus, Tag 
 } from 'lucide-react';
 import CustomSpecModalForm from './CustomSpecModalForm';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
 
 export default function CustomSpecManager({ specsData, onUpdateSpecs }) {
   const { 
@@ -17,6 +18,7 @@ export default function CustomSpecManager({ specsData, onUpdateSpecs }) {
     reorderGroups
   } = specsData;
 
+  const { settings, setSettings } = useSiteSettings();
   const [activeGroupId, setActiveGroupId] = useState(() => groups[0]?.id || 'wig');
   const [search, setSearch] = useState('');
   const [priceFilter, setPriceFilter] = useState('all'); // all | free | paid
@@ -29,7 +31,14 @@ export default function CustomSpecManager({ specsData, onUpdateSpecs }) {
   // Group modal states (Add/Edit category)
   const [editingGroup, setEditingGroup] = useState(null);
   const [isAddingGroup, setIsAddingGroup] = useState(false);
-  const [groupFormData, setGroupFormData] = useState({ name: '', icon: '✨', order_index: 0, is_active: 1 });
+  const [groupFormData, setGroupFormData] = useState({ 
+    name: '', 
+    icon: '✨', 
+    target_categories: 'all', 
+    target_mode: 'all', 
+    order_index: 0, 
+    is_active: 1 
+  });
 
   // Lightbox preview
   const [previewImage, setPreviewImage] = useState(null); // { url, title }
@@ -154,6 +163,8 @@ export default function CustomSpecManager({ specsData, onUpdateSpecs }) {
       id: '',
       name: '',
       icon: '✨',
+      target_categories: 'all',
+      target_mode: 'all',
       order_index: groups.length + 1,
       is_active: 1
     });
@@ -164,10 +175,13 @@ export default function CustomSpecManager({ specsData, onUpdateSpecs }) {
   // Open Edit Group Modal
   const handleOpenEditGroup = (group, e) => {
     e.stopPropagation();
+    const tCats = group.target_categories || 'all';
     setGroupFormData({
       id: group.id,
       name: group.name,
       icon: group.icon || '✨',
+      target_categories: tCats,
+      target_mode: (!tCats || tCats === 'all') ? 'all' : 'specific',
       order_index: group.order_index ?? 0,
       is_active: group.is_active ?? 1
     });
@@ -185,10 +199,15 @@ export default function CustomSpecManager({ specsData, onUpdateSpecs }) {
       slug = 'group_' + Date.now().toString(36);
     }
 
+    const finalTarget = groupFormData.target_mode === 'all' 
+      ? 'all' 
+      : (groupFormData.target_categories || 'all').trim();
+
     const payload = {
       id: slug,
       name: groupFormData.name.trim(),
       icon: (groupFormData.icon || '✨').trim(),
+      target_categories: finalTarget,
       order_index: Number(groupFormData.order_index) || 0,
       is_active: groupFormData.is_active ? 1 : 0
     };
@@ -275,11 +294,56 @@ export default function CustomSpecManager({ specsData, onUpdateSpecs }) {
         </div>
       </div>
 
+      {/* Global Free Label Toggle Banner */}
+      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-sand-300 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold text-base shrink-0">
+            🏷️
+          </div>
+          <div>
+            <div className="font-bold text-xs sm:text-sm text-ink flex items-center gap-2">
+              <span>แสดงคำว่า "(ฟรี)" และป้าย "ฟรี" ให้ลูกค้าเห็นในหน้าเว็บ</span>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                settings?.specs_show_free_label !== false ? 'bg-emerald-100 text-emerald-800' : 'bg-sand-200 text-ink-muted'
+              }`}>
+                {settings?.specs_show_free_label !== false ? '🟢 เปิดอยู่' : '⚪ ปิดซ่อน'}
+              </span>
+            </div>
+            <p className="text-[11px] text-ink-muted mt-0.5">
+              {settings?.specs_show_free_label !== false 
+                ? 'เปิดใช้งาน: ตัวเลือกที่ไม่มีค่าใช้จ่ายจะแสดงคำว่า "(ฟรี)" ใน Dropdown และแสดงป้ายเขียว "ฟรี"' 
+                : 'ปิดใช้งาน: หน้าเว็บจะแสดงเฉพาะชื่อตัวเลือกเท่านั้น (ไม่มีคำว่า "(ฟรี)" หรือป้ายเขียว แต่ราคายังคิดเป็น 0 บาทตามปกติ)'}
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={async () => {
+            const nextVal = settings?.specs_show_free_label === false ? true : false;
+            try {
+              await setSettings({ specs_show_free_label: nextVal });
+              showToast(nextVal ? '✓ เปิดแสดงคำว่า "(ฟรี)" เรียบร้อยแล้ว' : '✓ ปิดซ่อนคำว่า "(ฟรี)" เรียบร้อยแล้ว');
+            } catch (e) {
+              showToast('❌ ไม่สามารถเปลี่ยนการตั้งค่าได้');
+            }
+          }}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 border ${
+            settings?.specs_show_free_label !== false
+              ? 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100 shadow-2xs'
+              : 'bg-sand-100 text-ink-muted border-sand-300 hover:bg-sand-200 hover:text-ink'
+          }`}
+        >
+          {settings?.specs_show_free_label !== false ? 'เปิดอยู่ (คลิกเพื่อปิด)' : 'ปิดอยู่ (คลิกเพื่อเปิด)'}
+        </button>
+      </div>
+
       {/* Category Tabs (Dynamic Groups) */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
         {groups.map((g, gIdx) => {
           const isActive = g.id === currentGroup.id;
           const count = groupItemCounts[g.id] || 0;
+          const isTargeted = g.target_categories && g.target_categories !== 'all';
           return (
             <div
               key={g.id}
@@ -292,6 +356,13 @@ export default function CustomSpecManager({ specsData, onUpdateSpecs }) {
             >
               <span className="text-base">{g.icon || '✨'}</span>
               <span>{g.name}</span>
+              {isTargeted && (
+                <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-semibold ${
+                  isActive ? 'bg-amber-400/20 text-amber-300 border border-amber-400/30' : 'bg-sand-100 text-amber-700 border border-sand-200'
+                }`}>
+                  เฉพาะหมวด
+                </span>
+              )}
               <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
                 isActive ? 'bg-amber-400 text-neutral-950' : 'bg-sand-100 text-ink-muted'
               }`}>
@@ -691,6 +762,86 @@ export default function CustomSpecManager({ specsData, onUpdateSpecs }) {
                     className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl font-medium focus:outline-none focus:border-bronze text-center"
                   />
                 </div>
+              </div>
+
+              {/* Target Categories Selection */}
+              <div className="space-y-2 p-3 bg-sand-50 rounded-2xl border border-sand-200">
+                <label className="font-bold text-ink flex items-center justify-between text-xs">
+                  <span>🎯 หมวดหมู่สินค้าที่ให้แสดงสเปกนี้:</span>
+                  <span className="text-[11px] text-bronze font-semibold">
+                    {groupFormData.target_mode === 'all' ? 'ทุกหมวดหมู่' : 'เลือกเฉพาะหมวด'}
+                  </span>
+                </label>
+                
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setGroupFormData(prev => ({ ...prev, target_mode: 'all', target_categories: 'all' }))}
+                    className={`py-2 px-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer text-center ${
+                      groupFormData.target_mode === 'all'
+                        ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                        : 'bg-white text-ink border-sand-300 hover:bg-sand-100'
+                    }`}
+                  >
+                    🔘 ทุกหมวดหมู่ (All)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setGroupFormData(prev => ({ 
+                      ...prev, 
+                      target_mode: 'specific',
+                      target_categories: (!prev.target_categories || prev.target_categories === 'all') ? 'silicone,ready' : prev.target_categories
+                    }))}
+                    className={`py-2 px-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer text-center ${
+                      groupFormData.target_mode === 'specific'
+                        ? 'bg-amber-500 text-neutral-950 border-amber-500 shadow-xs'
+                        : 'bg-white text-ink border-sand-300 hover:bg-sand-100'
+                    }`}
+                  >
+                    🔘 กำหนดหมวดหมู่เอง
+                  </button>
+                </div>
+
+                {groupFormData.target_mode === 'specific' && (
+                  <div className="pt-2 border-t border-sand-200/80 space-y-2 animate-in fade-in">
+                    <p className="text-[11px] text-ink-muted leading-tight">
+                      💡 <strong>คำแนะนำ:</strong> สำหรับสินค้า <strong>"ครึ่งตัว (Torso)"</strong> ให้ติ๊กเลือกเฉพาะ <strong>"ขนาดหน้าอก"</strong> เท่านั้น และไม่ติ๊ก วิกผม, สีตา หรือสีเล็บ
+                    </p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { id: 'torso', label: 'ตุ๊กตาครึ่งตัว TORSO' },
+                        { id: 'silicone', label: 'ตุ๊กตาเต็มตัว (ซิลิโคน)' },
+                        { id: 'ready', label: 'สินค้าพร้อมส่ง (ไทย)' },
+                        { id: 'asian', label: 'สาวสวยเอเชีย' },
+                        { id: 'western', label: 'สาวสวยสายฝอ' },
+                        { id: 'anime', label: 'สาวสวยอนิเมะ' },
+                        { id: 'toys', label: 'ของเล่นผู้ใหญ่' }
+                      ].map(cat => {
+                        const selected = (groupFormData.target_categories || '').split(',').map(s => s.trim()).includes(cat.id);
+                        return (
+                          <label key={cat.id} className="flex items-center gap-2 p-1.5 rounded-lg bg-white border border-sand-200 text-xs font-medium cursor-pointer hover:bg-sand-100 transition-colors">
+                            <input
+                              type="checkbox"
+                              checked={selected}
+                              onChange={e => {
+                                const curr = (groupFormData.target_categories || '').split(',').map(s => s.trim()).filter(Boolean).filter(s => s !== 'all');
+                                let next;
+                                if (e.target.checked) {
+                                  next = [...curr, cat.id];
+                                } else {
+                                  next = curr.filter(id => id !== cat.id);
+                                }
+                                setGroupFormData(prev => ({ ...prev, target_categories: next.join(',') }));
+                              }}
+                              className="w-3.5 h-3.5 text-emerald-600 rounded border-sand-300 focus:ring-emerald-500 cursor-pointer shrink-0"
+                            />
+                            <span className="truncate text-[11px]">{cat.label}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <label className="flex items-center gap-2 p-2.5 bg-sand-50 rounded-xl border border-sand-200 cursor-pointer">

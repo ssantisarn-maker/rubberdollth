@@ -137,13 +137,59 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
       }
     }
 
-    // Default safety heuristics for adult toys and torso
-    if (pCats.includes('toys') || pCatStr.includes('ของเล่น') || pCats.includes('torso') || pCatStr.includes('ครึ่งตัว')) {
+    // Default safety heuristics for adult toys (torso dolls can have custom specs like breast size)
+    if (pCats.includes('toys') || pCatStr.includes('ของเล่น')) {
       return false;
     }
 
     return true;
   }, [product, allCategories]);
+
+  // Filtered spec groups based on group.target_categories and current product categories
+  const visibleSpecGroups = useMemo(() => {
+    if (!specGroups || !Array.isArray(specGroups)) return [];
+
+    const pCats = (Array.isArray(product?.categories) ? product.categories : []).map(c => String(c).toLowerCase().trim());
+    const pCatStr = String(product?.category || '').toLowerCase();
+    const isTorso = pCats.includes('torso') || pCats.includes('half') || pCatStr.includes('torso') || pCatStr.includes('ครึ่งตัว');
+
+    return specGroups.filter(group => {
+      const targetStr = (group.target_categories || 'all').toLowerCase().trim();
+
+      if (isTorso) {
+        // If product is torso doll:
+        if (targetStr !== 'all' && targetStr !== '') {
+          const targets = targetStr.split(',').map(t => t.trim());
+          return targets.includes('torso') || targets.includes('half') || targets.some(t => t.includes('ครึ่งตัว'));
+        }
+        // If target is 'all', safe default for torso dolls is breast and skin (not wig, eyes, or nails)
+        return group.id === 'breast' || group.id === 'skin';
+      }
+
+      // For non-torso products:
+      if (targetStr === 'all' || !targetStr) {
+        return true;
+      }
+      const targets = targetStr.split(',').map(t => t.trim());
+      // If group is targeted exclusively to torso, hide on full dolls
+      if (targets.length === 1 && (targets[0] === 'torso' || targets[0] === 'half')) {
+        return false;
+      }
+
+      const matchesCategory = targets.some(tgt => {
+        if (!tgt) return false;
+        return pCats.includes(tgt) || pCatStr.includes(tgt);
+      });
+
+      // Regular dolls match silicone/ready targets
+      const isFullDoll = !pCats.includes('toys') && !pCatStr.includes('ของเล่น');
+      if (isFullDoll && (targets.includes('silicone') || targets.includes('ready') || targets.includes('asian') || targets.includes('western') || targets.includes('anime'))) {
+        return true;
+      }
+
+      return matchesCategory;
+    });
+  }, [specGroups, product]);
 
   // Full share URL containing product, selected options, and custom specs
   const shareUrl = useMemo(() => {
@@ -231,9 +277,9 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
   // Selected custom specifications (wig, eyes, breast, nails, skin, etc.)
   const selectedSpecList = useMemo(() => {
     if (!allowsCustomOptions) return [];
-    if (!specGroups || !Array.isArray(specGroups)) return [];
+    if (!visibleSpecGroups || !Array.isArray(visibleSpecGroups)) return [];
     const list = [];
-    specGroups.forEach(g => {
+    visibleSpecGroups.forEach(g => {
       const gItems = specItemsByGroup[g.id] || [];
       if (gItems.length === 0) return;
       const selectedId = selectedSpecs[g.id] || defaultSpecSelection[g.id] || gItems[0]?.id;
@@ -243,7 +289,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
       }
     });
     return list;
-  }, [allowsCustomOptions, specGroups, specItemsByGroup, selectedSpecs, defaultSpecSelection]);
+  }, [allowsCustomOptions, visibleSpecGroups, specItemsByGroup, selectedSpecs, defaultSpecSelection]);
 
   // Total specs price (used for grandTotal calculation)
   const specsTotal = useMemo(() => {
@@ -294,10 +340,11 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
       msg += `\n\n🎨 สเปกสั่งทำที่เลือก:`;
       selectedSpecList.forEach(({ group, item }) => {
         const isVisible = item.show_price !== 0 && item.show_price !== false;
+        const showFree = (settings?.specs_show_free_label !== false) && (item.show_free !== 0 && item.show_free !== false);
         let priceStr = '';
         if (Number(item.price) > 0) {
           priceStr = isVisible ? ` (+฿${Number(item.price).toLocaleString()}.-)` : '';
-        } else {
+        } else if (showFree) {
           priceStr = ' (ฟรี)';
         }
         msg += `\n• ${group.name}: ${item.name}${priceStr}`;
@@ -723,7 +770,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
               </div>
 
               {/* Custom Doll Specifications Section (Dropdowns: วิกผม, สีตา, ขนาดหน้าอก, สีเล็บ, สีผิว ฯลฯ) */}
-              {allowsCustomOptions && specGroups.length > 0 && (
+              {allowsCustomOptions && visibleSpecGroups.length > 0 && (
                 <div className="rounded-2xl border border-purple-200/80 bg-gradient-to-b from-purple-50/40 via-sand-50/30 to-white overflow-hidden shadow-2xs">
                   
                   {/* Specifications Header Accordion */}
@@ -741,7 +788,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                             เลือกสเปกสั่งทำ (Custom Specifications)
                           </h4>
                           <span className="text-[10px] bg-purple-500/20 text-purple-900 font-bold px-2 py-0.5 rounded-full">
-                            {specGroups.length} หัวข้อ
+                            {visibleSpecGroups.length} หัวข้อ
                           </span>
                         </div>
                         <p className="text-[10px] sm:text-[11px] text-ink-muted truncate">
@@ -770,12 +817,13 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                   {isSpecsExpanded && (
                     <div className="p-3 sm:p-4 space-y-3">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
-                        {specGroups.map(group => {
+                        {visibleSpecGroups.map(group => {
                           const items = specItemsByGroup[group.id] || [];
                           if (items.length === 0) return null;
 
                           const currentSelectedId = selectedSpecs[group.id] || defaultSpecSelection[group.id] || items[0]?.id;
                           const currentItem = items.find(it => it.id === currentSelectedId) || items[0];
+                          const showFreeBadge = (settings?.specs_show_free_label !== false) && (currentItem?.show_free !== 0 && currentItem?.show_free !== false);
 
                           return (
                             <div 
@@ -795,9 +843,11 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                                       </span>
                                     ) : null
                                   ) : (
-                                    <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full shrink-0 border border-emerald-200/60">
-                                      ฟรี
-                                    </span>
+                                    showFreeBadge ? (
+                                      <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full shrink-0 border border-emerald-200/60">
+                                        ฟรี
+                                      </span>
+                                    ) : null
                                   )}
                                 </div>
 
@@ -816,10 +866,11 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                                     {items.map(it => {
                                       const p = Number(it.price) || 0;
                                       const isVisible = it.show_price !== 0 && it.show_price !== false;
+                                      const showOptionFree = (settings?.specs_show_free_label !== false) && (it.show_free !== 0 && it.show_free !== false);
                                       let pLabel = '';
                                       if (p > 0) {
                                         pLabel = isVisible ? ` (+฿${p.toLocaleString()}.-)` : '';
-                                      } else {
+                                      } else if (showOptionFree) {
                                         pLabel = ' (ฟรี)';
                                       }
                                       return (

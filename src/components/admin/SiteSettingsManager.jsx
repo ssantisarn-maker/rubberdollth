@@ -269,7 +269,7 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
         case 'nav_footer':
           return k.startsWith('brand_') || k.startsWith('footer_') || k.startsWith('nav_');
         case 'modal_content':
-          return k.startsWith('modal_') || k === 'line_order_privacy_badge';
+          return k.startsWith('modal_') || k === 'line_order_privacy_badge' || k.startsWith('specs_');
         case 'catalog_ui':
           return k.startsWith('catalog_') || k.startsWith('card_') || k.startsWith('product_sort_');
         case 'social_share':
@@ -799,6 +799,30 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
                         placeholder="เช่น บรรจุกล่องทึบ 2 ชั้น ไม่ระบุชื่อสินค้า รักษาความลับ 100%"
                         className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:border-bronze focus:bg-white text-ink"
                       />
+                    </div>
+
+                    {/* Custom Specs Free Label Toggle */}
+                    <div className="pt-3 border-t border-sand-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-sand-50/70 p-3.5 rounded-2xl border border-sand-200">
+                      <div className="space-y-0.5">
+                        <label className="font-semibold text-ink text-xs sm:text-sm flex items-center gap-2">
+                          <span className="text-base">🏷️</span>
+                          <span>แสดงคำว่า "(ฟรี)" และป้าย "ฟรี" ในตัวเลือกสเปกสั่งทำ</span>
+                        </label>
+                        <p className="text-xs text-ink-muted">
+                          เปิด/ปิด การแสดงข้อความ "(ฟรี)" ใน Dropdown และป้ายสีเขียว "ฟรี" หน้ารายละเอียดสินค้า (ราคายังคิด 0 บาทตามปกติ)
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, specs_show_free_label: formData.specs_show_free_label === false ? true : false })}
+                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 border ${
+                          formData.specs_show_free_label !== false
+                            ? 'bg-emerald-500 text-white border-emerald-600 shadow-sm'
+                            : 'bg-white text-ink-muted border-sand-300 hover:bg-sand-100 hover:text-ink'
+                        }`}
+                      >
+                        {formData.specs_show_free_label !== false ? '🟢 เปิดใช้งาน (แสดงฟรี)' : '⚪ ปิดซ่อน (ไม่แสดงคำว่าฟรี)'}
+                      </button>
                     </div>
                   </div>
                 </div>

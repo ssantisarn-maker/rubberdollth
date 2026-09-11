@@ -14,43 +14,43 @@ $jsonCacheFile = __DIR__ . '/custom_specs_cache.json';
 // Default initial seed data (5 groups + choices)
 $defaultSpecs = [
     'groups' => [
-        ['id' => 'wig', 'name' => 'วิกผม', 'icon' => '💇‍♀️', 'order_index' => 1, 'is_active' => 1],
-        ['id' => 'eyes', 'name' => 'สีตา', 'icon' => '👁️', 'order_index' => 2, 'is_active' => 1],
-        ['id' => 'breast', 'name' => 'ขนาดหน้าอก', 'icon' => '🍈', 'order_index' => 3, 'is_active' => 1],
-        ['id' => 'nails', 'name' => 'สีเล็บ', 'icon' => '💅', 'order_index' => 4, 'is_active' => 1],
-        ['id' => 'skin', 'name' => 'สีผิว', 'icon' => '🧴', 'order_index' => 5, 'is_active' => 1]
+        ['id' => 'wig', 'name' => 'วิกผม', 'icon' => '💇‍♀️', 'target_categories' => 'silicone,ready', 'order_index' => 1, 'is_active' => 1],
+        ['id' => 'eyes', 'name' => 'สีตา', 'icon' => '👁️', 'target_categories' => 'silicone,ready', 'order_index' => 2, 'is_active' => 1],
+        ['id' => 'breast', 'name' => 'ขนาดหน้าอก', 'icon' => '🍈', 'target_categories' => 'all', 'order_index' => 3, 'is_active' => 1],
+        ['id' => 'nails', 'name' => 'สีเล็บ', 'icon' => '💅', 'target_categories' => 'silicone,ready', 'order_index' => 4, 'is_active' => 1],
+        ['id' => 'skin', 'name' => 'สีผิว', 'icon' => '🧴', 'target_categories' => 'all', 'order_index' => 5, 'is_active' => 1]
     ],
     'items' => [
         // วิกผม
-        ['id' => 'wig_1', 'group_id' => 'wig', 'name' => 'ผมยาวลอน สีดำธรรมชาติ', 'price' => 0, 'image' => '', 'description' => 'วิกผมสัมผัสนุ่มลื่น สไตล์หวานละมุน', 'is_default' => 1, 'is_active' => 1, 'order_index' => 1],
-        ['id' => 'wig_2', 'group_id' => 'wig', 'name' => 'ผมยาวตรง สีน้ำตาลคาราเมล', 'price' => 0, 'image' => '', 'description' => 'ทรงตรงสลวย เรียบหรูดูแพง', 'is_default' => 0, 'is_active' => 1, 'order_index' => 2],
-        ['id' => 'wig_3', 'group_id' => 'wig', 'name' => 'ผมสั้นบ๊อบ สีบลอนด์ทองสว่าง', 'price' => 0, 'image' => '', 'description' => 'ลุคคิวท์ สดใสน่ารักสไตล์อนิเมะ', 'is_default' => 0, 'is_active' => 1, 'order_index' => 3],
-        ['id' => 'wig_4', 'group_id' => 'wig', 'name' => 'วิกผมเกรดพรีเมียมทนความร้อนสูงพิเศษ', 'price' => 800, 'image' => '', 'description' => 'ใยสังเคราะห์พิเศษ หนีบไดร์ดัดลอนได้อิสระ', 'is_default' => 0, 'is_active' => 1, 'order_index' => 4],
+        ['id' => 'wig_1', 'group_id' => 'wig', 'name' => 'ผมยาวลอน สีดำธรรมชาติ', 'price' => 0, 'image' => '', 'description' => 'วิกผมสัมผัสนุ่มลื่น สไตล์หวานละมุน', 'is_default' => 1, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 1],
+        ['id' => 'wig_2', 'group_id' => 'wig', 'name' => 'ผมยาวตรง สีน้ำตาลคาราเมล', 'price' => 0, 'image' => '', 'description' => 'ทรงตรงสลวย เรียบหรูดูแพง', 'is_default' => 0, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 2],
+        ['id' => 'wig_3', 'group_id' => 'wig', 'name' => 'ผมสั้นบ๊อบ สีบลอนด์ทองสว่าง', 'price' => 0, 'image' => '', 'description' => 'ลุคคิวท์ สดใสน่ารักสไตล์อนิเมะ', 'is_default' => 0, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 3],
+        ['id' => 'wig_4', 'group_id' => 'wig', 'name' => 'วิกผมเกรดพรีเมียมทนความร้อนสูงพิเศษ', 'price' => 800, 'image' => '', 'description' => 'ใยสังเคราะห์พิเศษ หนีบไดร์ดัดลอนได้อิสระ', 'is_default' => 0, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 4],
 
         // สีตา
-        ['id' => 'eyes_1', 'group_id' => 'eyes', 'name' => 'น้ำตาลธรรมชาติ (Natural Brown)', 'price' => 0, 'image' => '', 'description' => 'แววตาอบอุ่น มีมิติเสมือนจริง', 'is_default' => 1, 'is_active' => 1, 'order_index' => 1],
-        ['id' => 'eyes_2', 'group_id' => 'eyes', 'name' => 'ฟ้าคริสตัล (Ocean Crystal Blue)', 'price' => 0, 'image' => '', 'description' => 'ตาสีฟ้าประกาย สไตล์สาวลูกครึ่งยุโรป', 'is_default' => 0, 'is_active' => 1, 'order_index' => 2],
-        ['id' => 'eyes_3', 'group_id' => 'eyes', 'name' => 'เขียวมรกต (Emerald Green)', 'price' => 0, 'image' => '', 'description' => 'แววตาเซ็กซี่ มีเสน่ห์น่าค้นหา', 'is_default' => 0, 'is_active' => 1, 'order_index' => 3],
-        ['id' => 'eyes_4', 'group_id' => 'eyes', 'name' => 'ม่วงอนิเมะ (Anime Violet Purple)', 'price' => 0, 'image' => '', 'description' => 'สีตาโทนพิเศษสำหรับสายคอสเพลย์/อนิเมะ', 'is_default' => 0, 'is_active' => 1, 'order_index' => 4],
-        ['id' => 'eyes_5', 'group_id' => 'eyes', 'name' => 'ตาแก้วอะคริลิกขยับมุมมอง 3D', 'price' => 1500, 'image' => '', 'description' => 'ดวงตาเสมือนมองตามผู้ใช้ มีชีวิตชีวาขั้นสูงสุด', 'is_default' => 0, 'is_active' => 1, 'order_index' => 5],
+        ['id' => 'eyes_1', 'group_id' => 'eyes', 'name' => 'น้ำตาลธรรมชาติ (Natural Brown)', 'price' => 0, 'image' => '', 'description' => 'แววตาอบอุ่น มีมิติเสมือนจริง', 'is_default' => 1, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 1],
+        ['id' => 'eyes_2', 'group_id' => 'eyes', 'name' => 'ฟ้าคริสตัล (Ocean Crystal Blue)', 'price' => 0, 'image' => '', 'description' => 'ตาสีฟ้าประกาย สไตล์สาวลูกครึ่งยุโรป', 'is_default' => 0, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 2],
+        ['id' => 'eyes_3', 'group_id' => 'eyes', 'name' => 'เขียวมรกต (Emerald Green)', 'price' => 0, 'image' => '', 'description' => 'แววตาเซ็กซี่ มีเสน่ห์น่าค้นหา', 'is_default' => 0, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 3],
+        ['id' => 'eyes_4', 'group_id' => 'eyes', 'name' => 'ม่วงอนิเมะ (Anime Violet Purple)', 'price' => 0, 'image' => '', 'description' => 'สีตาโทนพิเศษสำหรับสายคอสเพลย์/อนิเมะ', 'is_default' => 0, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 4],
+        ['id' => 'eyes_5', 'group_id' => 'eyes', 'name' => 'ตาแก้วอะคริลิกขยับมุมมอง 3D', 'price' => 1500, 'image' => '', 'description' => 'ดวงตาเสมือนมองตามผู้ใช้ มีชีวิตชีวาขั้นสูงสุด', 'is_default' => 0, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 5],
 
         // ขนาดหน้าอก
-        ['id' => 'breast_1', 'group_id' => 'breast', 'name' => 'คัพ C มาตรฐาน สัมผัสธรรมชาติ', 'price' => 0, 'image' => '', 'description' => 'ขนาดสมส่วน เหมาะกับทุกสรีระ', 'is_default' => 1, 'is_active' => 1, 'order_index' => 1],
-        ['id' => 'breast_2', 'group_id' => 'breast', 'name' => 'คัพ D สัมผัสนุ่มยืดหยุ่นพิเศษ', 'price' => 1200, 'image' => '', 'description' => 'ขนาดกำลังดี นุ่มเด้งเป็นธรรมชาติ', 'is_default' => 0, 'is_active' => 1, 'order_index' => 2],
-        ['id' => 'breast_3', 'group_id' => 'breast', 'name' => 'คัพ E เสริมซิลิโคนเหลวสัมผัสเด้ง', 'price' => 2500, 'image' => '', 'description' => 'หน้าอกไซส์ใหญ่ นุ่มยวบเหมือนคนจริง 100%', 'is_default' => 0, 'is_active' => 1, 'order_index' => 3],
-        ['id' => 'breast_4', 'group_id' => 'breast', 'name' => 'คัพ G บิ๊กไซส์ อกตูมพรีเมียม', 'price' => 3500, 'image' => '', 'description' => 'อกใหญ่พิเศษ สวยเด่นตระการตา', 'is_default' => 0, 'is_active' => 1, 'order_index' => 4],
+        ['id' => 'breast_1', 'group_id' => 'breast', 'name' => 'คัพ C มาตรฐาน สัมผัสธรรมชาติ', 'price' => 0, 'image' => '', 'description' => 'ขนาดสมส่วน เหมาะกับทุกสรีระ', 'is_default' => 1, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 1],
+        ['id' => 'breast_2', 'group_id' => 'breast', 'name' => 'คัพ D สัมผัสนุ่มยืดหยุ่นพิเศษ', 'price' => 1200, 'image' => '', 'description' => 'ขนาดกำลังดี นุ่มเด้งเป็นธรรมชาติ', 'is_default' => 0, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 2],
+        ['id' => 'breast_3', 'group_id' => 'breast', 'name' => 'คัพ E เสริมซิลิโคนเหลวสัมผัสเด้ง', 'price' => 2500, 'image' => '', 'description' => 'หน้าอกไซส์ใหญ่ นุ่มยวบเหมือนคนจริง 100%', 'is_default' => 0, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 3],
+        ['id' => 'breast_4', 'group_id' => 'breast', 'name' => 'คัพ G บิ๊กไซส์ อกตูมพรีเมียม', 'price' => 3500, 'image' => '', 'description' => 'อกใหญ่พิเศษ สวยเด่นตระการตา', 'is_default' => 0, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 4],
 
         // สีเล็บ
-        ['id' => 'nails_1', 'group_id' => 'nails', 'name' => 'เล็บใสธรรมชาติ (French Natural)', 'price' => 0, 'image' => '', 'description' => 'เคลือบเงาสุขภาพดี ดูสะอาดสะอ้าน', 'is_default' => 1, 'is_active' => 1, 'order_index' => 1],
-        ['id' => 'nails_2', 'group_id' => 'nails', 'name' => 'แดงไวน์เชอร์รี่ (Cherry Wine Red)', 'price' => 0, 'image' => '', 'description' => 'เฉดสีแดงลักชัวรี เพิ่มเสน่ห์เย้ายวน', 'is_default' => 0, 'is_active' => 1, 'order_index' => 2],
-        ['id' => 'nails_3', 'group_id' => 'nails', 'name' => 'ชมพูนู้ดพาสเทล (Soft Pink Nude)', 'price' => 0, 'image' => '', 'description' => 'สไตล์คุณหนู หวานน่ารัก', 'is_default' => 0, 'is_active' => 1, 'order_index' => 3],
-        ['id' => 'nails_4', 'group_id' => 'nails', 'name' => 'เพ้นท์เล็บเจล 3D สไตล์ญี่ปุ่น', 'price' => 500, 'image' => '', 'description' => 'ติดลวดลายสวยงาม ทนทานไม่หลุดลอก', 'is_default' => 0, 'is_active' => 1, 'order_index' => 4],
+        ['id' => 'nails_1', 'group_id' => 'nails', 'name' => 'เล็บใสธรรมชาติ (French Natural)', 'price' => 0, 'image' => '', 'description' => 'เคลือบเงาสุขภาพดี ดูสะอาดสะอ้าน', 'is_default' => 1, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 1],
+        ['id' => 'nails_2', 'group_id' => 'nails', 'name' => 'แดงไวน์เชอร์รี่ (Cherry Wine Red)', 'price' => 0, 'image' => '', 'description' => 'เฉดสีแดงลักชัวรี เพิ่มเสน่ห์เย้ายวน', 'is_default' => 0, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 2],
+        ['id' => 'nails_3', 'group_id' => 'nails', 'name' => 'ชมพูนู้ดพาสเทล (Soft Pink Nude)', 'price' => 0, 'image' => '', 'description' => 'สไตล์คุณหนู หวานน่ารัก', 'is_default' => 0, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 3],
+        ['id' => 'nails_4', 'group_id' => 'nails', 'name' => 'เพ้นท์เล็บเจล 3D สไตล์ญี่ปุ่น', 'price' => 500, 'image' => '', 'description' => 'ติดลวดลายสวยงาม ทนทานไม่หลุดลอก', 'is_default' => 0, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 4],
 
         // สีผิว
-        ['id' => 'skin_1', 'group_id' => 'skin', 'name' => 'ผิวขาวเหลืองธรรมชาติ (Natural Asian)', 'price' => 0, 'image' => '', 'description' => 'โทนยอดนิยม สัมผัสเนียนละมุน', 'is_default' => 1, 'is_active' => 1, 'order_index' => 1],
-        ['id' => 'skin_2', 'group_id' => 'skin', 'name' => 'ผิวขาวโอโม่ (Snow Pale White)', 'price' => 0, 'image' => '', 'description' => 'ผิวขาวใสออร่า ดุจหิมะบริสุทธิ์', 'is_default' => 0, 'is_active' => 1, 'order_index' => 2],
-        ['id' => 'skin_3', 'group_id' => 'skin', 'name' => 'ผิวสีน้ำผึ้ง/สองสี (Warm Honey Tan)', 'price' => 0, 'image' => '', 'description' => 'โทนสุขภาพดี ผิวเนียนคมเข้ม', 'is_default' => 0, 'is_active' => 1, 'order_index' => 3],
-        ['id' => 'skin_4', 'group_id' => 'skin', 'name' => 'ผิวสีแทนเข้ม (Golden Bronze Tan)', 'price' => 0, 'image' => '', 'description' => 'สไตล์สายฝอ สวยคมเซ็กซี่', 'is_default' => 0, 'is_active' => 1, 'order_index' => 4]
+        ['id' => 'skin_1', 'group_id' => 'skin', 'name' => 'ผิวขาวเหลืองธรรมชาติ (Natural Asian)', 'price' => 0, 'image' => '', 'description' => 'โทนยอดนิยม สัมผัสเนียนละมุน', 'is_default' => 1, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 1],
+        ['id' => 'skin_2', 'group_id' => 'skin', 'name' => 'ผิวขาวโอโม่ (Snow Pale White)', 'price' => 0, 'image' => '', 'description' => 'ผิวขาวใสออร่า ดุจหิมะบริสุทธิ์', 'is_default' => 0, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 2],
+        ['id' => 'skin_3', 'group_id' => 'skin', 'name' => 'ผิวสีน้ำผึ้ง/สองสี (Warm Honey Tan)', 'price' => 0, 'image' => '', 'description' => 'โทนสุขภาพดี ผิวเนียนคมเข้ม', 'is_default' => 0, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 3],
+        ['id' => 'skin_4', 'group_id' => 'skin', 'name' => 'ผิวสีแทนเข้ม (Golden Bronze Tan)', 'price' => 0, 'image' => '', 'description' => 'สไตล์สายฝอ สวยคมเซ็กซี่', 'is_default' => 0, 'is_active' => 1, 'show_price' => 1, 'show_free' => 1, 'order_index' => 4]
     ]
 ];
 
@@ -62,6 +62,7 @@ function ensureSpecTables($pdo, $defaultSpecs, $jsonCacheFile) {
             id VARCHAR(50) PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             icon VARCHAR(50) DEFAULT '',
+            target_categories VARCHAR(255) DEFAULT 'all',
             order_index INT DEFAULT 0,
             is_active TINYINT(1) DEFAULT 1,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -78,15 +79,24 @@ function ensureSpecTables($pdo, $defaultSpecs, $jsonCacheFile) {
             is_default TINYINT(1) DEFAULT 0,
             is_active TINYINT(1) DEFAULT 1,
             show_price TINYINT(1) DEFAULT 1,
+            show_free TINYINT(1) DEFAULT 1,
             order_index INT DEFAULT 0,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             INDEX idx_group (group_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
-        // Auto-migration: ensure show_price column exists
+        // Auto-migration: ensure target_categories column exists in custom_spec_groups
+        try {
+            $pdo->exec("ALTER TABLE custom_spec_groups ADD COLUMN target_categories VARCHAR(255) DEFAULT 'all' AFTER icon");
+        } catch (Exception $e) {}
+
+        // Auto-migration: ensure show_price & show_free columns exist in custom_spec_items
         try {
             $pdo->exec("ALTER TABLE custom_spec_items ADD COLUMN show_price TINYINT(1) DEFAULT 1 AFTER is_active");
+        } catch (Exception $e) {}
+        try {
+            $pdo->exec("ALTER TABLE custom_spec_items ADD COLUMN show_free TINYINT(1) DEFAULT 1 AFTER show_price");
         } catch (Exception $e) {}
 
         // Seed if empty
@@ -101,19 +111,20 @@ function ensureSpecTables($pdo, $defaultSpecs, $jsonCacheFile) {
             }
 
             // Insert groups
-            $stmtG = $pdo->prepare("INSERT INTO custom_spec_groups (id, name, icon, order_index, is_active) VALUES (:id, :name, :icon, :order_index, :is_active)");
+            $stmtG = $pdo->prepare("INSERT INTO custom_spec_groups (id, name, icon, target_categories, order_index, is_active) VALUES (:id, :name, :icon, :target_categories, :order_index, :is_active)");
             foreach ($data['groups'] as $g) {
                 $stmtG->execute([
                     'id' => $g['id'],
                     'name' => $g['name'],
                     'icon' => $g['icon'] ?? '',
+                    'target_categories' => $g['target_categories'] ?? 'all',
                     'order_index' => (int)($g['order_index'] ?? 0),
                     'is_active' => isset($g['is_active']) ? (int)$g['is_active'] : 1
                 ]);
             }
 
             // Insert items
-            $stmtI = $pdo->prepare("INSERT INTO custom_spec_items (id, group_id, name, price, image, description, is_default, is_active, order_index) VALUES (:id, :group_id, :name, :price, :image, :description, :is_default, :is_active, :order_index)");
+            $stmtI = $pdo->prepare("INSERT INTO custom_spec_items (id, group_id, name, price, image, description, is_default, is_active, show_price, show_free, order_index) VALUES (:id, :group_id, :name, :price, :image, :description, :is_default, :is_active, :show_price, :show_free, :order_index)");
             foreach ($data['items'] as $item) {
                 $stmtI->execute([
                     'id' => $item['id'],
@@ -124,6 +135,8 @@ function ensureSpecTables($pdo, $defaultSpecs, $jsonCacheFile) {
                     'description' => $item['description'] ?? '',
                     'is_default' => isset($item['is_default']) ? (int)$item['is_default'] : 0,
                     'is_active' => isset($item['is_active']) ? (int)$item['is_active'] : 1,
+                    'show_price' => isset($item['show_price']) ? (int)$item['show_price'] : 1,
+                    'show_free' => isset($item['show_free']) ? (int)$item['show_free'] : 1,
                     'order_index' => (int)($item['order_index'] ?? 0)
                 ]);
             }
@@ -145,6 +158,7 @@ function syncSpecsCache($pdo, $jsonCacheFile) {
                     'id' => $g['id'],
                     'name' => $g['name'],
                     'icon' => $g['icon'] ?? '',
+                    'target_categories' => $g['target_categories'] ?? 'all',
                     'order_index' => (int)$g['order_index'],
                     'is_active' => (int)$g['is_active']
                 ];
@@ -160,6 +174,7 @@ function syncSpecsCache($pdo, $jsonCacheFile) {
                     'is_default' => (int)$i['is_default'],
                     'is_active' => (int)$i['is_active'],
                     'show_price' => isset($i['show_price']) ? (int)$i['show_price'] : 1,
+                    'show_free' => isset($i['show_free']) ? (int)$i['show_free'] : 1,
                     'order_index' => (int)$i['order_index']
                 ];
             }, $items)
@@ -193,6 +208,7 @@ if ($method === 'GET') {
                         'id' => $g['id'],
                         'name' => $g['name'],
                         'icon' => $g['icon'] ?? '',
+                        'target_categories' => $g['target_categories'] ?? 'all',
                         'order_index' => (int)$g['order_index'],
                         'is_active' => (int)$g['is_active']
                     ];
@@ -208,6 +224,7 @@ if ($method === 'GET') {
                         'is_default' => (int)$i['is_default'],
                         'is_active' => (int)$i['is_active'],
                         'show_price' => isset($i['show_price']) ? (int)$i['show_price'] : 1,
+                        'show_free' => isset($i['show_free']) ? (int)$i['show_free'] : 1,
                         'order_index' => (int)$i['order_index']
                     ];
                 }, $items)
@@ -253,15 +270,16 @@ if ($method === 'POST' || $method === 'PUT') {
         $id = !empty($group['id']) ? trim($group['id']) : ('group_' . time());
         $name = trim($group['name']);
         $icon = trim($group['icon'] ?? '');
+        $targetCategories = !empty($group['target_categories']) ? trim($group['target_categories']) : 'all';
         $orderIndex = (int)($group['order_index'] ?? 0);
         $isActive = isset($group['is_active']) ? (int)$group['is_active'] : 1;
 
         if ($pdo) {
             try {
-                $stmt = $pdo->prepare("INSERT INTO custom_spec_groups (id, name, icon, order_index, is_active)
-                    VALUES (:id, :name, :icon, :order_index, :is_active)
-                    ON DUPLICATE KEY UPDATE name = VALUES(name), icon = VALUES(icon), order_index = VALUES(order_index), is_active = VALUES(is_active), updated_at = NOW()");
-                $stmt->execute(['id' => $id, 'name' => $name, 'icon' => $icon, 'order_index' => $orderIndex, 'is_active' => $isActive]);
+                $stmt = $pdo->prepare("INSERT INTO custom_spec_groups (id, name, icon, target_categories, order_index, is_active)
+                    VALUES (:id, :name, :icon, :target_categories, :order_index, :is_active)
+                    ON DUPLICATE KEY UPDATE name = VALUES(name), icon = VALUES(icon), target_categories = VALUES(target_categories), order_index = VALUES(order_index), is_active = VALUES(is_active), updated_at = NOW()");
+                $stmt->execute(['id' => $id, 'name' => $name, 'icon' => $icon, 'target_categories' => $targetCategories, 'order_index' => $orderIndex, 'is_active' => $isActive]);
                 $synced = syncSpecsCache($pdo, $jsonCacheFile);
                 sendResponse(['success' => true, 'message' => 'บันทึกหัวข้อสเปกสำเร็จ', 'data' => $synced]);
             } catch (PDOException $e) {
@@ -275,6 +293,7 @@ if ($method === 'POST' || $method === 'PUT') {
                 if ($g['id'] === $id) {
                     $g['name'] = $name;
                     $g['icon'] = $icon;
+                    $g['target_categories'] = $targetCategories;
                     $g['order_index'] = $orderIndex;
                     $g['is_active'] = $isActive;
                     $found = true;
@@ -282,7 +301,7 @@ if ($method === 'POST' || $method === 'PUT') {
                 }
             }
             if (!$found) {
-                $cached['groups'][] = ['id' => $id, 'name' => $name, 'icon' => $icon, 'order_index' => $orderIndex, 'is_active' => $isActive];
+                $cached['groups'][] = ['id' => $id, 'name' => $name, 'icon' => $icon, 'target_categories' => $targetCategories, 'order_index' => $orderIndex, 'is_active' => $isActive];
             }
             file_put_contents($jsonCacheFile, json_encode($cached, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
             sendResponse(['success' => true, 'message' => 'บันทึกลง Cache สำเร็จ', 'data' => $cached]);
@@ -331,6 +350,7 @@ if ($method === 'POST' || $method === 'PUT') {
         $isDefault = isset($item['is_default']) ? (int)$item['is_default'] : 0;
         $isActive = isset($item['is_active']) ? (int)$item['is_active'] : 1;
         $showPrice = isset($item['show_price']) ? (int)$item['show_price'] : 1;
+        $showFree = isset($item['show_free']) ? (int)$item['show_free'] : 1;
         $orderIndex = (int)($item['order_index'] ?? 0);
 
         if ($pdo) {
@@ -340,13 +360,13 @@ if ($method === 'POST' || $method === 'PUT') {
                     $pdo->prepare("UPDATE custom_spec_items SET is_default = 0 WHERE group_id = :gid")->execute(['gid' => $groupId]);
                 }
 
-                $stmt = $pdo->prepare("INSERT INTO custom_spec_items (id, group_id, name, price, image, description, is_default, is_active, show_price, order_index)
-                    VALUES (:id, :group_id, :name, :price, :image, :description, :is_default, :is_active, :show_price, :order_index)
-                    ON DUPLICATE KEY UPDATE group_id = VALUES(group_id), name = VALUES(name), price = VALUES(price), image = VALUES(image), description = VALUES(description), is_default = VALUES(is_default), is_active = VALUES(is_active), show_price = VALUES(show_price), order_index = VALUES(order_index), updated_at = NOW()");
+                $stmt = $pdo->prepare("INSERT INTO custom_spec_items (id, group_id, name, price, image, description, is_default, is_active, show_price, show_free, order_index)
+                    VALUES (:id, :group_id, :name, :price, :image, :description, :is_default, :is_active, :show_price, :show_free, :order_index)
+                    ON DUPLICATE KEY UPDATE group_id = VALUES(group_id), name = VALUES(name), price = VALUES(price), image = VALUES(image), description = VALUES(description), is_default = VALUES(is_default), is_active = VALUES(is_active), show_price = VALUES(show_price), show_free = VALUES(show_free), order_index = VALUES(order_index), updated_at = NOW()");
                 $stmt->execute([
                     'id' => $id, 'group_id' => $groupId, 'name' => $name, 'price' => $price,
                     'image' => $image, 'description' => $description, 'is_default' => $isDefault,
-                    'is_active' => $isActive, 'show_price' => $showPrice, 'order_index' => $orderIndex
+                    'is_active' => $isActive, 'show_price' => $showPrice, 'show_free' => $showFree, 'order_index' => $orderIndex
                 ]);
 
                 $synced = syncSpecsCache($pdo, $jsonCacheFile);
@@ -372,6 +392,7 @@ if ($method === 'POST' || $method === 'PUT') {
                     $ci['is_default'] = $isDefault;
                     $ci['is_active'] = $isActive;
                     $ci['show_price'] = $showPrice;
+                    $ci['show_free'] = $showFree;
                     $ci['order_index'] = $orderIndex;
                     $found = true;
                     break;
@@ -381,7 +402,7 @@ if ($method === 'POST' || $method === 'PUT') {
                 $cached['items'][] = [
                     'id' => $id, 'group_id' => $groupId, 'name' => $name, 'price' => $price,
                     'image' => $image, 'description' => $description, 'is_default' => $isDefault,
-                    'is_active' => $isActive, 'show_price' => $showPrice, 'order_index' => $orderIndex
+                    'is_active' => $isActive, 'show_price' => $showPrice, 'show_free' => $showFree, 'order_index' => $orderIndex
                 ];
             }
             file_put_contents($jsonCacheFile, json_encode($cached, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
