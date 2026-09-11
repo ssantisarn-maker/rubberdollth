@@ -86,18 +86,7 @@ function syncOpenGraphToIndexHtml($settings) {
         }
 
         // 5. Sync window.__INITIAL_SETTINGS__ into index.html to eliminate CLS (Layout Shift)
-        $cleanSettings = [
-            'site_title' => $settings['site_title'] ?? '',
-            'hero_tag' => $settings['hero_tag'] ?? '',
-            'hero_title' => $settings['hero_title'] ?? '',
-            'hero_subtitle' => $settings['hero_subtitle'] ?? '',
-            'hero_bg_image' => $settings['hero_bg_image'] ?? '',
-            'line_url' => $settings['line_url'] ?? '',
-            'announcement_enabled' => $settings['announcement_enabled'] ?? true,
-            'announcement_text' => $settings['announcement_text'] ?? '',
-            'announcement_badge' => $settings['announcement_badge'] ?? ''
-        ];
-        $jsonStr = json_encode($cleanSettings, JSON_UNESCAPED_UNICODE);
+        $jsonStr = json_encode($settings, JSON_UNESCAPED_UNICODE);
         $scriptTag = '<script id="rbd-init-settings">window.__INITIAL_SETTINGS__ = ' . $jsonStr . ';</script>';
         if (strpos($html, 'id="rbd-init-settings"') !== false) {
             $html = preg_replace('/<script\s+id=["\']rbd-init-settings["\']>.*?<\/script>/is', $scriptTag, $html);
@@ -120,6 +109,26 @@ if ($method === 'POST' || $method === 'PUT') {
         sendError('No settings data provided');
     }
 
+    // Load existing settings to ensure partial/scoped saves never wipe other settings
+    $existing = [];
+    if (file_exists($jsonCacheFile)) {
+        $existing = json_decode(file_get_contents($jsonCacheFile), true) ?: [];
+    }
+    if ($pdo) {
+        try {
+            $stmt = $pdo->query("SELECT setting_key, setting_value FROM site_settings");
+            $rows = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+            if (!empty($rows)) {
+                foreach ($rows as $k => $v) {
+                    $decoded = json_decode($v, true);
+                    $existing[$k] = (json_last_error() === JSON_ERROR_NONE) ? $decoded : $v;
+                }
+            }
+        } catch (Exception $e) {}
+    }
+
+    $mergedSettings = array_merge($existing, $data);
+
     if ($pdo) {
         try {
             $pdo->exec("CREATE TABLE IF NOT EXISTS site_settings (
@@ -135,18 +144,18 @@ if ($method === 'POST' || $method === 'PUT') {
                 $stmt->execute(['k' => $k, 'v' => $valStr]);
             }
 
-            // Sync cache
-            file_put_contents($jsonCacheFile, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+            // Sync cache with merged data
+            file_put_contents($jsonCacheFile, json_encode($mergedSettings, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
             // Sync index.html physical meta tags
-            syncOpenGraphToIndexHtml($data);
-            sendResponse(['success' => true, 'message' => 'บันทึกการตั้งค่าเว็บไซต์สำเร็จ', 'settings' => $data]);
+            syncOpenGraphToIndexHtml($mergedSettings);
+            sendResponse(['success' => true, 'message' => 'บันทึกการตั้งค่าเว็บไซต์สำเร็จ', 'settings' => $mergedSettings]);
         } catch (PDOException $e) {
             sendError('Database error: ' . $e->getMessage(), 500);
         }
     } else {
         // Cache fallback update
-        file_put_contents($jsonCacheFile, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
-        syncOpenGraphToIndexHtml($data);
-        sendResponse(['success' => true, 'message' => 'บันทึกลง Cache สำเร็จ', 'settings' => $data]);
+        file_put_contents($jsonCacheFile, json_encode($mergedSettings, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+        syncOpenGraphToIndexHtml($mergedSettings);
+        sendResponse(['success' => true, 'message' => 'บันทึกลง Cache สำเร็จ', 'settings' => $mergedSettings]);
     }
 }

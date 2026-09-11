@@ -243,20 +243,74 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
     }
   };
 
+  // Helper to extract only the keys belonging to the active subTab
+  const getScopedSettings = (data, activeSubTab) => {
+    if (!activeSubTab || activeSubTab === 'all') return data;
+
+    const isMatch = (k) => {
+      switch (activeSubTab) {
+        case 'spotlight':
+          return k.startsWith('spotlight_');
+        case 'hero':
+          return k.startsWith('hero_');
+        case 'promo':
+          return k.startsWith('announcement_') || k.startsWith('shipping_');
+        case 'values':
+          return k.startsWith('values_');
+        case 'discreet':
+          return k.startsWith('discreet_');
+        case 'care':
+          return k.startsWith('care_');
+        case 'contact':
+          return k.startsWith('contact_') || ['line_id', 'line_url', 'phone', 'email', 'business_hours'].includes(k);
+        case 'typography':
+          return ['font_size_scale', 'font_family_preset'].includes(k);
+        case 'nav_footer':
+          return k.startsWith('brand_') || k.startsWith('footer_') || k.startsWith('nav_');
+        case 'modal_content':
+          return k.startsWith('modal_') || k === 'line_order_privacy_badge';
+        case 'catalog_ui':
+          return k.startsWith('catalog_') || k.startsWith('card_') || k.startsWith('product_sort_');
+        case 'social_share':
+          return k.startsWith('seo_og_') || ['site_title', 'site_subtitle'].includes(k);
+        case 'reviews_header':
+          return k.startsWith('reviews_');
+        default:
+          return true;
+      }
+    };
+
+    const result = {};
+    for (const [k, v] of Object.entries(data)) {
+      if (isMatch(k)) {
+        result[k] = v;
+      }
+    }
+    return result;
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
     setSaveLoading(true);
 
     try {
+      // 1. Extract only the scoped keys relevant to the current subTab
+      const scopedPayload = getScopedSettings(formData, subTab);
+
       const token = localStorage.getItem('rbd_admin_token') || 'RBD_ADMIN_SECRET_KEY_2026';
       const res = await fetch('/api/settings.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(scopedPayload)
       });
       const data = await res.json();
       if (data.success) {
-        showToast('✓ บันทึกการตั้งค่าเว็บไซต์เรียบร้อยแล้ว ข้อมูลบนหน้าเว็บอัปเดตทันที!');
+        showToast('✓ บันทึกการตั้งค่าเรียบร้อยแล้ว ข้อมูลบนหน้าเว็บอัปเดตทันที!');
+        const updatedComplete = data.settings || { ...formData, ...scopedPayload };
+        onUpdateSettings(updatedComplete);
+        setFormData(prev => ({ ...prev, ...updatedComplete }));
+      } else {
+        showToast('✓ บันทึกการตั้งค่าเรียบร้อยแล้ว');
         onUpdateSettings(formData);
       }
     } catch (e) {
