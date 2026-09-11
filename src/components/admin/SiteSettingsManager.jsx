@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Bell, Phone, MessageCircle, Image as ImageIcon, ShieldCheck, Sparkles, CheckCircle2, Upload, Flame, Globe, Layers, ArrowRight, Lock, HeartHandshake, Droplets, MessageSquareQuote, Share2 } from 'lucide-react';
+import { Save, Bell, Phone, MessageCircle, Image as ImageIcon, ShieldCheck, Shield, Sparkles, CheckCircle2, Upload, Flame, Globe, Layers, ArrowRight, Lock, HeartHandshake, Droplets, MessageSquareQuote, Share2 } from 'lucide-react';
 import { useLiveProducts } from '../../hooks/useLiveProducts';
 
 export default function SiteSettingsManager({ settings, onUpdateSettings, subTab = 'all' }) {
@@ -235,6 +235,7 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
       setFormData(prev => ({
         ...prev,
         hero_bg_image: selected.image,
+        hero_product_code: selected.code,
         hero_tag: `MODEL SPOTLIGHT • ${selected.code} ${selected.name}`,
         hero_title: `สุนทรียภาพแห่งสัมผัสเสมือนจริง: ${selected.name}`,
         hero_subtitle: selected.description || prev.hero_subtitle
@@ -1202,6 +1203,37 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
                     ))}
                   </select>
                 </div>
+
+                {/* Linked Product for Hero Click */}
+                <div className="space-y-1.5 p-3.5 bg-sand-50 border border-sand-300 rounded-2xl">
+                  <label className="font-bold text-ink text-xs flex items-center gap-1.5">
+                    <span>🎯 รหัสสินค้าที่เปิดเมื่อคลิกรูปภาพ Hero:</span>
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={formData.hero_product_code || ''}
+                      onChange={e => setFormData({ ...formData, hero_product_code: e.target.value })}
+                      placeholder="เช่น SLC-162"
+                      className="flex-1 px-3 py-2 bg-white border border-sand-300 rounded-xl text-xs font-bold text-ink"
+                    />
+                    <select
+                      value={formData.hero_product_code || ''}
+                      onChange={e => setFormData({ ...formData, hero_product_code: e.target.value })}
+                      className="w-36 px-2 py-2 bg-white border border-sand-300 rounded-xl text-xs font-semibold text-ink"
+                    >
+                      <option value="">-- เลือกรุ่น --</option>
+                      {products.map(p => (
+                        <option key={p.code} value={p.code}>
+                          {p.code}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <p className="text-[10px] text-ink-muted">
+                    💡 เมื่อลูกค้าคลิกที่รูปโมเดลหน้าแรก ระบบจะเด้งเปิดสเปกและรูปเต็มของสินค้ารุ่นนี้ให้อัตโนมัติ
+                  </p>
+                </div>
               </div>
 
               {/* Right Col: Hero Text Headlines & Buttons */}
@@ -1273,6 +1305,63 @@ export default function SiteSettingsManager({ settings, onUpdateSettings, subTab
                       placeholder="เช่น ปรึกษาแอดมินทาง LINE"
                       className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl focus:outline-none focus:border-bronze focus:bg-white"
                     />
+                  </div>
+                </div>
+
+                {/* Hero Trust Badge Settings: "ส่งลับเฉพาะ 100%" */}
+                <div className="p-4 bg-emerald-50/60 border border-emerald-200 rounded-2xl space-y-3 pt-4 mt-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Shield className="w-4 h-4 text-emerald-700" />
+                      <span className="font-bold text-ink text-xs sm:text-sm">🛡️ ป้ายการันตี "ส่งลับเฉพาะ" ที่มุมล่างรูป Hero</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-ink">
+                        {formData.hero_trust_enabled !== false ? '🟢 เปิดแสดง' : '⚪ ปิดซ่อน'}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, hero_trust_enabled: prev.hero_trust_enabled === false ? true : false }))}
+                        className={`w-10 h-6 rounded-full p-0.5 transition-colors cursor-pointer ${
+                          formData.hero_trust_enabled !== false ? 'bg-emerald-600' : 'bg-sand-300'
+                        }`}
+                      >
+                        <div className={`w-5 h-5 rounded-full bg-white transition-transform ${formData.hero_trust_enabled !== false ? 'translate-x-4' : 'translate-x-0'}`} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs">
+                    <div className="sm:col-span-8 space-y-1">
+                      <label className="font-semibold text-ink">หัวข้อป้าย (Title)</label>
+                      <input
+                        type="text"
+                        value={formData.hero_trust_title || ''}
+                        onChange={e => setFormData({ ...formData, hero_trust_title: e.target.value })}
+                        placeholder="ส่งลับเฉพาะ: 100% (Discreet Shipping)"
+                        className="w-full px-3 py-2 bg-white border border-emerald-300/80 rounded-xl font-bold text-ink focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                    <div className="sm:col-span-4 space-y-1">
+                      <label className="font-semibold text-ink">ป้ายสถานะ (Badge Tag)</label>
+                      <input
+                        type="text"
+                        value={formData.hero_trust_tag || ''}
+                        onChange={e => setFormData({ ...formData, hero_trust_tag: e.target.value })}
+                        placeholder="VERIFIED"
+                        className="w-full px-3 py-2 bg-white border border-emerald-300/80 rounded-xl font-bold text-emerald-700 focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                    <div className="sm:col-span-12 space-y-1">
+                      <label className="font-semibold text-ink">คำบรรยายใต้ป้าย (Subtitle / Description)</label>
+                      <input
+                        type="text"
+                        value={formData.hero_trust_desc || ''}
+                        onChange={e => setFormData({ ...formData, hero_trust_desc: e.target.value })}
+                        placeholder="ไม่ระบุชื่อสินค้าหน้ากล่องพัสดุ"
+                        className="w-full px-3 py-2 bg-white border border-emerald-300/80 rounded-xl text-ink focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

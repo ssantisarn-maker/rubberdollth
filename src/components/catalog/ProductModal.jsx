@@ -57,6 +57,26 @@ function getVideoEmbedInfo(rawUrl) {
   return { type: 'video', src: url };
 }
 
+// Helper to parse query options and specs from URL search string
+function parseUrlOptionsAndSpecs(search) {
+  if (!search) return { initialOptions: [], initialSpecs: {} };
+  const params = new URLSearchParams(search);
+  const optsStr = params.get('opts');
+  const specsStr = params.get('specs');
+
+  const initialOptions = optsStr ? optsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const initialSpecs = {};
+  if (specsStr) {
+    specsStr.split(',').forEach(part => {
+      const [grp, item] = part.split(':').map(s => s.trim());
+      if (grp && item) {
+        initialSpecs[grp] = item;
+      }
+    });
+  }
+  return { initialOptions, initialSpecs };
+}
+
 export default function ProductModal({ product, onClose, isAdultMode, lang = 'th' }) {
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [showVideo, setShowVideo] = useState(false);
@@ -70,8 +90,21 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
   const { options } = useLiveOptions();
   const { categories: allCategories } = useLiveCategories();
   const { activeGroups: specGroups, itemsByGroup: specItemsByGroup, defaultSelection: defaultSpecSelection } = useLiveCustomSpecs();
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const [selectedSpecs, setSelectedSpecs] = useState({});
+  
+  // Initialize options & specs from URL if present
+  const [selectedOptions, setSelectedOptions] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return parseUrlOptionsAndSpecs(window.location.search).initialOptions;
+    }
+    return [];
+  });
+  const [selectedSpecs, setSelectedSpecs] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return parseUrlOptionsAndSpecs(window.location.search).initialSpecs;
+    }
+    return {};
+  });
+
   const [isSpecsExpanded, setIsSpecsExpanded] = useState(true);
   const [previewOptionMedia, setPreviewOptionMedia] = useState(null);
   const [isOptionsExpanded, setIsOptionsExpanded] = useState(true);
@@ -112,15 +145,63 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
     return true;
   }, [product, allCategories]);
 
-  const shareUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/?p=${encodeURIComponent(product?.code || '')}`
-    : `https://rubberdollth.com/?p=${encodeURIComponent(product?.code || '')}`;
+  // Full share URL containing product, selected options, and custom specs
+  const shareUrl = useMemo(() => {
+    if (!product?.code) return typeof window !== 'undefined' ? window.location.href : 'https://rubberdollth.com/';
+    const base = typeof window !== 'undefined' ? window.location.origin : 'https://rubberdollth.com';
+    const params = new URLSearchParams();
+    params.set('p', product.code);
+
+    if (selectedOptions && selectedOptions.length > 0) {
+      params.set('opts', selectedOptions.join(','));
+    }
+
+    const specsEntries = Object.entries(selectedSpecs || {})
+      .filter(([k, v]) => Boolean(k && v))
+      .map(([k, v]) => `${k}:${v}`);
+    if (specsEntries.length > 0) {
+      params.set('specs', specsEntries.join(','));
+    }
+
+    if (typeof window !== 'undefined') {
+      const currentParams = new URLSearchParams(window.location.search);
+      const cat = currentParams.get('cat') || currentParams.get('category');
+      if (cat) params.set('cat', cat);
+    }
+
+    return `${base}/?${params.toString()}`;
+  }, [product?.code, selectedOptions, selectedSpecs]);
+
+  // Keep browser address bar query params synced in real-time
+  useEffect(() => {
+    if (!product?.code || typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    params.set('p', product.code);
+
+    if (selectedOptions.length > 0) {
+      params.set('opts', selectedOptions.join(','));
+    } else {
+      params.delete('opts');
+    }
+
+    const specsEntries = Object.entries(selectedSpecs || {})
+      .filter(([k, v]) => Boolean(k && v))
+      .map(([k, v]) => `${k}:${v}`);
+    if (specsEntries.length > 0) {
+      params.set('specs', specsEntries.join(','));
+    } else {
+      params.delete('specs');
+    }
+
+    const newSearch = params.toString() ? `?${params.toString()}` : '';
+    window.history.replaceState({}, '', `${newSearch}${window.location.hash}`);
+  }, [product?.code, selectedOptions, selectedSpecs]);
 
   const handleCopyShareLink = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
+      setTimeout(() => setCopied(false), 3500);
     } catch (e) {
       const input = document.createElement('input');
       input.value = shareUrl;
@@ -129,7 +210,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
       document.execCommand('copy');
       document.body.removeChild(input);
       setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
+      setTimeout(() => setCopied(false), 3500);
     }
   };
 
@@ -234,7 +315,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
       msg += `\n\n💰 ราคารวมทั้งสิ้น: ฿${grandTotal.toLocaleString()}.-`;
     }
 
-    msg += `\n\nดูข้อมูลรุ่นนี้: ${shareUrl}`;
+    msg += `\n\n🔗 ดูข้อมูลและสเปกที่เลือกนี้: ${shareUrl}`;
     return msg;
   }, [product, basePriceNum, selectedSpecList, selectedOptionList, grandTotal, shareUrl]);
 
@@ -253,7 +334,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
 
   const currentVideo = videoList[activeVideoIdx] || videoList[0];
 
-  // Reset states ONLY when a different product is opened
+  // Reset states when product changes, initializing from URL query if available
   useEffect(() => {
     setActiveImageIdx(0);
     setShowVideo(false);
@@ -261,9 +342,16 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
     setVideoError(false);
     setIsZoomOpen(false);
     setZoomScale(1);
-    setSelectedOptions([]);
-    setSelectedSpecs({});
     setPreviewOptionMedia(null);
+
+    if (typeof window !== 'undefined') {
+      const { initialOptions, initialSpecs } = parseUrlOptionsAndSpecs(window.location.search);
+      setSelectedOptions(initialOptions);
+      setSelectedSpecs(initialSpecs);
+    } else {
+      setSelectedOptions([]);
+      setSelectedSpecs({});
+    }
   }, [product?.id, product?.code]);
 
   // Handle keyboard events (ESC, Arrow Left, Arrow Right) and body scroll lock
@@ -1057,6 +1145,35 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
                     <>
                       <Copy className="w-3.5 h-3.5 text-bronze" />
                       <span>คัดลอกลิงก์</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Dedicated Share Link with Selected Specs & Options (LINE-friendly) */}
+              <div className="pt-0.5">
+                <button
+                  type="button"
+                  onClick={handleCopyShareLink}
+                  className={`w-full py-2.5 px-4 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs active:scale-98 ${
+                    copied
+                      ? 'bg-emerald-600 border-emerald-600 text-white shadow-md'
+                      : 'bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 border-amber-300/90 text-amber-950'
+                  }`}
+                  title="คัดลอกลิงก์สินค้านี้พร้อมออฟชั่นและสเปกที่เลือกทั้งหมดเพื่อส่งต่อให้ลูกค้าทาง LINE"
+                >
+                  {copied ? (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 text-white shrink-0 animate-bounce" />
+                      <span>✓ คัดลอกลิงก์พร้อมสเปก & ออฟชั่นสำเร็จ! นำไปส่งในแชท LINE ได้ทันที</span>
+                    </>
+                  ) : (
+                    <>
+                      <Share2 className="w-4 h-4 text-amber-700 shrink-0" />
+                      <span>
+                        🔗 คัดลอกลิงก์พร้อมสเปกที่เลือกนี้ (ส่งให้ลูกค้าทาง LINE)
+                        {selectedOptionList.length > 0 ? ` [${selectedOptionList.length} ออฟชั่น]` : ''}
+                      </span>
                     </>
                   )}
                 </button>

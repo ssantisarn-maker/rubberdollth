@@ -33,8 +33,13 @@ const defaultSettings = {
   hero_title: '🆕สินค้าเข้าใหม่ :  น้องไอยู',
   hero_subtitle: '✨SLC-162 น้องไอยู✨\n\nตุ๊กตายางพรีเมียม สไตล์สาวนักเรียนน่ารักเซ็กซี่\n\nน้องไอยูมาในลุคสาวนักเรียนสุดน่ารักที่ทั้งสดใสและเย้ายวน',
   hero_bg_image: '/images/products/SLC-162_1788898701_af9fd7.webp',
+  hero_product_code: 'SLC-162',
   hero_btn_primary_text: 'ดูแคตตาล็อกสินค้าทั้งหมด',
   hero_btn_secondary_text: 'ปรึกษาแอดมินทาง LINE',
+  hero_trust_enabled: true,
+  hero_trust_title: 'ส่งลับเฉพาะ: 100% (Discreet Shipping)',
+  hero_trust_desc: 'ไม่ระบุชื่อสินค้าหน้ากล่องพัสดุ',
+  hero_trust_tag: 'VERIFIED',
 
   // Spotlight Ready-to-Ship Showcase
   spotlight_enabled: false,

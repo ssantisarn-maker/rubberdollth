@@ -17,6 +17,26 @@ export default function HeroSection({ onExploreClick, lang = 'th' }) {
   const btnPrimary = settings.hero_btn_primary_text || t.hero.btnCatalog;
   const btnSecondary = settings.hero_btn_secondary_text || t.hero.btnConsult;
 
+  const targetProductCode = settings.hero_product_code || 'SLC-162';
+
+  const handleHeroClick = () => {
+    // 1. Dispatch custom event for ProductCatalog
+    window.dispatchEvent(new CustomEvent('rbd_open_product', { 
+      detail: { code: targetProductCode } 
+    }));
+
+    // 2. Update URL query params
+    const params = new URLSearchParams(window.location.search);
+    params.set('p', targetProductCode);
+    window.history.replaceState({}, '', `?${params.toString()}${window.location.hash}`);
+
+    // 3. Smooth scroll down to catalog
+    const el = document.getElementById('catalog');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-sand-100/80 via-sand-50 to-white pt-10 pb-16 sm:pt-16 sm:pb-24 border-b border-sand-200">
       
@@ -90,13 +110,20 @@ export default function HeroSection({ onExploreClick, lang = 'th' }) {
 
           </div>
 
-          {/* Right Column: Hero Visual Card */}
+          {/* Right Column: Hero Visual Card (Clickable to open target product) */}
           <div className="lg:col-span-5 relative">
             <div className="relative mx-auto max-w-md lg:max-w-none">
               
               <div className="absolute -inset-2 bg-gradient-to-tr from-amber-400/30 to-rose-400/20 rounded-3xl blur-xl" />
 
-              <div className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-modal border-2 border-sand-300 bg-sand-200 group">
+              <div 
+                onClick={handleHeroClick}
+                className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-modal border-2 border-sand-300 bg-sand-200 group cursor-pointer select-none"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleHeroClick(); }}
+                title="คลิกเพื่อดูสเปกและรูปภาพเต็มของสินค้ารุ่นนี้"
+              >
                 <img
                   src={settings.hero_bg_image && !settings.hero_bg_image.includes('7ee33a0f-4684-42bb-b140-e282b3df64a3.jpg') ? settings.hero_bg_image : defaultHeroImage}
                   alt="RUBBER DOLL THAILAND ตุ๊กตายางพรีเมียม ซิลิโคนแท้"
@@ -110,23 +137,36 @@ export default function HeroSection({ onExploreClick, lang = 'th' }) {
                     e.target.onerror = null;
                     e.target.src = "https://cdn.zyrosite.com/cdn-ecommerce/store_01KYYQFNVFQMCAMTY5SZA4J5H8/assets/7ee33a0f-4684-42bb-b140-e282b3df64a3.jpg";
                   }}
-                  className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700 ease-out"
+                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
 
-                <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl border border-sand-200 shadow-soft flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700">
-                      <Shield className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="text-xs sm:text-sm font-bold text-ink">{settings.trust_discrete_title || '100% Secret Packaging'}</div>
-                      <div className="text-[11px] text-ink-muted">ไม่ระบุชื่อสินค้าหน้ากล่องพัสดุ</div>
-                    </div>
-                  </div>
-                  <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                    VERIFIED
-                  </span>
+                {/* Floating Quick View hint on hover */}
+                <div className="absolute top-4 right-4 z-10 bg-ink/75 backdrop-blur-md text-white text-xs font-bold px-3.5 py-1.5 rounded-full flex items-center gap-1.5 shadow-md border border-white/20 opacity-90 sm:opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-105 pointer-events-none">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <span>คลิกดูสเปก & ราคา ➔</span>
                 </div>
+
+                {/* Trust Badge at bottom of Hero Card */}
+                {settings.hero_trust_enabled !== false && (
+                  <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl border border-sand-200 shadow-soft flex items-center justify-between">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 shrink-0">
+                        <Shield className="w-5 h-5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs sm:text-sm font-bold text-ink truncate">
+                          {settings.hero_trust_title || settings.trust_discrete_title || 'ส่งลับเฉพาะ: 100% (Discreet Shipping)'}
+                        </div>
+                        <div className="text-[11px] text-ink-muted truncate">
+                          {settings.hero_trust_desc || 'ไม่ระบุชื่อสินค้าหน้ากล่องพัสดุ'}
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 shrink-0 ml-2">
+                      {settings.hero_trust_tag || 'VERIFIED'}
+                    </span>
+                  </div>
+                )}
 
               </div>
             </div>

@@ -5,17 +5,25 @@ const ProductModal = React.lazy(() => import('./ProductModal'));
 import { useLiveProducts } from '../../hooks/useLiveProducts';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 import { useLiveCategories } from '../../hooks/useLiveCategories';
-import { Sparkles, PackageCheck, Flame, CheckCircle2, ArrowDown } from 'lucide-react';
+import { Sparkles, PackageCheck, Flame, CheckCircle2, ArrowDown, Share2, Check } from 'lucide-react';
 import { translations } from '../../data/translations';
 
 export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, onToggleAdultMode, lang = 'th' }) {
   const { products } = useLiveProducts();
   const { settings } = useSiteSettings();
   const { categories: liveCats } = useLiveCategories();
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const catParam = params.get('cat') || params.get('category');
+      if (catParam) return catParam;
+    }
+    return 'all';
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [visibleCount, setVisibleCount] = useState(12);
+  const [copiedCategory, setCopiedCategory] = useState(false);
   const productsGridRef = useRef(null);
   const t = translations[lang] || translations.th;
 
@@ -62,6 +70,44 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
     }
   }, [products]);
 
+  // Listen to external/custom events to open product modal (e.g. from Hero Section image click)
+  useEffect(() => {
+    const handleRbdOpenProduct = (e) => {
+      const targetCode = e.detail?.code || e.detail;
+      if (!targetCode || !products || products.length === 0) return;
+      const cleanTarget = decodeURIComponent(String(targetCode)).trim().toLowerCase().replace(/\s+/g, '');
+      const matched = products.find(p => {
+        const pCode = (p.code || '').toLowerCase().replace(/\s+/g, '');
+        const pId = (p.id || '').toLowerCase().replace(/\s+/g, '');
+        return pCode === cleanTarget || pId === cleanTarget;
+      });
+      if (matched) {
+        setSelectedProduct(matched);
+        const params = new URLSearchParams(window.location.search);
+        params.set('p', matched.code);
+        window.history.replaceState({}, '', `?${params.toString()}${window.location.hash}`);
+      }
+    };
+
+    window.addEventListener('rbd_open_product', handleRbdOpenProduct);
+    return () => window.removeEventListener('rbd_open_product', handleRbdOpenProduct);
+  }, [products]);
+
+  // Sync category param from URL on initial load / back navigation
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const catParam = params.get('cat') || params.get('category');
+    if (catParam && catParam !== selectedCategory) {
+      setSelectedCategory(catParam);
+      if (!params.get('p') && !params.get('code')) {
+        setTimeout(() => {
+          const el = document.getElementById('catalog');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
+      }
+    }
+  }, [liveCats]);
+
   const handleOpenProduct = (prod) => {
     setSelectedProduct(prod);
     if (prod?.code) {
@@ -74,15 +120,39 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
   const handleCloseModal = () => {
     setSelectedProduct(null);
     const params = new URLSearchParams(window.location.search);
-    if (params.has('p') || params.has('code') || params.has('product')) {
+    if (params.has('p') || params.has('code') || params.has('product') || params.has('opts') || params.has('specs')) {
       params.delete('p');
       params.delete('code');
       params.delete('product');
+      params.delete('opts');
+      params.delete('specs');
       const newSearch = params.toString() ? `?${params.toString()}` : '';
       const newPath = window.location.pathname.startsWith('/p/') ? '/' : window.location.pathname;
       window.history.replaceState({}, '', `${newPath}${newSearch}${window.location.hash}`);
     } else if (window.location.hash.startsWith('#product-')) {
       window.history.replaceState({}, '', window.location.pathname + window.location.search);
+    }
+  };
+
+  const handleCopyCategoryLink = async () => {
+    const shareCatUrl = typeof window !== 'undefined'
+      ? (selectedCategory !== 'all' 
+          ? `${window.location.origin}/?cat=${encodeURIComponent(selectedCategory)}` 
+          : `${window.location.origin}/#catalog`)
+      : `https://rubberdollth.com/?cat=${encodeURIComponent(selectedCategory)}`;
+    try {
+      await navigator.clipboard.writeText(shareCatUrl);
+      setCopiedCategory(true);
+      setTimeout(() => setCopiedCategory(false), 3000);
+    } catch (e) {
+      const input = document.createElement('input');
+      input.value = shareCatUrl;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      setCopiedCategory(true);
+      setTimeout(() => setCopiedCategory(false), 3000);
     }
   };
 
@@ -338,6 +408,17 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
     setSelectedCategory(catId);
     setVisibleCount(12);
 
+    // Sync URL query param ?cat=...
+    const params = new URLSearchParams(window.location.search);
+    if (catId && catId !== 'all') {
+      params.set('cat', catId);
+    } else {
+      params.delete('cat');
+      params.delete('category');
+    }
+    const newSearch = params.toString() ? `?${params.toString()}` : '';
+    window.history.replaceState({}, '', `${window.location.pathname}${newSearch}${window.location.hash}`);
+
     // Smooth scroll down to products grid
     setTimeout(() => {
       if (productsGridRef.current) {
@@ -405,7 +486,7 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
 
         {/* Anchor and Active Category Badge above products */}
         <div ref={productsGridRef} className="pt-2 flex items-center justify-between flex-wrap gap-3 scroll-mt-28">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs font-bold text-ink bg-white px-3.5 py-1.5 rounded-full border border-sand-300 shadow-2xs flex items-center gap-1.5">
               <CheckCircle2 className="w-3.5 h-3.5 text-bronze" />
               <span>{lang === 'th' ? 'กำลังแสดงหมวดหมู่:' : 'Showing Category:'} <strong>{activeCategoryLabel}</strong></span>
@@ -413,12 +494,35 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
             <span className="text-xs text-ink-muted">
               ({filteredProducts.length} {t.catalog.itemsUnit})
             </span>
+
+            {/* Category Share Button */}
+            <button
+              onClick={handleCopyCategoryLink}
+              className={`text-xs px-3 py-1.5 rounded-full border flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer ${
+                copiedCategory
+                  ? 'bg-emerald-50 border-emerald-300 text-emerald-700 font-bold'
+                  : 'bg-white hover:bg-sand-100 border-sand-300 text-ink-soft hover:text-ink'
+              }`}
+              title="คัดลอกลิงก์หมวดหมู่นี้เพื่อส่งต่อให้ลูกค้าทาง LINE"
+            >
+              {copiedCategory ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span>คัดลอกลิงก์หมวดหมู่แล้ว!</span>
+                </>
+              ) : (
+                <>
+                  <Share2 className="w-3.5 h-3.5 text-bronze shrink-0" />
+                  <span>แชร์ลิงก์หมวดหมู่นี้</span>
+                </>
+              )}
+            </button>
           </div>
 
           {selectedCategory !== 'all' && (
             <button
               onClick={() => handleSelectCategory('all')}
-              className="text-xs font-semibold text-bronze hover:text-bronze-dark underline decoration-dotted"
+              className="text-xs font-semibold text-bronze hover:text-bronze-dark underline decoration-dotted cursor-pointer"
             >
               {t.catalog.resetBtn}
             </button>
