@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   X, MessageCircle, ShieldCheck, Sparkles, Box, Check, Star, Lock, 
   HeartHandshake, ChevronLeft, ChevronRight, Flame, Layers, DollarSign, 
@@ -77,7 +77,15 @@ function parseUrlOptionsAndSpecs(search) {
   return { initialOptions, initialSpecs };
 }
 
-export default function ProductModal({ product, onClose, isAdultMode, lang = 'th' }) {
+export default function ProductModal({ 
+  product, 
+  onClose, 
+  isAdultMode, 
+  lang = 'th',
+  productList = [],
+  onNavigateProduct = null,
+  currentCategoryName = ''
+}) {
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [showVideo, setShowVideo] = useState(false);
   const [activeVideoIdx, setActiveVideoIdx] = useState(0);
@@ -91,6 +99,70 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
   const { categories: allCategories } = useLiveCategories();
   const { activeGroups: specGroups, itemsByGroup: specItemsByGroup, defaultSelection: defaultSpecSelection } = useLiveCustomSpecs();
   
+  // Navigation refs and gesture state
+  const modalCardRef = useRef(null);
+  const touchStartX = useRef(null);
+  const touchStartY = useRef(null);
+
+  // Effective product list for navigation
+  const effectiveProductList = useMemo(() => {
+    if (Array.isArray(productList) && productList.length > 0) {
+      if (productList.some(p => (p.id && p.id === product?.id) || (p.code && p.code === product?.code))) {
+        return productList;
+      }
+    }
+    return [product].filter(Boolean);
+  }, [productList, product]);
+
+  const currentIndex = useMemo(() => {
+    if (!effectiveProductList || effectiveProductList.length === 0 || !product) return -1;
+    return effectiveProductList.findIndex(p => (p.id && p.id === product.id) || (p.code && p.code === product.code));
+  }, [effectiveProductList, product]);
+
+  const hasMultipleProducts = effectiveProductList.length > 1 && currentIndex >= 0;
+
+  const prevProduct = useMemo(() => {
+    if (!hasMultipleProducts) return null;
+    return currentIndex > 0 ? effectiveProductList[currentIndex - 1] : effectiveProductList[effectiveProductList.length - 1];
+  }, [hasMultipleProducts, currentIndex, effectiveProductList]);
+
+  const nextProduct = useMemo(() => {
+    if (!hasMultipleProducts) return null;
+    return currentIndex < effectiveProductList.length - 1 ? effectiveProductList[currentIndex + 1] : effectiveProductList[0];
+  }, [hasMultipleProducts, currentIndex, effectiveProductList]);
+
+  const handleNavigate = (targetProd) => {
+    if (!targetProd || !onNavigateProduct) return;
+    if (modalCardRef.current) {
+      modalCardRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    onNavigateProduct(targetProd);
+  };
+
+  const handleTouchStart = (e) => {
+    if (isZoomOpen) return;
+    if (e.target.closest('.overflow-x-auto') || e.target.closest('select') || e.target.closest('input')) return;
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (isZoomOpen || touchStartX.current === null || touchStartY.current === null) return;
+    const diffX = touchStartX.current - e.changedTouches[0].clientX;
+    const diffY = touchStartY.current - e.changedTouches[0].clientY;
+
+    // Minimum horizontal swipe distance of 55px, and horizontal distance > vertical scroll distance * 1.4
+    if (Math.abs(diffX) > 55 && Math.abs(diffX) > Math.abs(diffY) * 1.4) {
+      if (diffX > 0 && nextProduct) {
+        handleNavigate(nextProduct);
+      } else if (diffX < 0 && prevProduct) {
+        handleNavigate(prevProduct);
+      }
+    }
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
   // Initialize options & specs from URL if present
   const [selectedOptions, setSelectedOptions] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -412,19 +484,31 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
           onClose();
         }
       } else if (e.key === 'ArrowLeft') {
-        const total = (product?.gallery && product.gallery.length > 0)
-          ? product.gallery.length
-          : [product?.image, product?.secondaryImage].filter(Boolean).length;
-        if (total > 1) {
-          setActiveImageIdx(prev => (prev > 0 ? prev - 1 : total - 1));
+        if ((e.shiftKey || e.altKey) && prevProduct) {
+          handleNavigate(prevProduct);
+        } else {
+          const total = (product?.gallery && product.gallery.length > 0)
+            ? product.gallery.length
+            : [product?.image, product?.secondaryImage].filter(Boolean).length;
+          if (total > 1) {
+            setActiveImageIdx(prev => (prev > 0 ? prev - 1 : total - 1));
+          }
         }
       } else if (e.key === 'ArrowRight') {
-        const total = (product?.gallery && product.gallery.length > 0)
-          ? product.gallery.length
-          : [product?.image, product?.secondaryImage].filter(Boolean).length;
-        if (total > 1) {
-          setActiveImageIdx(prev => (prev < total - 1 ? prev + 1 : 0));
+        if ((e.shiftKey || e.altKey) && nextProduct) {
+          handleNavigate(nextProduct);
+        } else {
+          const total = (product?.gallery && product.gallery.length > 0)
+            ? product.gallery.length
+            : [product?.image, product?.secondaryImage].filter(Boolean).length;
+          if (total > 1) {
+            setActiveImageIdx(prev => (prev < total - 1 ? prev + 1 : 0));
+          }
         }
+      } else if (e.key === 'PageDown' && nextProduct) {
+        handleNavigate(nextProduct);
+      } else if (e.key === 'PageUp' && prevProduct) {
+        handleNavigate(prevProduct);
       }
     };
 
@@ -434,7 +518,7 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'auto';
     };
-  }, [isZoomOpen, onClose, product]);
+  }, [isZoomOpen, onClose, product, prevProduct, nextProduct, hasMultipleProducts]);
 
   if (!product) return null;
 
@@ -470,11 +554,96 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
       {/* Backdrop click */}
       <div className="fixed inset-0" onClick={onClose} />
 
+      {/* Floating Side Navigation on Desktop (Screens >= 1280px / xl) */}
+      {hasMultipleProducts && (
+        <>
+          {/* Previous Product Button (Left) */}
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); handleNavigate(prevProduct); }}
+            className="hidden xl:flex fixed left-4 lg:left-6 top-1/2 -translate-y-1/2 z-30 group flex-col items-center gap-1.5 p-3 rounded-2xl bg-white/95 hover:bg-white text-ink shadow-2xl border border-sand-300/80 backdrop-blur-md transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+            title={`รุ่นก่อนหน้า: ${prevProduct.code} - ${prevProduct.name}`}
+            aria-label="สินค้าก่อนหน้า"
+          >
+            <div className="w-10 h-10 rounded-xl bg-sand-100 group-hover:bg-amber-100/80 flex items-center justify-center transition-colors">
+              <ChevronLeft className="w-6 h-6 text-bronze group-hover:-translate-x-0.5 transition-transform" />
+            </div>
+            <span className="text-[10px] font-bold text-ink-muted group-hover:text-ink">ก่อนหน้า</span>
+
+            {/* Hover Tooltip with Image & Code */}
+            <div className="opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-200 absolute left-full ml-3 top-1/2 -translate-y-1/2 bg-neutral-900/95 text-white p-2.5 rounded-2xl shadow-2xl flex items-center gap-2.5 w-48 border border-white/10 backdrop-blur-md">
+              <img src={prevProduct.image} alt="" className="w-11 h-14 object-cover object-top rounded-xl shrink-0 bg-neutral-800" />
+              <div className="min-w-0 text-left">
+                <span className="text-[9px] font-bold text-amber-400 uppercase tracking-wider block">◀ รุ่นก่อนหน้า</span>
+                <p className="text-xs font-bold text-white truncate">{prevProduct.code}</p>
+                <p className="text-[11px] text-neutral-300 truncate">{prevProduct.name}</p>
+              </div>
+            </div>
+          </button>
+
+          {/* Next Product Button (Right) */}
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); handleNavigate(nextProduct); }}
+            className="hidden xl:flex fixed right-4 lg:right-6 top-1/2 -translate-y-1/2 z-30 group flex-col items-center gap-1.5 p-3 rounded-2xl bg-white/95 hover:bg-white text-ink shadow-2xl border border-sand-300/80 backdrop-blur-md transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+            title={`รุ่นถัดไป: ${nextProduct.code} - ${nextProduct.name}`}
+            aria-label="สินค้าถัดไป"
+          >
+            <div className="w-10 h-10 rounded-xl bg-sand-100 group-hover:bg-amber-100/80 flex items-center justify-center transition-colors">
+              <ChevronRight className="w-6 h-6 text-bronze group-hover:translate-x-0.5 transition-transform" />
+            </div>
+            <span className="text-[10px] font-bold text-ink-muted group-hover:text-ink">ถัดไป</span>
+
+            {/* Hover Tooltip with Image & Code */}
+            <div className="opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-200 absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-neutral-900/95 text-white p-2.5 rounded-2xl shadow-2xl flex items-center gap-2.5 w-48 border border-white/10 backdrop-blur-md">
+              <img src={nextProduct.image} alt="" className="w-11 h-14 object-cover object-top rounded-xl shrink-0 bg-neutral-800" />
+              <div className="min-w-0 text-left">
+                <span className="text-[9px] font-bold text-amber-400 uppercase tracking-wider block">รุ่นถัดไป ▶</span>
+                <p className="text-xs font-bold text-white truncate">{nextProduct.code}</p>
+                <p className="text-[11px] text-neutral-300 truncate">{nextProduct.name}</p>
+              </div>
+            </div>
+          </button>
+        </>
+      )}
+
       {/* Modal Card / Mobile Bottom Sheet */}
-      <div className="relative bg-white rounded-t-3xl sm:rounded-3xl max-w-4xl lg:max-w-5xl xl:max-w-6xl w-full max-h-[92vh] sm:max-h-[90vh] overflow-y-auto shadow-modal border border-sand-200 z-10 animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200 pb-20 sm:pb-0">
+      <div 
+        ref={modalCardRef}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        className="relative bg-white rounded-t-3xl sm:rounded-3xl max-w-4xl lg:max-w-5xl xl:max-w-6xl w-full max-h-[92vh] sm:max-h-[90vh] overflow-y-auto shadow-modal border border-sand-200 z-10 animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200 pb-20 sm:pb-0"
+      >
         
         {/* Mobile Pull Indicator */}
         <div className="sm:hidden w-12 h-1.5 bg-sand-300 rounded-full mx-auto my-3" />
+
+        {/* Top Header Quick Product Navigation Controls */}
+        {hasMultipleProducts && (
+          <div className="absolute top-3 sm:top-4 right-14 sm:right-16 z-20 flex items-center gap-1 bg-white/95 backdrop-blur-md p-1 rounded-full border border-sand-300/80 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => handleNavigate(prevProduct)}
+              className="p-1 sm:p-1.5 rounded-full hover:bg-sand-100 text-ink-muted hover:text-ink transition-colors cursor-pointer flex items-center justify-center"
+              title={`รุ่นก่อนหน้า: ${prevProduct.code}`}
+              aria-label="สินค้าก่อนหน้า"
+            >
+              <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-ink" />
+            </button>
+            <span className="text-[10px] sm:text-xs font-bold px-1.5 text-ink-muted font-mono select-none" title={currentCategoryName ? `หมวด: ${currentCategoryName}` : ''}>
+              {currentIndex + 1} / {effectiveProductList.length}
+            </span>
+            <button
+              type="button"
+              onClick={() => handleNavigate(nextProduct)}
+              className="p-1 sm:p-1.5 rounded-full hover:bg-sand-100 text-ink-muted hover:text-ink transition-colors cursor-pointer flex items-center justify-center"
+              title={`รุ่นถัดไป: ${nextProduct.code}`}
+              aria-label="สินค้าถัดไป"
+            >
+              <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-ink" />
+            </button>
+          </div>
+        )}
 
         {/* Close Button */}
         <button
@@ -1249,6 +1418,73 @@ export default function ProductModal({ product, onClose, isAdultMode, lang = 'th
           </div>
 
         </div>
+
+        {/* Full-width Bottom Product Navigation Showcase */}
+        {hasMultipleProducts && (
+          <div className="px-4 sm:px-6 lg:px-8 pb-6 sm:pb-8 pt-2">
+            <div className="pt-5 border-t border-sand-200 space-y-2.5">
+              <div className="flex items-center justify-between text-[11px] text-ink-muted px-1 font-medium">
+                <span className="flex items-center gap-1.5 truncate">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <span>{currentCategoryName ? `ดูสินค้ารุ่นอื่นๆ ในหมวด "${currentCategoryName}"` : 'ดูสินค้ารุ่นอื่นๆ'}</span>
+                </span>
+                <span className="font-mono font-bold text-bronze shrink-0 ml-2">
+                  {currentIndex + 1} / {effectiveProductList.length}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
+                {/* Previous Product Card */}
+                <button
+                  type="button"
+                  onClick={() => handleNavigate(prevProduct)}
+                  className="p-2.5 sm:p-3.5 rounded-2xl border border-sand-200 hover:border-bronze bg-sand-50/70 hover:bg-white transition-all text-left flex items-center gap-2.5 sm:gap-3.5 group cursor-pointer shadow-2xs hover:shadow-sm"
+                >
+                  <img
+                    src={prevProduct.image}
+                    alt=""
+                    className="w-11 h-14 sm:w-14 sm:h-18 object-cover object-top rounded-xl border border-sand-200 shrink-0 bg-sand-100 group-hover:scale-105 transition-transform"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[9px] sm:text-[10px] text-ink-muted font-bold flex items-center gap-1 group-hover:text-bronze transition-colors">
+                      <ChevronLeft className="w-3 h-3 -translate-x-0.5" /> รุ่นก่อนหน้า
+                    </span>
+                    <p className="text-xs sm:text-sm font-bold text-ink truncate mt-0.5">
+                      {prevProduct.code}
+                    </p>
+                    <p className="text-[10px] sm:text-[11px] text-ink-muted truncate hidden xs:block">
+                      {prevProduct.name}
+                    </p>
+                  </div>
+                </button>
+
+                {/* Next Product Card */}
+                <button
+                  type="button"
+                  onClick={() => handleNavigate(nextProduct)}
+                  className="p-2.5 sm:p-3.5 rounded-2xl border border-sand-200 hover:border-bronze bg-sand-50/70 hover:bg-white transition-all text-right flex items-center justify-end gap-2.5 sm:gap-3.5 group cursor-pointer shadow-2xs hover:shadow-sm"
+                >
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[9px] sm:text-[10px] text-ink-muted font-bold flex items-center justify-end gap-1 group-hover:text-bronze transition-colors">
+                      รุ่นถัดไป <ChevronRight className="w-3 h-3 translate-x-0.5" />
+                    </span>
+                    <p className="text-xs sm:text-sm font-bold text-ink truncate mt-0.5">
+                      {nextProduct.code}
+                    </p>
+                    <p className="text-[10px] sm:text-[11px] text-ink-muted truncate hidden xs:block">
+                      {nextProduct.name}
+                    </p>
+                  </div>
+                  <img
+                    src={nextProduct.image}
+                    alt=""
+                    className="w-11 h-14 sm:w-14 sm:h-18 object-cover object-top rounded-xl border border-sand-200 shrink-0 bg-sand-100 group-hover:scale-105 transition-transform"
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
 

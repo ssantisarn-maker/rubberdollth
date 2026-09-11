@@ -617,6 +617,13 @@ export default function ProductCatalog({ activeTab, setActiveTab, isAdultMode, o
             onClose={handleCloseModal}
             isAdultMode={isAdultMode}
             lang={lang}
+            productList={
+              (filteredProducts && filteredProducts.some(p => p.id === selectedProduct?.id || p.code === selectedProduct?.code))
+                ? filteredProducts
+                : products
+            }
+            onNavigateProduct={handleOpenProduct}
+            currentCategoryName={(categories.find(c => c.id === selectedCategory)?.label) || ''}
           />
         </React.Suspense>
       )}
